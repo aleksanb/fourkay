@@ -173,7 +173,6 @@ fn start(_argc: isize, _argv: *const *const u8) -> isize {
                     (xlib.XGetWindowAttributes)(display, window, &mut window_attributes);
                     dbg!(window_attributes);
                     gl.viewport(0, 0, window_attributes.width, window_attributes.height);
-
                     setup(&*gl);
                     (glx.glXSwapBuffers)(display, window);
                 }
@@ -190,14 +189,14 @@ fn start(_argc: isize, _argv: *const *const u8) -> isize {
                     }
                 }
                 xlib::KeyPress => {
-                    if count % 2 == 0 {
-                        red(&*gl);
-                    } else {
-                        blue(&*gl);
-                    }
-                    (glx.glXSwapBuffers)(display, window);
-                    count += 1;
-                    dbg!(event);
+                    // if count % 2 == 0 {
+                    //     red(&*gl);
+                    // } else {
+                    //     blue(&*gl);
+                    // }
+                    // (glx.glXSwapBuffers)(display, window);
+                    // count += 1;
+                    // dbg!(event);
                 }
                 _ => (),
             }
@@ -254,32 +253,34 @@ fn load_shader(gl: &dyn gl::Gl, shader_type: ShaderType) -> Result<gl::GLuint, (
 
 static VERTEX_SHADER: &'static str = "
 #version 130
-in vec2 position;
+in vec3 position;
 
 void main() {
-    gl_Position = vec4(position, 0.0, 1.0);
+    gl_Position = vec4(vec2(position), 0.0, 1.0);
 }
 ";
 
 static FRAGMENT_SHADER: &'static str = "
 #version 130
-out vec4 outColor;
 
 void main() {
-    outColor = vec4(1.0, 0.0, 1.0, 1.0);
+    gl_FragColor = vec4(1.0, 0.0, 1.0, 1.0);
 }
 ";
 
 fn setup(gl: &dyn gl::Gl) {
     let vertex_arrays = gl.gen_vertex_arrays(1);
     let vao = vertex_arrays[0];
+    dbg!(vao);
     gl.bind_vertex_array(vao);
 
-    let vertices = [0.0, 0.5, 0.5, -0.5, -0.5, -0.5];
-    let buffers = gl.gen_buffers(1);
-    let vbo = buffers[0];
+    let vertices:Vec<f32> = vec![0.0, 0.5, 0.0, 0.5, -0.5, 0.0, -0.5, -0.5, 0.0];
+    let vbo = gl.gen_buffers(1)[0];
     gl.bind_buffer(gl::ARRAY_BUFFER, vbo);
     gl::buffer_data(gl, gl::ARRAY_BUFFER, &vertices, gl::STATIC_DRAW);
+
+    gl.enable_vertex_attrib_array(0);
+    gl.vertex_attrib_pointer(0 as _, 3, gl::FLOAT, false, 0, 0);
 
     let fragment_shader =
         load_shader(gl, ShaderType::FragmentShader(FRAGMENT_SHADER.to_string())).unwrap();
@@ -290,7 +291,6 @@ fn setup(gl: &dyn gl::Gl) {
     gl.attach_shader(program, fragment_shader);
     gl.attach_shader(program, vertex_shader);
 
-    gl.bind_frag_data_location_indexed(program, 0, 0, "outColor");
     gl.link_program(program);
     gl.use_program(program);
 
@@ -310,11 +310,6 @@ fn setup(gl: &dyn gl::Gl) {
         let log = gl.get_program_info_log(program);
         dbg!(log);
     }
-
-    let pos_attrib = gl.get_attrib_location(program, "position");
-    dbg!(pos_attrib);
-    gl.enable_vertex_attrib_array(pos_attrib as _);
-    gl.vertex_attrib_pointer(pos_attrib as _, 2, gl::FLOAT, false, 0, 0);
 
     render(gl);
 }
