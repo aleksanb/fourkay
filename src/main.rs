@@ -36,30 +36,67 @@ fn start(_argc: isize, _argv: *const *const u8) -> isize {
 
     //let display = unsafe{x11::xlib::XOpenDisplay(std::ptr::null());};
     unsafe {
-        let mut display = (xlib.XOpenDisplay)(std::ptr::null());
+        let display = (xlib.XOpenDisplay)(std::ptr::null());
         if display.is_null() {
             println!("fuck");
         }
         dbg!(display);
 
-        let screen = (xlib.XDefaultScreen)(display);
-        let root_window = (xlib.XRootWindow)(display, screen);
-
-        let mut set_window_attributes = vec![
-            glx::GLX_RGBA,
+        let mut visual_attributes: Vec<libc::c_int> = vec![
+            glx::GLX_X_RENDERABLE,
+            1,
+            glx::GLX_DRAWABLE_TYPE,
+            glx::GLX_WINDOW_BIT,
+            glx::GLX_RENDER_TYPE,
+            glx::GLX_RGBA_BIT,
+            glx::GLX_X_VISUAL_TYPE,
+            glx::GLX_TRUE_COLOR,
+            glx::GLX_RED_SIZE,
+            8,
+            glx::GLX_GREEN_SIZE,
+            8,
+            glx::GLX_BLUE_SIZE,
+            8,
+            glx::GLX_ALPHA_SIZE,
+            8,
             glx::GLX_DEPTH_SIZE,
-            24 as libc::c_int,
+            24,
+            glx::GLX_STENCIL_SIZE,
+            8,
             glx::GLX_DOUBLEBUFFER,
+            1,
             glx::GLX_NONE,
         ];
 
-        let visual: *mut xlib::XVisualInfo = (glx.glXChooseVisual)(
-            display as *mut _,
-            0,
-            set_window_attributes.as_mut_ptr() as *mut libc::c_int,
-        );
+        let mut glx_major: libc::c_int = 0;
+        let mut glx_minor: libc::c_int = 0;
+        let result = (glx.glXQueryVersion)(display, &mut glx_major, &mut glx_minor);
+        dbg!(glx_major);
+        dbg!(glx_minor);
+        dbg!(result);
 
+        let default_screen = (xlib.XDefaultScreen)(display);
+        dbg!(default_screen);
+
+        let mut fb_count: libc::c_int = 10;
+        let fb_config = (glx.glXChooseFBConfig)(
+            display,
+            default_screen,
+            visual_attributes.as_ptr(),
+            &mut fb_count,
+        );
+        dbg!(fb_count);
+        dbg!(fb_config);
+        if fb_config.is_null() {
+            println!("Failed to retrieve a framebuffer config");
+            return 1;
+        }
+
+        let visual = (glx.glXGetVisualFromFBConfig)(display, *fb_config);;
         dbg!(visual);
+
+        let root_window = (xlib.XRootWindow)(display, (*visual).screen);
+        dbg!(root_window);
 
         let color_map =
             (xlib.XCreateColormap)(display, root_window, (*visual).visual, xlib::AllocNone);
@@ -67,7 +104,7 @@ fn start(_argc: isize, _argv: *const *const u8) -> isize {
 
         let mut set_window_attributes: xlib::XSetWindowAttributes = mem::uninitialized();
         set_window_attributes.colormap = color_map;
-        set_window_attributes.background_pixel = (xlib.XWhitePixel)(display, screen);
+        set_window_attributes.background_pixel = (xlib.XWhitePixel)(display, (*visual).screen);
         set_window_attributes.event_mask = xlib::ExposureMask | xlib::KeyPressMask;
 
         let window: xlib::Window = (xlib.XCreateWindow)(
@@ -81,7 +118,7 @@ fn start(_argc: isize, _argv: *const *const u8) -> isize {
             (*visual).depth,
             xlib::InputOutput as libc::c_uint,
             (*visual).visual,
-            xlib::CWColormap | xlib::CWBackPixel | xlib::CWEventMask,
+            xlib::CWColormap | xlib::CWEventMask, // | xlib::CWBackPixel ,
             &mut set_window_attributes,
         );
         dbg!(window);
@@ -101,7 +138,7 @@ fn start(_argc: isize, _argv: *const *const u8) -> isize {
             (glx.glXGetProcAddress)(address as *const _).unwrap() as *const _
         });
         let gl: Rc<dyn gl::Gl> = gl::ErrorCheckingGl::wrap(gl);
-        // gl.enable(gl::DEPTH_TEST);
+        gl.enable(gl::DEPTH_TEST);
 
         let gl_version = gl.get_string(gl::VERSION);
         dbg!(gl_version);
@@ -136,6 +173,7 @@ fn start(_argc: isize, _argv: *const *const u8) -> isize {
                     (xlib.XGetWindowAttributes)(display, window, &mut window_attributes);
                     dbg!(window_attributes);
                     gl.viewport(0, 0, window_attributes.width, window_attributes.height);
+
                     setup(&*gl);
                     (glx.glXSwapBuffers)(display, window);
                 }
@@ -186,7 +224,8 @@ fn load_shader(gl: &dyn gl::Gl, shader_type: ShaderType) -> Result<gl::GLuint, (
     });
     let shader_cstring = ffi::CString::new(match shader_type {
         ShaderType::VertexShader(s) | ShaderType::FragmentShader(s) => s,
-    }).unwrap();
+    })
+    .unwrap();
 
     gl.shader_source(shader, &[shader_cstring.as_bytes()]);
     gl.compile_shader(shader);
@@ -256,7 +295,9 @@ fn setup(gl: &dyn gl::Gl) {
     gl.use_program(program);
 
     let mut program_status = vec![0];
-    unsafe{gl.get_program_iv(program, gl::LINK_STATUS, &mut program_status);}
+    unsafe {
+        gl.get_program_iv(program, gl::LINK_STATUS, &mut program_status);
+    }
     if (dbg!(program_status[0]) as gl::GLboolean) == gl::FALSE {
         dbg!("Failure");
 
