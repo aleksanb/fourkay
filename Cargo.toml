@@ -6,10 +6,7 @@ edition = "2018"
 
 [dependencies]
 libc = {version = "0.2.*", default-features = false}
-# winit = "0.17"
 gleam = "0.6.3"
-# glx = "0.2.3"
-# x11 = "2.18.1"
 x11-dl = "2.18.1"
 
 [profile.release]
