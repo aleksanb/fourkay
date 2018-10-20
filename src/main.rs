@@ -14,13 +14,12 @@ use gleam::gl;
 use std::ffi;
 use std::mem;
 use std::ptr;
-use x11_dl::{glx, xlib::Display as OldDisplay};
 
 use std::rc::Rc;
 
 mod bindings;
 
-use self::bindings::{Xlib, Xlib_constants};
+use self::bindings::{glx, Xlib, Xlib_constants};
 use libc::c_long;
 
 #[start]
@@ -36,19 +35,18 @@ fn start(_argc: isize, _argv: *const *const u8) -> isize {
     //    gl::CreateShader(gl::TERTEX_SHADER);
     //};
 
-    let glx = glx::Glx::open().unwrap();
-
     //let display = unsafe{x11::Xlib::XOpenDisplay(std::ptr::null());};
     unsafe {
         let display = Xlib::XOpenDisplay(std::ptr::null());
-        let old_display: *mut OldDisplay = mem::transmute(display);
+        // let old_display: *mut OldDisplay = mem::transmute(display);
         //let display = (Xlib.XOpenDisplay)(std::ptr::null());
         if display.is_null() {
             println!("fuck");
         }
         dbg!(display);
+        let glx_display: *mut glx::Display = mem::transmute(display);
 
-        let mut visual_attributes: Vec<libc::c_int> = vec![
+        let mut visual_attributes: Vec<libc::c_uint> = vec![
             glx::GLX_X_RENDERABLE,
             1,
             glx::GLX_DRAWABLE_TYPE,
@@ -76,7 +74,7 @@ fn start(_argc: isize, _argv: *const *const u8) -> isize {
 
         let mut glx_major: libc::c_int = 0;
         let mut glx_minor: libc::c_int = 0;
-        let result = (glx.glXQueryVersion)(old_display, &mut glx_major, &mut glx_minor);
+        let result = glx::glXQueryVersion(glx_display, &mut glx_major, &mut glx_minor);
         dbg!(glx_major);
         dbg!(glx_minor);
         dbg!(result);
@@ -85,12 +83,13 @@ fn start(_argc: isize, _argv: *const *const u8) -> isize {
         dbg!(default_screen);
 
         let mut fb_count: libc::c_int = 10;
-        let fb_config = (glx.glXChooseFBConfig)(
-            old_display,
+        let fb_config = glx::glXChooseFBConfig(
+            glx_display,
             default_screen,
-            visual_attributes.as_ptr(),
+            mem::transmute(visual_attributes.as_ptr()),
             &mut fb_count,
         );
+
         dbg!(fb_count);
         dbg!(fb_config);
         if fb_config.is_null() {
@@ -98,7 +97,7 @@ fn start(_argc: isize, _argv: *const *const u8) -> isize {
             return 1;
         }
 
-        let visual = (glx.glXGetVisualFromFBConfig)(old_display, *fb_config);;
+        let visual = glx::glXGetVisualFromFBConfig(glx_display, *fb_config);;
         dbg!(visual);
 
         let root_window = Xlib::XRootWindow(display, (*visual).screen);
@@ -140,14 +139,14 @@ fn start(_argc: isize, _argv: *const *const u8) -> isize {
         Xlib::XStoreName(display, window, title.as_ptr() as *mut libc::c_char);
 
         let gl_context =
-            (glx.glXCreateContext)(old_display, visual, ptr::null_mut(), gl::TRUE as i32);
+            glx::glXCreateContext(glx_display, visual, ptr::null_mut(), gl::TRUE as i32);
         dbg!(gl_context);
-        dbg!(glx.glXMakeCurrent)(old_display, window, gl_context);
+        glx::glXMakeCurrent(glx_display, window, gl_context);
 
         let gl: Rc<gl::Gl> = gl::GlFns::load_with(|symbol: &str| {
             let symbol_as_cstring = ffi::CString::new(symbol.as_bytes()).unwrap();
             let address = symbol_as_cstring.as_ptr();
-            (glx.glXGetProcAddress)(address as *const _).unwrap() as *const _
+            glx::glXGetProcAddress(address as *const _).unwrap() as *const _
         });
         let gl: Rc<dyn gl::Gl> = gl::ErrorCheckingGl::wrap(gl);
         gl.enable(gl::DEPTH_TEST);
@@ -190,7 +189,7 @@ fn start(_argc: isize, _argv: *const *const u8) -> isize {
                     //dbg!(window_attributes);
                     gl.viewport(0, 0, window_attributes.width, window_attributes.height);
                     setup(&*gl);
-                    (glx.glXSwapBuffers)(old_display, window);
+                    glx::glXSwapBuffers(glx_display, window);
                 }
                 &Xlib_constants::ClientMessage => {
                     dbg!("We client message now");
@@ -220,7 +219,7 @@ fn start(_argc: isize, _argv: *const *const u8) -> isize {
 
         // Shut down.
         //(glx.glXMakeCurrent)(display, glx::GLX_NONE as _, ptr::null_mut());
-        (glx.glXDestroyContext)(old_display, gl_context);
+        glx::glXDestroyContext(glx_display, gl_context);
         Xlib::XDestroyWindow(display, window);
         Xlib::XCloseDisplay(display);
     }
