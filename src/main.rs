@@ -184,15 +184,15 @@ fn start(_argc: isize, _argv: *const *const u8) -> isize {
         loop {
             Xlib::XNextEvent(display, mem::transmute(&mut event));
 
-            match event.type_{
-                Xlib::Expose => {
+            match event.type_.as_ref() {
+                &Xlib_constants::Expose => {
                     Xlib::XGetWindowAttributes(display, window, &mut window_attributes);
                     //dbg!(window_attributes);
                     gl.viewport(0, 0, window_attributes.width, window_attributes.height);
                     setup(&*gl);
                     (glx.glXSwapBuffers)(old_display, window);
                 }
-                Xlib::ClientMessage => {
+                &Xlib_constants::ClientMessage => {
                     dbg!("We client message now");
                     // let xclient = Xlib::XClientMessageEvent::from(event);
 
@@ -204,7 +204,7 @@ fn start(_argc: isize, _argv: *const *const u8) -> isize {
                     //    }
                     // }
                 }
-                Xlib::KeyPress => {
+                &Xlib_constants::KeyPress => {
                     // if count % 2 == 0 {
                     //     red(&*gl);
                     // } else {
