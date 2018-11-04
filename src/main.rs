@@ -172,17 +172,22 @@ fn start(_argc: isize, _argv: *const *const u8) -> isize {
         println!("GL Context: %p\n\0", gl_context as *const libc::c_char);
         glx::glXMakeCurrent(glx_display, window, gl_context);
 
-        ////let proc_address: unsafe extern "C" fn(name: gl::GLenum, index: gl::GLuint) -> *const gl::GLubyte =
-        //    //glx::glXGetProcAddress(proc_string.as_ptr() as *const _).unwrap();
+        gl::glEnable(gl::GL_DEPTH_TEST);
 
-        let gl_get_string_i = "glGetStringi\0";
-        let raw_function_pointer = glx::glXGetProcAddress(gl_get_string_i.as_ptr() as *const _);
-        //println!("raw_pointer: %p\n\0", raw_function_pointer as *const libc::c_char);
-        //let glGetStringi: gl::PFNGLGETSTRINGIPROC = mem::transmute(raw_function_pointer);
-        //let glGetStringi = glGetStringi.unwrap();
+        //loop{}
+
+        // const GLGETSTRING_NAME: &'static str = "glGetStringi\0";
+        // let address = glx::glXGetProcAddress(GLGETSTRING_NAME.as_ptr());
+        // let glGetStringi: gl::PFNGLGETSTRINGIPROC = mem::transmute(address);
+        // let glGetStringi = glGetStringi.unwrap();
 
 
-        // let version: *mut gl::GLubyte = glGetStringi(gl::GL_VERSION, 0);
+        // let version = glGetStringi(gl::GL_VERSION, 0);
+        // println!("Version: %s\n\0", version as *const libc::c_char);
+
+
+
+
         //let version = ffi::CString::from_raw(version);
         // dbg!(version);
         // let gl: Rc<gl::Gl> = gl::GlFns::load_with(|symbol: &str| {
@@ -218,46 +223,44 @@ fn start(_argc: isize, _argv: *const *const u8) -> isize {
         // );
 
         // // Main loop.
-        // let mut event: Xlib::XEvent = mem::uninitialized();
-        // let mut window_attributes: Xlib::XWindowAttributes = mem::uninitialized();
-        // let mut count = 0;
+        let mut event: Xlib::XEvent = mem::uninitialized();
+        let mut window_attributes: Xlib::XWindowAttributes = mem::uninitialized();
+        let mut count = 0;
 
-        // loop {
-        //     Xlib::XNextEvent(display, mem::transmute(&mut event));
+        loop {
+            Xlib::XNextEvent(display, &mut event);
 
-        //     match event.type_.as_ref() {
-        //         &Xlib_constants::Expose => {
-        //             Xlib::XGetWindowAttributes(display, window, &mut window_attributes);
-        //             //dbg!(window_attributes);
-        //             gl.viewport(0, 0, window_attributes.width, window_attributes.height);
-        //             setup(&*gl);
-        //             glx::glXSwapBuffers(glx_display, window);
-        //         }
-        //         &Xlib_constants::ClientMessage => {
-        //             dbg!("We client message now");
-        //             // let xclient = Xlib::XClientMessageEvent::from(event);
+            match event.type_.as_ref() {
+                &Xlib_constants::Expose => {
+                    Xlib::XGetWindowAttributes(display, window, &mut window_attributes);
+                    gl::glViewport(0, 0, window_attributes.width, window_attributes.height);
+                    glx::glXSwapBuffers(glx_display, window);
+                }
+                &Xlib_constants::ClientMessage => {
+                    //dbg!("We client message now");
+                    // let xclient = Xlib::XClientMessageEvent::from(event);
 
-        //             // if xclient.message_type == wm_protocols && xclient.format == 32 {
-        //             //     let protocol = xclient.data.get_long(0) as Xlib::Atom;
+                    // if xclient.message_type == wm_protocols && xclient.format == 32 {
+                    //     let protocol = xclient.data.get_long(0) as Xlib::Atom;
 
-        //             //     if protocol == wm_delete_window {
-        //             //         break;
-        //             //    }
-        //             // }
-        //         }
-        //         &Xlib_constants::KeyPress => {
-        //             // if count % 2 == 0 {
-        //             //     red(&*gl);
-        //             // } else {
-        //             //     blue(&*gl);
-        //             // }
-        //             // (glx.glXSwapBuffers)(display, window);
-        //             // count += 1;
-        //             // dbg!(event);
-        //         }
-        //         _ => (),
-        //     }
-        // }
+                    //     if protocol == wm_delete_window {
+                    //         break;
+                    //    }
+                    // }
+                }
+                &Xlib_constants::KeyPress => {
+                    // if count % 2 == 0 {
+                    //     red(&*gl);
+                    // } else {
+                    //     blue(&*gl);
+                    // }
+                    // (glx.glXSwapBuffers)(display, window);
+                    // count += 1;
+                    // dbg!(event);
+                }
+                _ => (),
+            }
+        }
 
         // // Shut down.
         // //(glx.glXMakeCurrent)(display, glx::GLX_NONE as _, ptr::null_mut());
