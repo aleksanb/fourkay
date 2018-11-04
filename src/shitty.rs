@@ -25,8 +25,10 @@ impl Prepare for &'static str {
     }
 }
 
-trivial_prepare!(i32);
+trivial_prepare!(libc::c_int);
+trivial_prepare!(libc::c_ulong);
 trivial_prepare!(*const libc::c_char);
+trivial_prepare!(*mut libc::c_char);
 
 macro_rules! println {
     ($( $args:expr ),* ) => {
