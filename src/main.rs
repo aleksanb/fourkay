@@ -167,17 +167,20 @@ fn start(_argc: isize, _argv: *const *const u8) -> isize {
         let title = "fourkay\0";
         Xlib::XStoreName(display, window, title.as_ptr() as *mut _);
 
-        loop {}
-        // let gl_context =
-        //     glx::glXCreateContext(glx_display, visual, ptr::null_mut(), gl::GL_TRUE as i32);
-        // dbg!(gl_context);
-        // glx::glXMakeCurrent(glx_display, window, gl_context);
+        let gl_context =
+            glx::glXCreateContext(glx_display, visual, ptr::null_mut(), gl::GL_TRUE as i32);
+        println!("GL Context: %p\n\0", gl_context as *const libc::c_char);
+        glx::glXMakeCurrent(glx_display, window, gl_context);
 
-        // let proc_string = ffi::CString::new("glGetStringi").unwrap();
-        // let proc_address:fn(name: GLenum, index: GLuint) -> *const GLubyte = glx::glXGetProcAddress(proc_string.as_ptr() as *const _);
-        // let glGetStringi: gl::PFNGLGETSTRINGIPROC = mem::transmute(proc_address);
-        // let glGetStringi = glGetStringi.unwrap();
-        // dbg!(glGetString);
+        ////let proc_address: unsafe extern "C" fn(name: gl::GLenum, index: gl::GLuint) -> *const gl::GLubyte =
+        //    //glx::glXGetProcAddress(proc_string.as_ptr() as *const _).unwrap();
+
+        let gl_get_string_i = "glGetStringi\0";
+        let raw_function_pointer = glx::glXGetProcAddress(gl_get_string_i.as_ptr() as *const _);
+        //println!("raw_pointer: %p\n\0", raw_function_pointer as *const libc::c_char);
+        //let glGetStringi: gl::PFNGLGETSTRINGIPROC = mem::transmute(raw_function_pointer);
+        //let glGetStringi = glGetStringi.unwrap();
+
 
         // let version: *mut gl::GLubyte = glGetStringi(gl::GL_VERSION, 0);
         //let version = ffi::CString::from_raw(version);
