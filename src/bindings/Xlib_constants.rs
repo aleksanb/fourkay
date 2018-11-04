@@ -4,7 +4,7 @@ use libc::{c_char, c_int, c_long, c_uchar, c_uint, c_ulong, c_ushort};
 pub type Bool = c_int;
 
 //
-// constants
+// Constants shamelessly ripped from https://github.com/erlepereira/x11-rs/blob/master/src/xlib.rs#L2635
 //
 
 // allocate colormap
