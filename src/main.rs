@@ -1,26 +1,46 @@
 #![feature(lang_items, start)]
-#![feature(dbg_macro)]
+#![no_std]
 
-//#![no_std]
-//#![feature(alloc_system)]
-//extern crate alloc_system;
+#[cfg(println)]
+#[macro_use]
+mod shitty;
+#[cfg(println)]
+use self::shitty::Prepare;
 
-use std::alloc::System;
-#[global_allocator]
-static GLOBAl: System = System;
+#[cfg(not(println))]
+macro_rules! println {
+    ($($val:expr),*) => {};
+}
+
+
+
+//extern crate alloc;
+//use alloc::vec::Vec;
+
+//#![macro_use] extern crate alloc;
+//use alloc::string::ToString;
 
 use core::panic::PanicInfo;
-use gleam::gl;
-use std::ffi;
-use std::mem;
-use std::ptr;
-
-use std::rc::Rc;
+// use gleam::gl;
+//use std::ffi;
+use core::mem;
+use core::ptr;
+//use core::rc::Rc;
+use core::ffi;
 
 mod bindings;
 
-use self::bindings::{glx, Xlib, Xlib_constants};
+use self::bindings::{gl, glx, Xlib, Xlib_constants};
 use libc::c_long;
+
+
+#[panic_handler]
+fn panic(_panic: &PanicInfo<'_>) -> ! {
+    loop {}
+}
+
+#[lang = "eh_personality"]
+extern "C" fn eh_personality() {}
 
 #[start]
 fn start(_argc: isize, _argv: *const *const u8) -> isize {
@@ -37,16 +57,18 @@ fn start(_argc: isize, _argv: *const *const u8) -> isize {
 
     //let display = unsafe{x11::Xlib::XOpenDisplay(std::ptr::null());};
     unsafe {
-        let display = Xlib::XOpenDisplay(std::ptr::null());
+        let display = Xlib::XOpenDisplay(ptr::null());
         // let old_display: *mut OldDisplay = mem::transmute(display);
         //let display = (Xlib.XOpenDisplay)(std::ptr::null());
         if display.is_null() {
-            println!("fuck");
+            println!("fuck\n\0");
         }
-        dbg!(display);
+
+        println!("Got displayyyyyyyy: %p\n\0", display as *const libc::c_char);
+
         let glx_display: *mut glx::Display = mem::transmute(display);
 
-        let mut visual_attributes: Vec<libc::c_uint> = vec![
+        let mut visual_attributes = &[
             glx::GLX_X_RENDERABLE,
             1,
             glx::GLX_DRAWABLE_TYPE,
@@ -75,12 +97,12 @@ fn start(_argc: isize, _argv: *const *const u8) -> isize {
         let mut glx_major: libc::c_int = 0;
         let mut glx_minor: libc::c_int = 0;
         let result = glx::glXQueryVersion(glx_display, &mut glx_major, &mut glx_minor);
-        dbg!(glx_major);
-        dbg!(glx_minor);
-        dbg!(result);
+        println!("%d\n\0", glx_major);
+        println!("%d\n\0", glx_minor);
+        println!("%d\n\0", result);
 
         let default_screen = Xlib::XDefaultScreen(display);
-        dbg!(default_screen);
+        println!("default_screen: %d\n\0", default_screen);
 
         let mut fb_count: libc::c_int = 10;
         let fb_config = glx::glXChooseFBConfig(
@@ -90,18 +112,18 @@ fn start(_argc: isize, _argv: *const *const u8) -> isize {
             &mut fb_count,
         );
 
-        dbg!(fb_count);
-        dbg!(fb_config);
+        println!("fb_count: %d\n\0", fb_count);
+        println!("fb_config: %p\n\0", fb_config as *const libc::c_char);
         if fb_config.is_null() {
-            println!("Failed to retrieve a framebuffer config");
+            println!("Failed to retrieve a framebuffer config\n\0");
             return 1;
         }
 
         let visual = glx::glXGetVisualFromFBConfig(glx_display, *fb_config);;
-        dbg!(visual);
+        println!("%d\n\0", visual as * const libc::c_char);
 
         let root_window = Xlib::XRootWindow(display, (*visual).screen);
-        dbg!(root_window);
+        println!("%d\n\0", root_window as * const libc::c_char);
 
         let color_map = Xlib::XCreateColormap(
             display,
@@ -109,13 +131,14 @@ fn start(_argc: isize, _argv: *const *const u8) -> isize {
             mem::transmute((*visual).visual),
             Xlib_constants::AllocNone,
         );
-        dbg!(color_map);
+        //dbg!(color_map);
 
         let mut set_window_attributes: Xlib::XSetWindowAttributes = mem::uninitialized();
         set_window_attributes.colormap = color_map;
         set_window_attributes.background_pixel =
             Xlib::XWhitePixel(display, mem::transmute((*visual).screen));
-        set_window_attributes.event_mask = Xlib_constants::ExposureMask | Xlib_constants::KeyPressMask;
+        set_window_attributes.event_mask =
+            Xlib_constants::ExposureMask | Xlib_constants::KeyPressMask;
 
         let window: Xlib::Window = Xlib::XCreateWindow(
             display,
@@ -131,102 +154,112 @@ fn start(_argc: isize, _argv: *const *const u8) -> isize {
             Xlib_constants::CWColormap | Xlib_constants::CWEventMask | Xlib_constants::CWBackPixel,
             &mut set_window_attributes,
         );
-        dbg!(window);
+        //dbg!(window);
 
         // Show window.
         Xlib::XMapWindow(display, window);
-        let title = ffi::CString::new("fourkay").unwrap();
-        Xlib::XStoreName(display, window, title.as_ptr() as *mut libc::c_char);
+        loop {}
+        // let title = ffi::CString::new("fourkay").unwrap();
+        // Xlib::XStoreName(display, window, title.as_ptr() as *mut libc::c_char);
 
-        let gl_context =
-            glx::glXCreateContext(glx_display, visual, ptr::null_mut(), gl::TRUE as i32);
-        dbg!(gl_context);
-        glx::glXMakeCurrent(glx_display, window, gl_context);
+        // let gl_context =
+        //     glx::glXCreateContext(glx_display, visual, ptr::null_mut(), gl::GL_TRUE as i32);
+        // dbg!(gl_context);
+        // glx::glXMakeCurrent(glx_display, window, gl_context);
 
-        let gl: Rc<gl::Gl> = gl::GlFns::load_with(|symbol: &str| {
-            let symbol_as_cstring = ffi::CString::new(symbol.as_bytes()).unwrap();
-            let address = symbol_as_cstring.as_ptr();
-            glx::glXGetProcAddress(address as *const _).unwrap() as *const _
-        });
-        let gl: Rc<dyn gl::Gl> = gl::ErrorCheckingGl::wrap(gl);
-        gl.enable(gl::DEPTH_TEST);
+        // let proc_string = ffi::CString::new("glGetStringi").unwrap();
+        // let proc_address:fn(name: GLenum, index: GLuint) -> *const GLubyte = glx::glXGetProcAddress(proc_string.as_ptr() as *const _);
+        // let glGetStringi: gl::PFNGLGETSTRINGIPROC = mem::transmute(proc_address);
+        // let glGetStringi = glGetStringi.unwrap();
+        // dbg!(glGetString);
 
-        let gl_version = gl.get_string(gl::VERSION);
-        dbg!(gl_version);
+        // let version: *mut gl::GLubyte = glGetStringi(gl::GL_VERSION, 0);
+        //let version = ffi::CString::from_raw(version);
+        // dbg!(version);
+        // let gl: Rc<gl::Gl> = gl::GlFns::load_with(|symbol: &str| {
+        //     let symbol_as_cstring = ffi::CString::new(symbol.as_bytes()).unwrap();
+        //     let address = symbol_as_cstring.as_ptr();
+        //     glx::glXGetProcAddress(address as *const _).unwrap() as *const _
+        // });
+        // let gl: Rc<dyn gl::Gl> = gl::ErrorCheckingGl::wrap(gl);
+        // gl.enable(gl::DEPTH_TEST);
 
-        // Hook close requests.
-        let wm_protocols_str = ffi::CString::new("WM_PROTOCOLS").unwrap();
-        let wm_delete_window_str = ffi::CString::new("WM_DELETE_WINDOW").unwrap();
+        // let gl_version = gl.get_string(gl::VERSION);
+        // dbg!(gl_version);
 
-        let wm_protocols =
-            Xlib::XInternAtom(display, wm_protocols_str.as_ptr(), Xlib_constants::False);
-        let wm_delete_window = Xlib::XInternAtom(
-            display,
-            wm_delete_window_str.as_ptr(),
-            Xlib_constants::False,
-        );
+        // // Hook close requests.
+        // let wm_protocols_str = ffi::CString::new("WM_PROTOCOLS").unwrap();
+        // let wm_delete_window_str = ffi::CString::new("WM_DELETE_WINDOW").unwrap();
 
-        let mut protocols = [wm_delete_window];
+        // let wm_protocols =
+        //     Xlib::XInternAtom(display, wm_protocols_str.as_ptr(), Xlib_constants::False);
+        // let wm_delete_window = Xlib::XInternAtom(
+        //     display,
+        //     wm_delete_window_str.as_ptr(),
+        //     Xlib_constants::False,
+        // );
 
-        Xlib::XSetWMProtocols(
-            display,
-            window,
-            protocols.as_mut_ptr(),
-            protocols.len() as libc::c_int,
-        );
+        // let mut protocols = [wm_delete_window];
 
-        // Main loop.
-        let mut event: Xlib::XEvent = mem::uninitialized();
-        let mut window_attributes: Xlib::XWindowAttributes = mem::uninitialized();
-        let mut count = 0;
+        // Xlib::XSetWMProtocols(
+        //     display,
+        //     window,
+        //     protocols.as_mut_ptr(),
+        //     protocols.len() as libc::c_int,
+        // );
 
-        loop {
-            Xlib::XNextEvent(display, mem::transmute(&mut event));
+        // // Main loop.
+        // let mut event: Xlib::XEvent = mem::uninitialized();
+        // let mut window_attributes: Xlib::XWindowAttributes = mem::uninitialized();
+        // let mut count = 0;
 
-            match event.type_.as_ref() {
-                &Xlib_constants::Expose => {
-                    Xlib::XGetWindowAttributes(display, window, &mut window_attributes);
-                    //dbg!(window_attributes);
-                    gl.viewport(0, 0, window_attributes.width, window_attributes.height);
-                    setup(&*gl);
-                    glx::glXSwapBuffers(glx_display, window);
-                }
-                &Xlib_constants::ClientMessage => {
-                    dbg!("We client message now");
-                    // let xclient = Xlib::XClientMessageEvent::from(event);
+        // loop {
+        //     Xlib::XNextEvent(display, mem::transmute(&mut event));
 
-                    // if xclient.message_type == wm_protocols && xclient.format == 32 {
-                    //     let protocol = xclient.data.get_long(0) as Xlib::Atom;
+        //     match event.type_.as_ref() {
+        //         &Xlib_constants::Expose => {
+        //             Xlib::XGetWindowAttributes(display, window, &mut window_attributes);
+        //             //dbg!(window_attributes);
+        //             gl.viewport(0, 0, window_attributes.width, window_attributes.height);
+        //             setup(&*gl);
+        //             glx::glXSwapBuffers(glx_display, window);
+        //         }
+        //         &Xlib_constants::ClientMessage => {
+        //             dbg!("We client message now");
+        //             // let xclient = Xlib::XClientMessageEvent::from(event);
 
-                    //     if protocol == wm_delete_window {
-                    //         break;
-                    //    }
-                    // }
-                }
-                &Xlib_constants::KeyPress => {
-                    // if count % 2 == 0 {
-                    //     red(&*gl);
-                    // } else {
-                    //     blue(&*gl);
-                    // }
-                    // (glx.glXSwapBuffers)(display, window);
-                    // count += 1;
-                    // dbg!(event);
-                }
-                _ => (),
-            }
-        }
+        //             // if xclient.message_type == wm_protocols && xclient.format == 32 {
+        //             //     let protocol = xclient.data.get_long(0) as Xlib::Atom;
 
-        // Shut down.
-        //(glx.glXMakeCurrent)(display, glx::GLX_NONE as _, ptr::null_mut());
-        glx::glXDestroyContext(glx_display, gl_context);
-        Xlib::XDestroyWindow(display, window);
-        Xlib::XCloseDisplay(display);
+        //             //     if protocol == wm_delete_window {
+        //             //         break;
+        //             //    }
+        //             // }
+        //         }
+        //         &Xlib_constants::KeyPress => {
+        //             // if count % 2 == 0 {
+        //             //     red(&*gl);
+        //             // } else {
+        //             //     blue(&*gl);
+        //             // }
+        //             // (glx.glXSwapBuffers)(display, window);
+        //             // count += 1;
+        //             // dbg!(event);
+        //         }
+        //         _ => (),
+        //     }
+        // }
+
+        // // Shut down.
+        // //(glx.glXMakeCurrent)(display, glx::GLX_NONE as _, ptr::null_mut());
+        // glx::glXDestroyContext(glx_display, gl_context);
+        // Xlib::XDestroyWindow(display, window);
+        // Xlib::XCloseDisplay(display);
     }
     0
 }
 
-enum ShaderType {
+/*enum ShaderType {
     VertexShader(String),
     FragmentShader(String),
 }
@@ -347,11 +380,4 @@ fn render(gl: &dyn gl::Gl) {
     gl.clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
     gl.draw_arrays(gl::TRIANGLES, 0, 3);
 }
-
-// #[panic_handler]
-// fn panic(_panic: &PanicInfo<'_>) -> ! {
-//     loop {}
-// }
-//
-// #[lang = "eh_personality"]
-// extern "C" fn eh_personality() {}
+*/
