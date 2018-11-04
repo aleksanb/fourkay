@@ -5,7 +5,9 @@
 #[macro_use]
 mod shitty;
 #[cfg(println)]
-use self::shitty::Prepare;
+use self::shitty::println::*;
+
+use self::shitty::gl_wrapper;
 
 #[cfg(not(println))]
 macro_rules! println {
@@ -174,19 +176,19 @@ fn start(_argc: isize, _argv: *const *const u8) -> isize {
 
         gl::glEnable(gl::GL_DEPTH_TEST);
 
-        //loop{}
+        println!("ptr: %p\n\0", gl_wrapper::GL_GET_STRING_PTR);
+        gl_wrapper::load_extensions();
+        println!("ptr: %p\n\0", gl_wrapper::GL_GET_STRING_PTR);
+
+        let gl_version = gl_wrapper::glGetString(gl::GL_VERSION);
+        println!("Version: %s\n\0", gl_version as *const libc::c_char);
 
         // const GLGETSTRING_NAME: &'static str = "glGetStringi\0";
         // let address = glx::glXGetProcAddress(GLGETSTRING_NAME.as_ptr());
         // let glGetStringi: gl::PFNGLGETSTRINGIPROC = mem::transmute(address);
         // let glGetStringi = glGetStringi.unwrap();
 
-
         // let version = glGetStringi(gl::GL_VERSION, 0);
-        // println!("Version: %s\n\0", version as *const libc::c_char);
-
-
-
 
         //let version = ffi::CString::from_raw(version);
         // dbg!(version);
