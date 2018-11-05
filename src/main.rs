@@ -1,21 +1,13 @@
 #![feature(lang_items, start)]
 #![no_std]
 
-#[cfg(println)]
+//#[cfg(println)]
 #[macro_use]
 mod shitty;
-#[cfg(println)]
+//#[cfg(println)]
 use self::shitty::println::*;
 
 use self::shitty::gl_wrapper;
-
-#[cfg(not(println))]
-macro_rules! println {
-    ($($val:expr),*) => {};
-}
-
-#[macro_use]
-extern crate lazy_static;
 
 //extern crate alloc;
 //use alloc::vec::Vec;
@@ -23,13 +15,10 @@ extern crate lazy_static;
 //#![macro_use] extern crate alloc;
 //use alloc::string::ToString;
 
-use core::panic::PanicInfo;
-// use gleam::gl;
-//use std::ffi;
-use core::mem;
-use core::ptr;
-//use core::rc::Rc;
 use core::ffi;
+use core::mem;
+use core::panic::PanicInfo;
+use core::ptr;
 
 mod bindings;
 
@@ -60,8 +49,6 @@ fn start(_argc: isize, _argv: *const *const u8) -> isize {
     //let display = unsafe{x11::Xlib::XOpenDisplay(std::ptr::null());};
     unsafe {
         let display = Xlib::XOpenDisplay(ptr::null());
-        // let old_display: *mut OldDisplay = mem::transmute(display);
-        //let display = (Xlib.XOpenDisplay)(std::ptr::null());
         if display.is_null() {
             println!("fuck\n\0");
         }
@@ -276,32 +263,30 @@ fn start(_argc: isize, _argv: *const *const u8) -> isize {
     0
 }
 
-/*enum ShaderType {
-    VertexShader(String),
-    FragmentShader(String),
+enum ShaderType {
+    VertexShader,
+    FragmentShader,
 }
 
-fn load_shader(gl: &dyn gl::Gl, shader_type: ShaderType) -> Result<gl::GLuint, ()> {
-    let shader = gl.create_shader(match shader_type {
-        ShaderType::VertexShader(_) => gl::VERTEX_SHADER,
-        ShaderType::FragmentShader(_) => gl::FRAGMENT_SHADER,
+fn load_shader(shader_type: ShaderType, shader_body: &'static str) -> Result<gl::GLuint, ()> {
+    let shader = gl_wrapper::glCreateShader(match shader_type {
+        ShaderType::VertexShader => gl::GL_VERTEX_SHADER,
+        ShaderType::FragmentShader => gl::GL_FRAGMENT_SHADER,
     });
-    let shader_cstring = ffi::CString::new(match shader_type {
-        ShaderType::VertexShader(s) | ShaderType::FragmentShader(s) => s,
-    })
-    .unwrap();
 
-    gl.shader_source(shader, &[shader_cstring.as_bytes()]);
-    gl.compile_shader(shader);
+    let shader_cstring = shader_body.as_ptr() as *const libc::c_char;
 
+    gl_wrapper::glShaderSource(shader, &[shader_cstring]);
+    gl_wrapper::glCompileShader(shader);
+    /*
     let mut is_compiled: Vec<gl::GLint> = vec![0; 2];
     unsafe {
         gl.get_shader_iv(shader, gl::COMPILE_STATUS, &mut is_compiled);
     }
-
+    
     if is_compiled[0] as gl::GLboolean == gl::FALSE {
         dbg!("Failure");
-
+    
         // let mut max_length: Vec<gl::GLint> = vec![10];
         // unsafe {
         //     gl.get_shader_iv(shader, gl::INFO_LOG_LENGTH, &mut max_length);
@@ -312,8 +297,9 @@ fn load_shader(gl: &dyn gl::Gl, shader_type: ShaderType) -> Result<gl::GLuint, (
         dbg!(log);
         return Err(());
     }
-
-    Ok(shader)
+    
+    Ok(shader)*/
+    Err(())
 }
 
 static VERTEX_SHADER: &'static str = "
@@ -323,7 +309,7 @@ static VERTEX_SHADER: &'static str = "
  void main() {
      gl_Position = vec4(vec2(position), 0.0, 1.0);
  }
- ";
+ \0";
 
 static FRAGMENT_SHADER: &'static str = "
  #version 130
@@ -331,8 +317,9 @@ static FRAGMENT_SHADER: &'static str = "
  void main() {
      gl_FragColor = vec4(gl_FragCoord.x / 1024.0, 0.0, gl_FragCoord.y / 768.0, 1.0);
  }
- ";
+ \0";
 
+/*
 fn setup(gl: &dyn gl::Gl) {
     let vertex_arrays = gl.gen_vertex_arrays(1);
     let vao = vertex_arrays[0];

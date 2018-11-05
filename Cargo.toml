@@ -7,7 +7,6 @@ build = "build.rs"
 
 [dependencies]
 libc = {version = "0.2.*", default-features = false}
-lazy_static = { version = "1.2.0", features = ["spin_no_std"] }
 
 [profile.release]
 opt-level = "z"

@@ -1,6 +1,6 @@
-use super::println;
-use core;
-use crate::bindings::{gl, glx};
+use crate::bindings::{
+    glx,
+};
 use libc;
 
 unsafe fn get_proc_address(name: &str) -> *const libc::c_char {
@@ -10,10 +10,10 @@ unsafe fn get_proc_address(name: &str) -> *const libc::c_char {
 }
 
 macro_rules! gl_function {
-($(pub unsafe fn $gl_symbol:ident( $ ( $param_name:ident: $ param_type:ty), * ) -> $ ret_type:ty),*) => {
+($(pub fn $gl_symbol:ident( $ ( $param_name:ident: $ param_type:ty), * ) -> $ ret_type:ty),*) => {
     $(
         mod $gl_symbol {
-            use crate::bindings::{gl};
+            use crate::bindings::{gl::{GLchar, GLenum, GLsizei, GLubyte, GLuint, GLint}};
 
             pub static mut pointer: *const libc::c_char = core::ptr::null();
 
@@ -38,6 +38,14 @@ macro_rules! gl_function {
 }
 
 gl_function!{
-    pub unsafe fn glGetString(name: gl::GLenum) -> *const gl::GLubyte,
-    pub unsafe fn glGenVertexArrays(n: gl::GLsizei, arrays: *mut gl::GLuint) -> *const gl::GLubyte
+    pub fn glGetString(name: GLenum) -> *const GLubyte,
+    pub fn glGenVertexArrays(n: GLsizei, arrays: *mut GLuint) -> *const GLubyte,
+    pub fn glShaderSource(
+        shader: GLuint,
+        count: GLsizei,
+        string: *const *const GLchar,
+        length: *const GLint
+    ) -> (),
+    pub fn glCreateShader(type_: GLenum) -> GLuint,
+    pub fn glCompileShader(shader: GLuint) -> GLuint
 }
