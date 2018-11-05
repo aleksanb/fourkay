@@ -18,9 +18,11 @@ macro_rules! gl_function {
             pub static mut pointer: *const libc::c_char = core::ptr::null();
 
 
-            pub unsafe fn function($($param_name: $param_type),*) -> $ret_type {
-                let function: unsafe extern "C" fn($($param_name: $param_type),*) -> $ret_type = core::mem::transmute(pointer);
-                function($($param_name),*)
+            pub fn function($($param_name: $param_type),*) -> $ret_type {
+                unsafe {
+                    let function: unsafe extern "C" fn($($param_name: $param_type),*) -> $ret_type = core::mem::transmute(pointer);
+                    function($($param_name),*)
+                }
             }
         }
 
