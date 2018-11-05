@@ -226,6 +226,7 @@ fn start(_argc: isize, _argv: *const *const u8) -> isize {
                 &Xlib_constants::Expose => {
                     Xlib::XGetWindowAttributes(display, window, &mut window_attributes);
                     gl::glViewport(0, 0, window_attributes.width, window_attributes.height);
+                    setup();
                     glx::glXSwapBuffers(glx_display, window);
                 }
                 &Xlib_constants::ClientMessage => {
@@ -273,101 +274,112 @@ fn load_shader(shader_type: ShaderType, shader_body: &'static str) -> Result<gl:
         ShaderType::VertexShader => gl::GL_VERTEX_SHADER,
         ShaderType::FragmentShader => gl::GL_FRAGMENT_SHADER,
     });
+    println!("Shader id: %d\n\0", shader);
+    println!("Shader body: %s\n\0", shader_body);
+    let shader_cstring = shader_body.as_bytes();
+    let shader_cstring = shader_cstring.as_ptr() as *const libc::c_char;
 
-    let shader_cstring = shader_body.as_ptr() as *const libc::c_char;
+    let doublepointer: *const *const gl::GLchar = &shader_cstring;
 
-    gl_wrapper::glShaderSource(shader, &[shader_cstring]);
+    gl_wrapper::glShaderSource(shader, 1, doublepointer, core::ptr::null());
     gl_wrapper::glCompileShader(shader);
-    /*
-    let mut is_compiled: Vec<gl::GLint> = vec![0; 2];
-    unsafe {
-        gl.get_shader_iv(shader, gl::COMPILE_STATUS, &mut is_compiled);
-    }
-    
-    if is_compiled[0] as gl::GLboolean == gl::FALSE {
-        dbg!("Failure");
-    
-        // let mut max_length: Vec<gl::GLint> = vec![10];
-        // unsafe {
-        //     gl.get_shader_iv(shader, gl::INFO_LOG_LENGTH, &mut max_length);
-        // }
-        // dbg!(max_length);
-        //let error_log = vec![0; max_length];
-        let log = gl.get_shader_info_log(shader);
-        dbg!(log);
+
+    let mut is_compiled: gl::GLint = 1337;
+    gl_wrapper::glGetShaderiv(shader, gl::GL_COMPILE_STATUS, &mut is_compiled);
+
+    println!("Did we manage to compile a shader? %d\n\0", is_compiled);
+    if is_compiled as u32 == gl::GL_FALSE {
+        println!("Ok we failed compiling the shader\n\0");
+        let mut max_length: gl::GLint = 1337;
+        gl_wrapper::glGetShaderiv(shader, gl::GL_INFO_LOG_LENGTH, &mut max_length);
+        println!("Max length is: %d\n\0", max_length);
+
+        let buffer: &mut [libc::c_char] = &mut [0; 1024];
+        let error_log = gl_wrapper::glGetShaderInfoLog(
+            shader,
+            buffer.len() as gl::GLsizei,
+            core::ptr::null_mut(),
+            buffer.as_ptr() as *mut _,
+        );
+        println!("YOlO: %s\n\0", buffer.as_ptr());
         return Err(());
     }
-    
-    Ok(shader)*/
-    Err(())
+
+    Ok(shader)
 }
 
 static VERTEX_SHADER: &'static str = "
- #version 130
- in vec3 position;
+#version 130
+in vec3 position;
 
- void main() {
-     gl_Position = vec4(vec2(position), 0.0, 1.0);
- }
- \0";
+void main() {
+    gl_Position = vec4(vec2(position), 0.0, 1.0);
+}
+\0";
 
 static FRAGMENT_SHADER: &'static str = "
- #version 130
+#version 130
 
- void main() {
-     gl_FragColor = vec4(gl_FragCoord.x / 1024.0, 0.0, gl_FragCoord.y / 768.0, 1.0);
- }
- \0";
-
-/*
-fn setup(gl: &dyn gl::Gl) {
-    let vertex_arrays = gl.gen_vertex_arrays(1);
-    let vao = vertex_arrays[0];
-    dbg!(vao);
-    gl.bind_vertex_array(vao);
-
-    let quad: Vec<f32> = vec![0.0, 0.5, 0.0, 0.5, -0.5, 0.0, -0.5, -0.5, 0.0];
-    // let quad: Vec<f32> = vec![-1.0, 1.0, 0.0, 1.0, 1.0, 0.0, -1.0, -1.0, 0.0, -1.0, -1.0, 0.0, 1.0, 1.0, 0.0, 1.0, -1.0, 0.0];
-
-    let vbo = gl.gen_buffers(1)[0];
-    gl.bind_buffer(gl::ARRAY_BUFFER, vbo);
-    gl::buffer_data(gl, gl::ARRAY_BUFFER, &quad, gl::STATIC_DRAW);
-
-    gl.enable_vertex_attrib_array(0);
-    gl.vertex_attrib_pointer(0 as _, 3, gl::FLOAT, false, 0, 0);
-
-    let fragment_shader =
-        load_shader(gl, ShaderType::FragmentShader(FRAGMENT_SHADER.to_string())).unwrap();
-    let vertex_shader =
-        load_shader(gl, ShaderType::VertexShader(VERTEX_SHADER.to_string())).unwrap();
-
-    let program = gl.create_program();
-    gl.attach_shader(program, fragment_shader);
-    gl.attach_shader(program, vertex_shader);
-
-    gl.link_program(program);
-
-    let mut program_status = vec![0];
-    unsafe {
-        gl.get_program_iv(program, gl::LINK_STATUS, &mut program_status);
-    }
-    if (dbg!(program_status[0]) as gl::GLboolean) == gl::FALSE {
-        dbg!("Failure");
-
-        // let mut max_length: Vec<gl::GLint> = vec![10];
-        // unsafe {
-        //     gl.get_program_iv(program, gl::INFO_LOG_LENGTH, &mut max_length);
-        // }
-        // dbg!(max_length);
-        //let error_log = vec![0; max_length];
-        let log = gl.get_program_info_log(program);
-        dbg!(log);
-    }
-
-    gl.use_program(program);
-
-    render(gl);
+void main() {
+    gl_FragColor = vec4(gl_FragCoord.x / 1024.0, 0.0, gl_FragCoord.y / 768.0, 1.0);
 }
+\0";
+
+fn setup() {
+    const num_vertex_arrays: gl::GLsizei = 1;
+    let vertex_arrays: &mut [gl::GLuint] = &mut [0; num_vertex_arrays as usize];
+    gl_wrapper::glGenVertexArrays(num_vertex_arrays, vertex_arrays.as_ptr() as *mut _);
+    let vao = vertex_arrays[0];
+    println!("vao = %d\n\0", vao);
+
+    gl_wrapper::glBindVertexArray(vao);
+
+    let quad: &[f32] = [0.0, 0.5, 0.0, 0.5, -0.5, 0.0, -0.5, -0.5, 0.0];
+    /*
+
+        // let quad: Vec<f32> = vec![-1.0, 1.0, 0.0, 1.0, 1.0, 0.0, -1.0, -1.0, 0.0, -1.0, -1.0, 0.0, 1.0, 1.0, 0.0, 1.0, -1.0, 0.0];
+    
+        let vbo = gl.gen_buffers(1)[0];
+        gl.bind_buffer(gl::ARRAY_BUFFER, vbo);
+        gl::buffer_data(gl, gl::ARRAY_BUFFER, &quad, gl::STATIC_DRAW);
+    
+        gl.enable_vertex_attrib_array(0);
+        gl.vertex_attrib_pointer(0 as _, 3, gl::FLOAT, false, 0, 0);
+    
+    */
+    let fragment_shader = load_shader(ShaderType::FragmentShader, VERTEX_SHADER);
+    let vertex_shader = load_shader(ShaderType::VertexShader, FRAGMENT_SHADER);
+    /*
+    
+        let program = gl.create_program();
+        gl.attach_shader(program, fragment_shader);
+        gl.attach_shader(program, vertex_shader);
+    
+        gl.link_program(program);
+    
+        let mut program_status = vec![0];
+        unsafe {
+            gl.get_program_iv(program, gl::LINK_STATUS, &mut program_status);
+        }
+        if (dbg!(program_status[0]) as gl::GLboolean) == gl::FALSE {
+            dbg!("Failure");
+    
+            // let mut max_length: Vec<gl::GLint> = vec![10];
+            // unsafe {
+            //     gl.get_program_iv(program, gl::INFO_LOG_LENGTH, &mut max_length);
+            // }
+            // dbg!(max_length);
+            //let error_log = vec![0; max_length];
+            let log = gl.get_program_info_log(program);
+            dbg!(log);
+        }
+    
+        gl.use_program(program);
+    
+        render(gl);
+    */
+}
+/*
 
 fn red(gl: &dyn gl::Gl) {
     gl.clear_color(1.0, 0.0, 0.0, 1.0);

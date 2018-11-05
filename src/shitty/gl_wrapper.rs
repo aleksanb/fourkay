@@ -1,6 +1,4 @@
-use crate::bindings::{
-    glx,
-};
+use crate::bindings::glx;
 use libc;
 
 unsafe fn get_proc_address(name: &str) -> *const libc::c_char {
@@ -41,7 +39,7 @@ macro_rules! gl_function {
 
 gl_function!{
     pub fn glGetString(name: GLenum) -> *const GLubyte,
-    pub fn glGenVertexArrays(n: GLsizei, arrays: *mut GLuint) -> *const GLubyte,
+    pub fn glGenVertexArrays(n: GLsizei, arrays: *mut GLuint) -> (),
     pub fn glShaderSource(
         shader: GLuint,
         count: GLsizei,
@@ -49,5 +47,13 @@ gl_function!{
         length: *const GLint
     ) -> (),
     pub fn glCreateShader(type_: GLenum) -> GLuint,
-    pub fn glCompileShader(shader: GLuint) -> GLuint
+    pub fn glCompileShader(shader: GLuint) -> GLuint,
+    pub fn glGetShaderiv(shader: GLuint, pname: GLenum, params: *mut GLint) -> (),
+    pub fn glGetShaderInfoLog(
+        shader: GLuint,
+        bufSize: GLsizei,
+        length: *mut GLsizei,
+        infoLog: *mut GLchar
+    ) -> (),
+    pub fn glBindVertexArray(array: GLuint) -> ()
 }
