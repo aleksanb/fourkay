@@ -14,6 +14,9 @@ macro_rules! println {
     ($($val:expr),*) => {};
 }
 
+#[macro_use]
+extern crate lazy_static;
+
 //extern crate alloc;
 //use alloc::vec::Vec;
 
@@ -176,9 +179,9 @@ fn start(_argc: isize, _argv: *const *const u8) -> isize {
 
         gl::glEnable(gl::GL_DEPTH_TEST);
 
-        println!("ptr: %p\n\0", gl_wrapper::GL_GET_STRING_PTR);
+        //println!("ptr: %p\n\0", gl_wrapper::GL_GET_STRING_PTR);
         gl_wrapper::load_extensions();
-        println!("ptr: %p\n\0", gl_wrapper::GL_GET_STRING_PTR);
+        //println!("ptr: %p\n\0", gl_wrapper::GL_GET_STRING_PTR);
 
         let gl_version = gl_wrapper::glGetString(gl::GL_VERSION);
         println!("Version: %s\n\0", gl_version as *const libc::c_char);
