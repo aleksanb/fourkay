@@ -9,12 +9,6 @@ use self::shitty::println::*;
 
 use self::shitty::gl_wrapper;
 
-//extern crate alloc;
-//use alloc::vec::Vec;
-
-//#![macro_use] extern crate alloc;
-//use alloc::string::ToString;
-
 use core::ffi;
 use core::mem;
 use core::panic::PanicInfo;
@@ -35,18 +29,6 @@ extern "C" fn eh_personality() {}
 
 #[start]
 fn start(_argc: isize, _argv: *const *const u8) -> isize {
-    // const HELLO: &'static str = "Hello, world!\n\0";
-    // unsafe {
-    //     libc::write(libc::STDOUT_FILENO, HELLO.as_ptr() as *const _, HELLO.len());
-    // }
-    //let shader = unsafe {
-    //gl::CreateShader(SHADER);
-    //};
-    //let vertex_shader = unsafe {
-    //    gl::CreateShader(gl::TERTEX_SHADER);
-    //};
-
-    //let display = unsafe{x11::Xlib::XOpenDisplay(std::ptr::null());};
     unsafe {
         let display = Xlib::XOpenDisplay(ptr::null());
         if display.is_null() {
@@ -59,10 +41,11 @@ fn start(_argc: isize, _argv: *const *const u8) -> isize {
 
         let mut glx_major: libc::c_int = 0;
         let mut glx_minor: libc::c_int = 0;
-        let result = glx::glXQueryVersion(glx_display, &mut glx_major, &mut glx_minor);
-        println!("%d\n\0", glx_major);
-        println!("%d\n\0", glx_minor);
-        println!("%d\n\0", result);
+        let glx_result = glx::glXQueryVersion(glx_display, &mut glx_major, &mut glx_minor);
+        println!(
+            "glX version: Major: %d, minor: %d, result: %d\n\0",
+            glx_major, glx_minor, glx_result
+        );
 
         let default_screen = Xlib::XDefaultScreen(display);
         println!("default_screen: %d\n\0", default_screen);
@@ -165,33 +148,10 @@ fn start(_argc: isize, _argv: *const *const u8) -> isize {
         glx::glXMakeCurrent(glx_display, window, gl_context);
 
         gl::glEnable(gl::GL_DEPTH_TEST);
-
-        //println!("ptr: %p\n\0", gl_wrapper::GL_GET_STRING_PTR);
         gl_wrapper::load_extensions();
-        //println!("ptr: %p\n\0", gl_wrapper::GL_GET_STRING_PTR);
 
         let gl_version = gl_wrapper::glGetString(gl::GL_VERSION);
         println!("Version: %s\n\0", gl_version as *const libc::c_char);
-
-        // const GLGETSTRING_NAME: &'static str = "glGetStringi\0";
-        // let address = glx::glXGetProcAddress(GLGETSTRING_NAME.as_ptr());
-        // let glGetStringi: gl::PFNGLGETSTRINGIPROC = mem::transmute(address);
-        // let glGetStringi = glGetStringi.unwrap();
-
-        // let version = glGetStringi(gl::GL_VERSION, 0);
-
-        //let version = ffi::CString::from_raw(version);
-        // dbg!(version);
-        // let gl: Rc<gl::Gl> = gl::GlFns::load_with(|symbol: &str| {
-        //     let symbol_as_cstring = ffi::CString::new(symbol.as_bytes()).unwrap();
-        //     let address = symbol_as_cstring.as_ptr();
-        //     glx::glXGetProcAddress(address as *const _).unwrap() as *const _
-        // });
-        // let gl: Rc<dyn gl::Gl> = gl::ErrorCheckingGl::wrap(gl);
-        // gl.enable(gl::DEPTH_TEST);
-
-        // let gl_version = gl.get_string(gl::VERSION);
-        // dbg!(gl_version);
 
         // // Hook close requests.
         // let wm_protocols_str = ffi::CString::new("WM_PROTOCOLS").unwrap();
@@ -276,12 +236,17 @@ fn load_shader(shader_type: ShaderType, shader_body: &'static str) -> Result<gl:
     });
     println!("Shader id: %d\n\0", shader);
     println!("Shader body: %s\n\0", shader_body);
-    let shader_cstring = shader_body.as_bytes();
-    let shader_cstring = shader_cstring.as_ptr() as *const libc::c_char;
 
-    let doublepointer: *const *const gl::GLchar = &shader_cstring;
+    let shader_body = shader_body.as_bytes();
+    let shader_body = shader_body.as_ptr() as *const libc::c_char;
+    let shader_strings = &[shader_body];
 
-    gl_wrapper::glShaderSource(shader, 1, doublepointer, core::ptr::null());
+    gl_wrapper::glShaderSource(
+        shader,
+        1,
+        shader_strings as * const *const gl::GLchar,
+        core::ptr::null(),
+    );
     gl_wrapper::glCompileShader(shader);
 
     let mut is_compiled: gl::GLint = 1337;
@@ -331,22 +296,31 @@ fn setup() {
     gl_wrapper::glGenVertexArrays(num_vertex_arrays, vertex_arrays.as_ptr() as *mut _);
     let vao = vertex_arrays[0];
     println!("vao = %d\n\0", vao);
-
     gl_wrapper::glBindVertexArray(vao);
 
-    let quad: &[f32] = [0.0, 0.5, 0.0, 0.5, -0.5, 0.0, -0.5, -0.5, 0.0];
-    /*
+    const num_buffers: gl::GLsizei = 1;
+    let buffers: &mut [gl::GLuint] = &mut [0; num_buffers as usize];
+    gl_wrapper::glGenBuffers(num_buffers, buffers.as_ptr() as *mut _);
+    let vbo = buffers[0];
 
-        // let quad: Vec<f32> = vec![-1.0, 1.0, 0.0, 1.0, 1.0, 0.0, -1.0, -1.0, 0.0, -1.0, -1.0, 0.0, 1.0, 1.0, 0.0, 1.0, -1.0, 0.0];
-    
-        let vbo = gl.gen_buffers(1)[0];
-        gl.bind_buffer(gl::ARRAY_BUFFER, vbo);
-        gl::buffer_data(gl, gl::ARRAY_BUFFER, &quad, gl::STATIC_DRAW);
-    
-        gl.enable_vertex_attrib_array(0);
-        gl.vertex_attrib_pointer(0 as _, 3, gl::FLOAT, false, 0, 0);
-    
-    */
+    let quad: &[f32] = &[0.0, 0.5, 0.0, 0.5, -0.5, 0.0, -0.5, -0.5, 0.0];
+    gl_wrapper::glBindBuffer(gl::GL_ARRAY_BUFFER, vbo);
+    gl_wrapper::glBufferData(
+        gl::GL_ARRAY_BUFFER,
+        (quad.len() * mem::size_of::<f32>()) as gl::GLsizeiptr,
+        quad.as_ptr() as *const _,
+        gl::GL_STATIC_DRAW,
+    );
+    gl_wrapper::glEnableVertexAttribArray(0);
+    gl_wrapper::glVertexAttribPointer(
+        0 as _,
+        3,
+        gl::GL_FLOAT,
+        gl::GL_FALSE as gl::GLboolean,
+        0,
+        core::ptr::null(),
+    );
+
     let fragment_shader = load_shader(ShaderType::FragmentShader, VERTEX_SHADER);
     let vertex_shader = load_shader(ShaderType::VertexShader, FRAGMENT_SHADER);
     /*

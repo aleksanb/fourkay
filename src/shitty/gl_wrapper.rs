@@ -11,15 +11,20 @@ macro_rules! gl_function {
 ($(pub fn $gl_symbol:ident( $ ( $param_name:ident: $ param_type:ty), * ) -> $ ret_type:ty),*) => {
     $(
         mod $gl_symbol {
-            use crate::bindings::{gl::{GLchar, GLenum, GLsizei, GLubyte, GLuint, GLint}};
+            use crate::bindings::{gl::{self, GLchar, GLenum, GLsizei, GLubyte, GLuint, GLint, GLsizeiptr, GLboolean}};
+            use crate::shitty::println::*;
 
-            pub static mut pointer: *const libc::c_char = core::ptr::null();
+            pub static mut raw_pointer: *const libc::c_char = core::ptr::null();
 
 
             pub fn function($($param_name: $param_type),*) -> $ret_type {
                 unsafe {
-                    let function: unsafe extern "C" fn($($param_name: $param_type),*) -> $ret_type = core::mem::transmute(pointer);
-                    function($($param_name),*)
+                    let function: unsafe extern "C" fn($($param_name: $param_type),*) -> $ret_type = core::mem::transmute(raw_pointer);
+                    let result = function($($param_name),*);
+                    let error = gl::glGetError();
+                    println!("Error? %d\n\0", error);
+                    assert_eq!(error, gl::GL_NO_ERROR);
+                    result
                 }
             }
         }
@@ -30,16 +35,15 @@ macro_rules! gl_function {
     pub fn load_extensions() {
         unsafe {
             $(
-                $gl_symbol::pointer = get_proc_address(concat!(stringify!($gl_symbol),"\0"));
+                $gl_symbol::raw_pointer = get_proc_address(concat!(stringify!($gl_symbol),"\0"));
             )*
         }
     }
 }
 }
 
-gl_function!{
+gl_function! {
     pub fn glGetString(name: GLenum) -> *const GLubyte,
-    pub fn glGenVertexArrays(n: GLsizei, arrays: *mut GLuint) -> (),
     pub fn glShaderSource(
         shader: GLuint,
         count: GLsizei,
@@ -55,5 +59,23 @@ gl_function!{
         length: *mut GLsizei,
         infoLog: *mut GLchar
     ) -> (),
-    pub fn glBindVertexArray(array: GLuint) -> ()
+    pub fn glGenVertexArrays(n: GLsizei, arrays: *mut GLuint) -> (),
+    pub fn glBindVertexArray(array: GLuint) -> (),
+    pub fn glGenBuffers(n: GLsizei, buffers: *mut GLuint) -> (),
+    pub fn glBindBuffer(target: GLenum, buffer: GLuint) -> (),
+    pub fn glBufferData(
+        target: GLenum,
+        size: GLsizeiptr,
+        data: *const libc::c_void,
+        usage: GLenum
+    ) -> (),
+    pub fn glEnableVertexAttribArray(index: GLuint) -> (),
+    pub fn glVertexAttribPointer(
+        index: GLuint,
+        size: GLint,
+        type_: GLenum,
+        normalized: GLboolean,
+        stride: GLsizei,
+        pointer: *const libc::c_void
+    ) -> ()
 }
