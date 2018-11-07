@@ -321,8 +321,8 @@ fn setup() {
         core::ptr::null(),
     );
 
-    let fragment_shader = load_shader(ShaderType::FragmentShader, VERTEX_SHADER);
-    let vertex_shader = load_shader(ShaderType::VertexShader, FRAGMENT_SHADER);
+    let fragment_shader = load_shader(ShaderType::FragmentShader, FRAGMENT_SHADER);
+    let vertex_shader = load_shader(ShaderType::VertexShader, VERTEX_SHADER);
     /*
     
         let program = gl.create_program();
