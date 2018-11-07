@@ -252,7 +252,6 @@ fn load_shader(shader_type: ShaderType, shader_body: &'static str) -> Result<gl:
     let mut is_compiled: gl::GLint = 1337;
     gl_wrapper::glGetShaderiv(shader, gl::GL_COMPILE_STATUS, &mut is_compiled);
 
-    println!("Did we manage to compile a shader? %d\n\0", is_compiled);
     if is_compiled as u32 == gl::GL_FALSE {
         println!("Ok we failed compiling the shader\n\0");
         let mut max_length: gl::GLint = 1337;
@@ -266,7 +265,7 @@ fn load_shader(shader_type: ShaderType, shader_body: &'static str) -> Result<gl:
             core::ptr::null_mut(),
             buffer.as_ptr() as *mut _,
         );
-        println!("YOlO: %s\n\0", buffer.as_ptr());
+        println!("Error log: %s\n\0", buffer.as_ptr());
         return Err(());
     }
 
@@ -323,17 +322,18 @@ fn setup() {
 
     let fragment_shader = load_shader(ShaderType::FragmentShader, FRAGMENT_SHADER);
     let vertex_shader = load_shader(ShaderType::VertexShader, VERTEX_SHADER);
+
+    let program = gl_wrapper::glCreateProgram();
+    gl_wrapper::glAttachShader(program, fragment_shader.unwrap());
+    gl_wrapper::glAttachShader(program, vertex_shader.unwrap());
+    gl_wrapper::glLinkProgram(program);
+
+    let mut program_status = 0;
+    gl_wrapper::glGetProgramIv(program, gl::GL_LINK_STATUS, &mut program_status);
     /*
-    
-        let program = gl.create_program();
-        gl.attach_shader(program, fragment_shader);
-        gl.attach_shader(program, vertex_shader);
-    
-        gl.link_program(program);
-    
         let mut program_status = vec![0];
         unsafe {
-            gl.get_program_iv(program, gl::LINK_STATUS, &mut program_status);
+            gl::get_program_iv(program, gl::LINK_STATUS, &mut program_status);
         }
         if (dbg!(program_status[0]) as gl::GLboolean) == gl::FALSE {
             dbg!("Failure");
@@ -348,11 +348,22 @@ fn setup() {
             dbg!(log);
         }
     
-        gl.use_program(program);
-    
+
         render(gl);
     */
+    gl_wrapper::glUseProgram(program);
+
+    render();
 }
+
+fn render() {
+    unsafe {
+        gl::glClearColor(0.0, 0.0, 0.0, 1.0);
+        gl::glClear((gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT) as gl::GLbitfield);
+        gl::glDrawArrays(gl::GL_TRIANGLES, 0, 3);
+    }
+}
+
 /*
 
 fn red(gl: &dyn gl::Gl) {
@@ -363,11 +374,5 @@ fn red(gl: &dyn gl::Gl) {
 fn blue(gl: &dyn gl::Gl) {
     gl.clear_color(0.0, 0.0, 1.0, 1.0);
     gl.clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
-}
-
-fn render(gl: &dyn gl::Gl) {
-    gl.clear_color(0.0, 0.0, 0.0, 1.0);
-    gl.clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
-    gl.draw_arrays(gl::TRIANGLES, 0, 3);
 }
 */

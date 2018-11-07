@@ -77,5 +77,10 @@ gl_function! {
         normalized: GLboolean,
         stride: GLsizei,
         pointer: *const libc::c_void
-    ) -> ()
+    ) -> (),
+    pub fn glCreateProgram() -> GLuint,
+    pub fn glAttachShader(program: GLuint, shader: GLuint) -> (),
+    pub fn glLinkProgram(program: GLuint) -> (),
+    pub fn glUseProgram(program: GLuint) -> (),
+    pub fn glGetProgramIv(program: GLuint, pname: GLenum, params: *mut GLint) -> ()
 }
