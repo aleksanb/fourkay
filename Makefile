@@ -1,12 +1,24 @@
-.PHONY: build
+.PHONY: buildstrip
 build:
 	# cargo rustc --release -- -C link-args=-static && strip target/release/fourkay && ls -la target/release
-	cargo build --release
+	xargo build --target x86_64-unknown-linux-gnu --release
+
+.PHONY: upx
+upx:
+	~/upx-3.95-amd64_linux/upx -9 target/release/fourkay
+
+.PHONY: strip
+strip:
+	strip --strip-all -R .note* -R .comment target/release/fourkay
 
 .PHONY: optimize
 optimize: build
-	strip --strip-all -R .note* -R .comment target/release/fourkay
+	make strip
+	make upx
+	make filesize
 
+.PHONY: filesize
+filesize:
 	ls -lah target/release/
 	du -h target/release/fourkay
 	stat --format="%n %b %B" target/release/fourkay
