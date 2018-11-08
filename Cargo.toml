@@ -11,4 +11,4 @@ libc = {version = "0.2.*", default-features = false}
 [profile.release]
 opt-level = "z"
 lto = true
-# panic = "abort"
+panic = "abort"

@@ -39,13 +39,13 @@ fn start(_argc: isize, _argv: *const *const u8) -> isize {
 
         let glx_display: *mut glx::Display = mem::transmute(display);
 
-        let mut glx_major: libc::c_int = 0;
-        let mut glx_minor: libc::c_int = 0;
-        let glx_result = glx::glXQueryVersion(glx_display, &mut glx_major, &mut glx_minor);
-        println!(
-            "glX version: Major: %d, minor: %d, result: %d\n\0",
-            glx_major, glx_minor, glx_result
-        );
+        // let mut glx_major: libc::c_int = 0;
+        // let mut glx_minor: libc::c_int = 0;
+        // let glx_result = glx::glXQueryVersion(glx_display, &mut glx_major, &mut glx_minor);
+        // println!(
+        //     "glX version: Major: %d, minor: %d, result: %d\n\0",
+        //     glx_major, glx_minor, glx_result
+        // );
 
         let default_screen = Xlib::XDefaultScreen(display);
         println!("default_screen: %d\n\0", default_screen);
@@ -139,8 +139,8 @@ fn start(_argc: isize, _argv: *const *const u8) -> isize {
 
         // Show window.
         Xlib::XMapWindow(display, window);
-        let title = "fourkay\0";
-        Xlib::XStoreName(display, window, title.as_ptr() as *mut _);
+        // let title = "fourkay\0";
+        // Xlib::XStoreName(display, window, title.as_ptr() as *mut _);
 
         let gl_context =
             glx::glXCreateContext(glx_display, visual, ptr::null_mut(), gl::GL_TRUE as i32);
@@ -272,22 +272,8 @@ fn load_shader(shader_type: ShaderType, shader_body: &'static str) -> Result<gl:
     Ok(shader)
 }
 
-static VERTEX_SHADER: &'static str = "
-#version 130
-in vec3 position;
-
-void main() {
-    gl_Position = vec4(vec2(position), 0.0, 1.0);
-}
-\0";
-
-static FRAGMENT_SHADER: &'static str = "
-#version 130
-
-void main() {
-    gl_FragColor = vec4(gl_FragCoord.x / 1024.0, 0.0, gl_FragCoord.y / 768.0, 1.0);
-}
-\0";
+static VERTEX_SHADER: &'static str = "#version 130\nin vec3 position;\nvoid main() {\ngl_Position = vec4(vec2(position), 0.0, 1.0);\n}\n\0";
+static FRAGMENT_SHADER: &'static str = "#version 130\nvoid main() {\ngl_FragColor = vec4(gl_FragCoord.x / 1024.0, 0.0, gl_FragCoord.y / 768.0, 1.0);\n}\n\0";
 
 fn setup() {
     const num_vertex_arrays: gl::GLsizei = 1;
@@ -337,7 +323,7 @@ fn setup() {
         }
         if (dbg!(program_status[0]) as gl::GLboolean) == gl::FALSE {
             dbg!("Failure");
-    
+
             // let mut max_length: Vec<gl::GLint> = vec![10];
             // unsafe {
             //     gl.get_program_iv(program, gl::INFO_LOG_LENGTH, &mut max_length);
@@ -347,7 +333,7 @@ fn setup() {
             let log = gl.get_program_info_log(program);
             dbg!(log);
         }
-    
+
 
         render(gl);
     */

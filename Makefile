@@ -1,11 +1,16 @@
 .PHONY: build
 build:
 	# cargo rustc --release -- -C link-args=-static && strip target/release/fourkay && ls -la target/release
-	cargo build --release && strip target/release/fourkay
+	cargo build --release
+
+.PHONY: optimize
+optimize: build
+	strip --strip-all -R .note* -R .comment target/release/fourkay
+
 	ls -lah target/release/
 	du -h target/release/fourkay
 	stat --format="%n %b %B" target/release/fourkay
-	wc -c < target/release/fourkay
+	wc --bytes target/release/fourkay
 	du -b target/release/fourkay
 
 .PHONY: run
