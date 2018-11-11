@@ -244,12 +244,12 @@ fn load_shader(shader_type: ShaderType, shader_body: &'static str) -> Result<gl:
     gl_wrapper::glShaderSource(
         shader,
         1,
-        shader_strings as * const *const gl::GLchar,
+        shader_strings as *const *const gl::GLchar,
         core::ptr::null(),
     );
     gl_wrapper::glCompileShader(shader);
 
-    let mut is_compiled: gl::GLint = 1337;
+    let mut is_compiled: gl::GLint = 0;
     gl_wrapper::glGetShaderiv(shader, gl::GL_COMPILE_STATUS, &mut is_compiled);
 
     if is_compiled as u32 == gl::GL_FALSE {
@@ -316,27 +316,20 @@ fn setup() {
 
     let mut program_status = 0;
     gl_wrapper::glGetProgramIv(program, gl::GL_LINK_STATUS, &mut program_status);
-    /*
-        let mut program_status = vec![0];
-        unsafe {
-            gl::get_program_iv(program, gl::LINK_STATUS, &mut program_status);
-        }
-        if (dbg!(program_status[0]) as gl::GLboolean) == gl::FALSE {
-            dbg!("Failure");
 
-            // let mut max_length: Vec<gl::GLint> = vec![10];
-            // unsafe {
-            //     gl.get_program_iv(program, gl::INFO_LOG_LENGTH, &mut max_length);
-            // }
-            // dbg!(max_length);
-            //let error_log = vec![0; max_length];
-            let log = gl.get_program_info_log(program);
-            dbg!(log);
-        }
+    if program_status as u32 == gl::GL_FALSE {
+        let mut max_length: gl::GLint = 0;
+        gl_wrapper::glGetProgramIv(program, gl::GL_INFO_LOG_LENGTH, &mut max_length);
+        let buffer: &mut [libc::c_char] = &mut [0; 1024];
+        gl_wrapper::glGetProgramInfoLog(
+            program,
+            buffer.len() as gl::GLsizei,
+            core::ptr::null_mut(),
+            buffer.as_ptr() as *mut _,
+        );
+        println!("Error log: %s\n\0", buffer.as_ptr());
+    }
 
-
-        render(gl);
-    */
     gl_wrapper::glUseProgram(program);
 
     render();
