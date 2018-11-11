@@ -288,14 +288,20 @@ fn main() -> Result<isize, ()> {
             shitty::sleep(16);
         }
 
-        //libc::clock_gettime(libc::CLOCK_REALTIME, &mut spec);
-        //println!("Time, %d, %d\n\0", spec.tv_sec, spec.tv_nsec);
+        match glx::glXMakeCurrent(glx_display, glx::GLX_NONE as u64, ptr::null_mut()) {
+            0 => return Err(()),
+            _ => (),
+        };
 
-        // // Shut down.
-        // //(glx.glXMakeCurrent)(display, glx::GLX_NONE as _, ptr::null_mut());
-        // glx::glXDestroyContext(glx_display, gl_context);
-        // Xlib::XDestroyWindow(display, window);
-        // Xlib::XCloseDisplay(display);
+        glx::glXDestroyContext(glx_display, gl_context);
+        match Xlib::XDestroyWindow(display, window) {
+            0 => return Err(()),
+            _ => (),
+        };
+        match Xlib::XCloseDisplay(display) {
+            0 => return Err(()),
+            _ => (),
+        };
     }
 
     Ok(0)
