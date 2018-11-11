@@ -1,3 +1,9 @@
+#![allow(non_upper_case_globals)]
+#![allow(non_camel_case_types)]
+#![allow(non_snake_case)]
+#![allow(unused_variables)]
+#![allow(dead_code)]
+
 use crate::Xlib::{Atom, Time};
 use libc::{c_char, c_int, c_long, c_uchar, c_uint, c_ulong, c_ushort};
 

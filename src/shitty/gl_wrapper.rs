@@ -1,3 +1,6 @@
+#![allow(non_camel_case_types)]
+#![allow(non_snake_case)]
+
 use crate::bindings::glx;
 use libc;
 
@@ -11,19 +14,16 @@ macro_rules! gl_function {
 ($(fn $gl_symbol:ident( $ ( $param_name:ident: $ param_type:ty), * ) -> $ ret_type:ty),*) => {
     $(
         mod $gl_symbol {
+            #[allow(unused_imports)]
             use crate::bindings::{gl::{self, GLchar, GLenum, GLsizei, GLubyte, GLuint, GLint, GLsizeiptr, GLboolean}};
             use crate::shitty::println::*;
 
-            pub(crate) static mut raw_pointer: *const libc::c_char = core::ptr::null();
+            pub(crate) static mut RAW_POINTER: *const libc::c_char = core::ptr::null();
 
             pub(crate) fn function($($param_name: $param_type),*) -> $ret_type {
                 unsafe {
-                    let function: unsafe extern "C" fn($($param_name: $param_type),*) -> $ret_type = core::mem::transmute(raw_pointer);
+                    let function: unsafe extern "C" fn($($param_name: $param_type),*) -> $ret_type = core::mem::transmute(RAW_POINTER);
                     function($($param_name),*)
-                    //let error = gl::glGetError();
-                    //println!("Error? %d\n\0", error);
-                    //assert_eq!(error, gl::GL_NO_ERROR);
-                    //result
                 }
             }
         }
@@ -34,7 +34,7 @@ macro_rules! gl_function {
     pub(crate) fn load_extensions() {
         unsafe {
             $(
-                $gl_symbol::raw_pointer = get_proc_address(concat!(stringify!($gl_symbol),"\0"));
+                $gl_symbol::RAW_POINTER = get_proc_address(concat!(stringify!($gl_symbol),"\0"));
             )*
         }
     }

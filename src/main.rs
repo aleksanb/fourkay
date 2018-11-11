@@ -1,10 +1,8 @@
 #![feature(lang_items, start)]
 #![no_std]
 
-//#[cfg(println)]
 #[macro_use]
 mod shitty;
-//#[cfg(println)]
 use self::shitty::println::*;
 
 use self::shitty::gl_wrapper;
@@ -29,23 +27,31 @@ extern "C" fn eh_personality() {}
 
 #[start]
 fn start(_argc: isize, _argv: *const *const u8) -> isize {
+    if let Err(()) = main() {
+        println!("Program failed with error code %d\n\0", 1u32);
+        return 1;
+    }
+
+    0
+}
+
+fn main() -> Result<isize, ()> {
     unsafe {
         let display = Xlib::XOpenDisplay(ptr::null());
         if display.is_null() {
-            println!("fuck\n\0");
+            println!("Coudln't set up display\n\0");
+            return Err(());
         }
-
-        println!("Got displayyyyyyyy: %p\n\0", display as *const libc::c_char);
 
         let glx_display: *mut glx::Display = mem::transmute(display);
 
-        // let mut glx_major: libc::c_int = 0;
-        // let mut glx_minor: libc::c_int = 0;
-        // let glx_result = glx::glXQueryVersion(glx_display, &mut glx_major, &mut glx_minor);
-        // println!(
-        //     "glX version: Major: %d, minor: %d, result: %d\n\0",
-        //     glx_major, glx_minor, glx_result
-        // );
+        let mut glx_major: libc::c_int = 0;
+        let mut glx_minor: libc::c_int = 0;
+        let glx_result = glx::glXQueryVersion(glx_display, &mut glx_major, &mut glx_minor);
+        println!(
+            "glX version: Major: %d, minor: %d, result: %d\n\0",
+            glx_major, glx_minor, glx_result
+        );
 
         let default_screen = Xlib::XDefaultScreen(display);
         println!("default_screen: %d\n\0", default_screen);
@@ -137,10 +143,9 @@ fn start(_argc: isize, _argv: *const *const u8) -> isize {
         );
         println!("Window: %lu\n\0", window);
 
-        // Show window.
         Xlib::XMapWindow(display, window);
-        // let title = "fourkay\0";
-        // Xlib::XStoreName(display, window, title.as_ptr() as *mut _);
+        let title = "fourkay\0";
+        Xlib::XStoreName(display, window, title.as_ptr() as *mut _);
 
         let gl_context =
             glx::glXCreateContext(glx_display, visual, ptr::null_mut(), gl::GL_TRUE as i32);
@@ -186,9 +191,7 @@ fn start(_argc: isize, _argv: *const *const u8) -> isize {
                 &Xlib_constants::Expose => {
                     Xlib::XGetWindowAttributes(display, window, &mut window_attributes);
                     gl::glViewport(0, 0, window_attributes.width, window_attributes.height);
-                    if let Err(()) = setup() {
-                        return 1;
-                    }
+                    setup()?;
                     glx::glXSwapBuffers(glx_display, window);
                 }
                 &Xlib_constants::ClientMessage => {
@@ -224,7 +227,7 @@ fn start(_argc: isize, _argv: *const *const u8) -> isize {
         // Xlib::XCloseDisplay(display);
     }
 
-    0
+    Ok(0)
 }
 
 enum ShaderType {

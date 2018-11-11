@@ -1,21 +1,11 @@
 [package]
-name = "fourkay"
+name = "bindings"
 version = "0.1.0"
 authors = ["Aleksander Vognild Burkow <aleksanderburkow@gmail.com>"]
 edition = "2018"
-build = "build.rs"
 
 [dependencies]
 libc = {version = "0.2.*", default-features = false}
-# bindings = { path = "bindings" }
 
 [build-dependencies]
-# bindgen = "0.42.*"
-
-[profile.release]
-opt-level = "z"
-lto = true
-panic = "abort"
-
-# [workspace]
-# members = ["bindings"]
+bindgen = "0.42.*"
