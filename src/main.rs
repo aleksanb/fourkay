@@ -181,23 +181,7 @@ fn main() -> Result<isize, ()> {
             protocols.len() as libc::c_int,
         );
 
-        // // Main loop.
-        let mut event: Xlib::XEvent = mem::uninitialized();
-        let mut window_attributes: Xlib::XWindowAttributes = mem::uninitialized();
-
-        loop {
-            Xlib::XNextEvent(display, &mut event);
-
-            match event.type_.as_ref() {
-                &Xlib_constants::Expose => {
-                    Xlib::XGetWindowAttributes(display, window, &mut window_attributes);
-                    gl::glViewport(0, 0, window_attributes.width, window_attributes.height);
-                    setup()?;
-                    break;
-                }
-                _ => (),
-            }
-        }
+        create_and_use_initial_program();
 
         const FRAMES_PER_SECOND: u64 = 60;
         const FRAME_LENGTH_MILLISECONDS: u64 = 1_000 / FRAMES_PER_SECOND;
@@ -248,6 +232,12 @@ fn main() -> Result<isize, ()> {
 
                 println!("event.type = %d\n\0", event.type_.as_ref());
                 match event.type_.as_ref() {
+                    &Xlib_constants::Expose => {
+                        println!("Window attributes!\n\0");
+                        let mut window_attributes: Xlib::XWindowAttributes = mem::uninitialized();
+                        Xlib::XGetWindowAttributes(display, window, &mut window_attributes);
+                        gl::glViewport(0, 0, window_attributes.width, window_attributes.height);
+                    }
                     &Xlib_constants::ClientMessage => {
                         println!("ClientMessage\n\0");
                         let xclient = event.xclient.as_ref();
@@ -309,7 +299,7 @@ void main() {
 }
 \0";
 
-fn setup() -> Result<(), ()> {
+fn create_and_use_initial_program() -> Result<(), ()> {
     const num_vertex_arrays: gl::GLsizei = 1;
     let vertex_arrays: &mut [gl::GLuint] = &mut [0; num_vertex_arrays as usize];
     gl_wrapper::glGenVertexArrays(num_vertex_arrays, vertex_arrays.as_ptr() as *mut _);
