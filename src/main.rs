@@ -163,12 +163,15 @@ fn main() -> Result<isize, ()> {
             wm_protocols_str.as_ptr() as *const _,
             Xlib_constants::False,
         );
+        println!("WM Protocol atom? %d\n\0", wm_protocols_atom);
+
         let wm_delete_window_str = "WM_DELETE_WINDOW\0";
         let wm_delete_window_atom = Xlib::XInternAtom(
             display,
             wm_delete_window_str.as_ptr() as *const _,
             Xlib_constants::False,
         );
+        println!("Delete window atom? %d\n\0", wm_delete_window_atom);
 
         let mut protocols = [wm_delete_window_atom];
         Xlib::XSetWMProtocols(
@@ -217,7 +220,7 @@ fn main() -> Result<isize, ()> {
 
         let mut delta_time = core::time::Duration::new(0, 0);
 
-        loop {
+        'main_loop: loop {
             libc::clock_gettime(libc::CLOCK_REALTIME, &mut current_time);
             let delta_since_last_wake =
                 core::time::Duration::new(current_time.tv_sec as u64, current_time.tv_nsec as u32)
@@ -235,39 +238,34 @@ fn main() -> Result<isize, ()> {
                 current_frame += 1;
             }
 
-            println!("Frame (render) #%d\n\0", current_frame);
             render(current_frame);
             glx::glXSwapBuffers(glx_display, window);
 
-            let events_ready = shitty::xlib_events_ready(display);
-            if events_ready > 0 {
+            let events_pending = Xlib::XPending(display);
+            for i in 0..events_pending {
                 let mut event: Xlib::XEvent = mem::uninitialized();
-                while Xlib::XCheckWindowEvent(
-                    display,
-                    window,
-                    Xlib_constants::KeyPressMask,
-                    &mut event,
-                ) as u32
-                    == Xlib::True
-                {
-                    println!("We have hit!\n\0");
-                    match event.type_.as_ref() {
-                        &Xlib_constants::ClientMessage => {
-                            let xclient = event.xclient.as_ref();
-                            if xclient.message_type == wm_protocols_atom && xclient.format == 32 {
-                                let protocol = xclient.data.l.as_ref()[0] as Xlib::Atom;
-                                if protocol == wm_delete_window_atom {
-                                    break;
-                                }
+                Xlib::XNextEvent(display, &mut event);
+
+                println!("event.type = %d\n\0", event.type_.as_ref());
+                match event.type_.as_ref() {
+                    &Xlib_constants::ClientMessage => {
+                        println!("ClientMessage\n\0");
+                        let xclient = event.xclient.as_ref();
+                        if xclient.message_type == wm_protocols_atom && xclient.format == 32 {
+                            let protocol = xclient.data.l.as_ref()[0] as Xlib::Atom;
+                            if protocol == wm_delete_window_atom {
+                                break 'main_loop;
                             }
                         }
-                        _ => (),
                     }
+                    &Xlib_constants::KeyPress => {
+                        println!("Keyboard was pressed\n\0");
+                    }
+                    _ => (),
                 }
-                //}
             }
 
-            shitty::sleep(16);
+            //shitty::sleep(16);
         }
 
         match glx::glXMakeCurrent(glx_display, glx::GLX_NONE as u64, ptr::null_mut()) {

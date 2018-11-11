@@ -40,7 +40,7 @@ pub fn xlib_events_ready(display: *mut Xlib::Display) -> i32 {
         libc::FD_SET(x11_fd, &mut in_fds);
         let mut select_timeout = libc::timeval {
             tv_sec: 0,
-            tv_usec: 2_000_000,
+            tv_usec: 2_000,
         };
         let mut num_ready_fds = 0;
         num_ready_fds = libc::select(
