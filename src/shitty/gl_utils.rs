@@ -1,4 +1,3 @@
-use core::ptr;
 use crate::bindings::gl;
 use crate::shitty::{gl_wrapper, println::*};
 
@@ -7,7 +6,7 @@ pub enum ShaderType {
     FragmentShader(&'static str),
 }
 
-pub fn create_shader(shader_type: ShaderType) -> Result<gl::GLuint, ()> {
+pub fn create_shader(shader_type: &ShaderType) -> Result<gl::GLuint, ()> {
     let shader_id = gl_wrapper::glCreateShader(match shader_type {
         ShaderType::VertexShader(_) => gl::GL_VERTEX_SHADER,
         ShaderType::FragmentShader(_) => gl::GL_FRAGMENT_SHADER,
@@ -39,7 +38,7 @@ pub fn create_shader(shader_type: ShaderType) -> Result<gl::GLuint, ()> {
         println!("Max length is: %d\n\0", max_length);
 
         let buffer: &mut [libc::c_char] = &mut [0; 1024];
-        let error_log = gl_wrapper::glGetShaderInfoLog(
+        gl_wrapper::glGetShaderInfoLog(
             shader_id,
             buffer.len() as gl::GLsizei,
             core::ptr::null_mut(),

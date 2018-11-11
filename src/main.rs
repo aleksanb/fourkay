@@ -5,7 +5,6 @@
 mod shitty;
 use self::shitty::{gl_utils, gl_wrapper, println::*};
 
-use core::ffi;
 use core::mem;
 use core::panic::PanicInfo;
 use core::ptr;
@@ -13,7 +12,6 @@ use core::ptr;
 mod bindings;
 
 use self::bindings::{gl, glx, Xlib, Xlib_constants};
-use libc::c_long;
 
 #[panic_handler]
 fn panic(_panic: &PanicInfo<'_>) -> ! {
@@ -114,7 +112,7 @@ fn main() -> Result<isize, ()> {
         let color_map = Xlib::XCreateColormap(
             display,
             root_window,
-            mem::transmute((*visual).visual),
+            (*visual).visual as *mut Xlib::Visual,
             Xlib_constants::AllocNone,
         );
         println!("Color map: %lu\n\0", color_map);
@@ -135,7 +133,7 @@ fn main() -> Result<isize, ()> {
             0,
             (*visual).depth,
             Xlib::InputOutput as libc::c_uint,
-            mem::transmute((*visual).visual),
+            (*visual).visual as *mut Xlib::Visual,
             Xlib_constants::CWColormap | Xlib_constants::CWEventMask | Xlib_constants::CWBackPixel,
             &mut set_window_attributes,
         );
@@ -181,7 +179,7 @@ fn main() -> Result<isize, ()> {
             protocols.len() as libc::c_int,
         );
 
-        create_and_use_initial_program();
+        let program = create_and_use_initial_program()?;
 
         const FRAMES_PER_SECOND: u64 = 60;
         const FRAME_LENGTH_MILLISECONDS: u64 = 1_000 / FRAMES_PER_SECOND;
@@ -218,7 +216,7 @@ fn main() -> Result<isize, ()> {
             while delta_time >= FRAME_LENGTH_DURATION {
                 delta_time -= FRAME_LENGTH_DURATION;
                 //println!("Frame (update) #%d\n\0", current_frame);
-                update(current_frame);
+                update(program, current_frame);
                 current_frame += 1;
             }
 
@@ -226,7 +224,7 @@ fn main() -> Result<isize, ()> {
             glx::glXSwapBuffers(glx_display, window);
 
             let events_pending = Xlib::XPending(display);
-            for i in 0..events_pending {
+            for _ in 0..events_pending {
                 let mut event: Xlib::XEvent = mem::uninitialized();
                 Xlib::XNextEvent(display, &mut event);
 
@@ -254,8 +252,6 @@ fn main() -> Result<isize, ()> {
                     _ => (),
                 }
             }
-
-            //shitty::sleep(16);
         }
 
         match glx::glXMakeCurrent(glx_display, glx::GLX_NONE as u64, ptr::null_mut()) {
@@ -277,10 +273,17 @@ fn main() -> Result<isize, ()> {
     Ok(0)
 }
 
-fn update(frame: u64) {}
+fn update(program: gl::GLuint, frame: u64) {
+    let uniform_name = "frame\0";
+    let location = gl_wrapper::glGetUniformLocation(program, uniform_name.as_ptr() as *const _);
+    gl_wrapper::glUniform1f(location, frame as f32);
+}
+
 fn render(frame: u64) {
     unsafe {
-        draw_triangles(frame);
+        gl::glClearColor(0.0, 0.0, 0.0, 1.0);
+        gl::glClear((gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT) as gl::GLbitfield);
+        gl::glDrawArrays(gl::GL_TRIANGLES, 0, 3);
     }
 }
 
@@ -294,12 +297,14 @@ void main() {
 
 static FRAGMENT_SHADER: &'static str = "
 #version 130
+uniform float frame;
+
 void main() {
-    gl_FragColor = vec4(gl_FragCoord.x / 1024.0, 0.0, gl_FragCoord.y / 768.0, 1.0);
+    gl_FragColor = vec4(gl_FragCoord.x / 1024.0, cos(frame / 10.0) / 2.0 + 0.5, gl_FragCoord.y / 768.0, 1.0);
 }
 \0";
 
-fn create_and_use_initial_program() -> Result<(), ()> {
+fn create_and_use_initial_program() -> Result<gl::GLuint, ()> {
     const num_vertex_arrays: gl::GLsizei = 1;
     let vertex_arrays: &mut [gl::GLuint] = &mut [0; num_vertex_arrays as usize];
     gl_wrapper::glGenVertexArrays(num_vertex_arrays, vertex_arrays.as_ptr() as *mut _);
@@ -331,26 +336,11 @@ fn create_and_use_initial_program() -> Result<(), ()> {
     );
 
     let fragment_shader =
-        gl_utils::create_shader(gl_utils::ShaderType::FragmentShader(FRAGMENT_SHADER))?;
-    let vertex_shader = gl_utils::create_shader(gl_utils::ShaderType::VertexShader(VERTEX_SHADER))?;
+        gl_utils::create_shader(&gl_utils::ShaderType::FragmentShader(FRAGMENT_SHADER))?;
+    let vertex_shader =
+        gl_utils::create_shader(&gl_utils::ShaderType::VertexShader(VERTEX_SHADER))?;
     let program = gl_utils::create_program(fragment_shader, vertex_shader)?;
     gl_wrapper::glUseProgram(program);
 
-    Ok(())
-}
-
-unsafe fn draw_triangles(frame: u64) {
-    gl::glClearColor(0.0, 0.0, 0.0, 1.0);
-    gl::glClear((gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT) as gl::GLbitfield);
-    gl::glDrawArrays(gl::GL_TRIANGLES, 0, 3);
-}
-
-unsafe fn red() {
-    gl::glClearColor(1.0, 0.0, 0.0, 1.0);
-    gl::glClear((gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT) as gl::GLbitfield);
-}
-
-unsafe fn blue() {
-    gl::glClearColor(0.0, 0.0, 1.0, 1.0);
-    gl::glClear((gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT) as gl::GLbitfield);
+    Ok(program)
 }

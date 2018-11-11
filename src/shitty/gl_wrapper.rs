@@ -15,8 +15,7 @@ macro_rules! gl_function {
     $(
         mod $gl_symbol {
             #[allow(unused_imports)]
-            use crate::bindings::{gl::{self, GLchar, GLenum, GLsizei, GLubyte, GLuint, GLint, GLsizeiptr, GLboolean}};
-            use crate::shitty::println::*;
+            use crate::bindings::{gl::{self, GLchar, GLenum, GLsizei, GLubyte, GLuint, GLint, GLsizeiptr, GLboolean, GLfloat}};
 
             pub(crate) static mut RAW_POINTER: *const libc::c_char = core::ptr::null();
 
@@ -87,5 +86,10 @@ gl_function! {
         bufSize: GLsizei,
         length: *mut GLsizei,
         infoLog: *mut GLchar
-    ) -> ()
+    ) -> (),
+    fn glGetUniformLocation(program: GLuint, name: *const GLchar) -> GLint,
+    fn glUniform1f(location: GLint, v0: GLfloat) -> (),
+    fn glUniform2f(location: GLint, v0: GLfloat, v1: GLfloat) -> (),
+    fn glUniform3f(location: GLint, v0: GLfloat, v1: GLfloat, v2: GLfloat) -> (),
+    fn glUniform4f(location: GLint, v0: GLfloat, v1: GLfloat, v2: GLfloat, v3: GLfloat) -> ()
 }
