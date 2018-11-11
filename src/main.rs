@@ -181,29 +181,6 @@ fn main() -> Result<isize, ()> {
         // // Main loop.
         let mut event: Xlib::XEvent = mem::uninitialized();
         let mut window_attributes: Xlib::XWindowAttributes = mem::uninitialized();
-        let mut count = 0;
-
-        // let x11_fd = Xlib::XConnectionNumber(display);
-        // println!("File descr %d\n\0", x11_fd);
-        // let mut in_fds: libc::fd_set = mem::uninitialized();
-        // libc::FD_ZERO(&mut in_fds);
-        // libc::FD_SET(x11_fd, &mut in_fds);
-        // let mut select_timeout = libc::timeval { tv_sec: 0, tv_usec: 8_000_000 };
-
-        // let mut num_ready_fds = 0;
-        // while num_ready_fds == 0 {
-        //     num_ready_fds = libc::select(
-        //         x11_fd + 1,
-        //         &mut in_fds,
-        //         ptr::null_mut(),
-        //         ptr::null_mut(),
-        //         &mut select_timeout,
-        //     );
-        //     println!("Ready File descriptors, %d\n\0", num_ready_fds);
-        //     select_timeout = libc::timeval { tv_sec: 5, tv_usec: 0 };
-        // }
-
-        // println!("Ready!\n\0");
 
         loop {
             Xlib::XNextEvent(display, &mut event);
@@ -213,25 +190,7 @@ fn main() -> Result<isize, ()> {
                     Xlib::XGetWindowAttributes(display, window, &mut window_attributes);
                     gl::glViewport(0, 0, window_attributes.width, window_attributes.height);
                     setup()?;
-                }
-                &Xlib_constants::ClientMessage => {
-                    let xclient = event.xclient.as_ref();
-                    if xclient.message_type == wm_protocols_atom && xclient.format == 32 {
-                        let protocol = xclient.data.l.as_ref()[0] as Xlib::Atom;
-                        if protocol == wm_delete_window_atom {
-                            break;
-                        }
-                    }
-                }
-                &Xlib_constants::KeyPress => {
-                    // if count % 2 == 0 {
-                    //     red(&*gl);
-                    // } else {
-                    //     blue(&*gl);
-                    // }
-                    // (glx.glXSwapBuffers)(display, window);
-                    // count += 1;
-                    // dbg!(event);
+                    break;
                 }
                 _ => (),
             }
@@ -271,7 +230,7 @@ fn main() -> Result<isize, ()> {
 
             while delta_time >= FRAME_LENGTH_DURATION {
                 delta_time -= FRAME_LENGTH_DURATION;
-                println!("Frame (update) #%d\n\0", current_frame);
+                //println!("Frame (update) #%d\n\0", current_frame);
                 update(current_frame);
                 current_frame += 1;
             }
@@ -279,6 +238,35 @@ fn main() -> Result<isize, ()> {
             println!("Frame (render) #%d\n\0", current_frame);
             render(current_frame);
             glx::glXSwapBuffers(glx_display, window);
+
+            let events_ready = shitty::xlib_events_ready(display);
+            if events_ready > 0 {
+                let mut event: Xlib::XEvent = mem::uninitialized();
+                while Xlib::XCheckWindowEvent(
+                    display,
+                    window,
+                    Xlib_constants::KeyPressMask,
+                    &mut event,
+                ) as u32
+                    == Xlib::True
+                {
+                    println!("We have hit!\n\0");
+                    match event.type_.as_ref() {
+                        &Xlib_constants::ClientMessage => {
+                            let xclient = event.xclient.as_ref();
+                            if xclient.message_type == wm_protocols_atom && xclient.format == 32 {
+                                let protocol = xclient.data.l.as_ref()[0] as Xlib::Atom;
+                                if protocol == wm_delete_window_atom {
+                                    break;
+                                }
+                            }
+                        }
+                        _ => (),
+                    }
+                }
+                //}
+            }
+
             shitty::sleep(16);
         }
 
