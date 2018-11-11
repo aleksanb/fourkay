@@ -1,11 +1,9 @@
-#![feature(lang_items, start)]
+#![feature(lang_items, start, duration_as_u128)]
 #![no_std]
 
 #[macro_use]
 mod shitty;
-use self::shitty::println::*;
-
-use self::shitty::gl_wrapper;
+use self::shitty::{println::*, gl_wrapper, gl_utils};
 
 use core::ffi;
 use core::mem;
@@ -184,6 +182,28 @@ fn main() -> Result<isize, ()> {
         let mut window_attributes: Xlib::XWindowAttributes = mem::uninitialized();
         let mut count = 0;
 
+        // let x11_fd = Xlib::XConnectionNumber(display);
+        // println!("File descr %d\n\0", x11_fd);
+        // let mut in_fds: libc::fd_set = mem::uninitialized();
+        // libc::FD_ZERO(&mut in_fds);
+        // libc::FD_SET(x11_fd, &mut in_fds);
+        // let mut select_timeout = libc::timeval { tv_sec: 0, tv_usec: 8_000_000 };
+
+        // let mut num_ready_fds = 0;
+        // while num_ready_fds == 0 {
+        //     num_ready_fds = libc::select(
+        //         x11_fd + 1,
+        //         &mut in_fds,
+        //         ptr::null_mut(),
+        //         ptr::null_mut(),
+        //         &mut select_timeout,
+        //     );
+        //     println!("Ready File descriptors, %d\n\0", num_ready_fds);
+        //     select_timeout = libc::timeval { tv_sec: 5, tv_usec: 0 };
+        // }
+
+        // println!("Ready!\n\0");
+
         loop {
             Xlib::XNextEvent(display, &mut event);
 
@@ -191,8 +211,8 @@ fn main() -> Result<isize, ()> {
                 &Xlib_constants::Expose => {
                     Xlib::XGetWindowAttributes(display, window, &mut window_attributes);
                     gl::glViewport(0, 0, window_attributes.width, window_attributes.height);
-                    setup()?;
-                    glx::glXSwapBuffers(glx_display, window);
+                    setup();
+                    break;
                 }
                 &Xlib_constants::ClientMessage => {
                     //dbg!("We client message now");
@@ -220,6 +240,57 @@ fn main() -> Result<isize, ()> {
             }
         }
 
+        setup()?;
+
+        const FRAMES_PER_SECOND: u64 = 60;
+        const FRAME_LENGTH_MILLISECONDS: u64 = 1_000 / FRAMES_PER_SECOND;
+        const FRAME_LENGTH_DURATION: core::time::Duration =
+            core::time::Duration::from_millis(FRAME_LENGTH_MILLISECONDS);
+
+        let mut current_frame: u64 = 0;
+
+        let mut current_time = libc::timespec {
+            tv_sec: 0,
+            tv_nsec: 0,
+        };
+        libc::clock_gettime(libc::CLOCK_REALTIME, &mut current_time);
+
+        let mut previous_time = libc::timespec {
+            tv_sec: 0,
+            tv_nsec: 0,
+        };
+        libc::clock_gettime(libc::CLOCK_REALTIME, &mut previous_time);
+
+        let mut delta_time = core::time::Duration::new(0, 0);
+
+        loop {
+            libc::clock_gettime(libc::CLOCK_REALTIME, &mut current_time);
+            let delta_since_last_wake = (core::time::Duration::new(
+                current_time.tv_sec as u64,
+                current_time.tv_nsec as u32,
+            ) - core::time::Duration::new(
+                previous_time.tv_sec as u64,
+                previous_time.tv_nsec as u32,
+            ));
+            delta_time += delta_since_last_wake;
+            previous_time = current_time;
+
+            while (delta_time >= FRAME_LENGTH_DURATION) {
+                delta_time -= FRAME_LENGTH_DURATION;
+                println!("Frame (update) #%d\n\0", current_frame);
+                update(current_frame);
+                current_frame += 1;
+            }
+
+            println!("Frame (render) #%d\n\0", current_frame);
+            render(current_frame);
+            glx::glXSwapBuffers(glx_display, window);
+            shitty::sleep(16);
+        }
+
+        //libc::clock_gettime(libc::CLOCK_REALTIME, &mut spec);
+        //println!("Time, %d, %d\n\0", spec.tv_sec, spec.tv_nsec);
+
         // // Shut down.
         // //(glx.glXMakeCurrent)(display, glx::GLX_NONE as _, ptr::null_mut());
         // glx::glXDestroyContext(glx_display, gl_context);
@@ -230,82 +301,9 @@ fn main() -> Result<isize, ()> {
     Ok(0)
 }
 
-enum ShaderType {
-    VertexShader,
-    FragmentShader,
-}
-
-fn load_shader(shader_type: ShaderType, shader_body: &'static str) -> Result<gl::GLuint, ()> {
-    let shader = gl_wrapper::glCreateShader(match shader_type {
-        ShaderType::VertexShader => gl::GL_VERTEX_SHADER,
-        ShaderType::FragmentShader => gl::GL_FRAGMENT_SHADER,
-    });
-    println!("Shader id: %d\n\0", shader);
-    println!("Shader body: %s\n\0", shader_body);
-
-    let shader_body = shader_body.as_bytes();
-    let shader_body = shader_body.as_ptr() as *const libc::c_char;
-    let shader_strings = &[shader_body];
-
-    gl_wrapper::glShaderSource(
-        shader,
-        1,
-        shader_strings as *const *const gl::GLchar,
-        core::ptr::null(),
-    );
-    gl_wrapper::glCompileShader(shader);
-
-    let mut is_compiled: gl::GLint = 0;
-    gl_wrapper::glGetShaderiv(shader, gl::GL_COMPILE_STATUS, &mut is_compiled);
-
-    if is_compiled as u32 == gl::GL_FALSE {
-        println!("Ok we failed compiling the shader\n\0");
-        let mut max_length: gl::GLint = 1337;
-        gl_wrapper::glGetShaderiv(shader, gl::GL_INFO_LOG_LENGTH, &mut max_length);
-        println!("Max length is: %d\n\0", max_length);
-
-        let buffer: &mut [libc::c_char] = &mut [0; 1024];
-        let error_log = gl_wrapper::glGetShaderInfoLog(
-            shader,
-            buffer.len() as gl::GLsizei,
-            core::ptr::null_mut(),
-            buffer.as_ptr() as *mut _,
-        );
-        println!("Error compiling shader: %s\n\0", buffer.as_ptr());
-        return Err(());
-    }
-
-    println!("Successfully compiled shader #%d\n\0", shader);
-    Ok(shader)
-}
-
-fn create_program(fragment_shader: gl::GLuint, vertex_shader: gl::GLuint) -> Result<gl::GLuint, ()> {
-    let program = gl_wrapper::glCreateProgram();
-    gl_wrapper::glAttachShader(program, fragment_shader);
-    gl_wrapper::glAttachShader(program, vertex_shader);
-    gl_wrapper::glLinkProgram(program);
-
-    let mut program_status = 0;
-    gl_wrapper::glGetProgramiv(program, gl::GL_LINK_STATUS, &mut program_status);
-
-    if program_status as u32 == gl::GL_FALSE {
-        let mut max_length: gl::GLint = 0;
-        gl_wrapper::glGetProgramiv(program, gl::GL_INFO_LOG_LENGTH, &mut max_length);
-        println!("Max length is: %d\n\0", max_length);
-
-        let buffer: &mut [libc::c_char] = &mut [0; 1024];
-        gl_wrapper::glGetProgramInfoLog(
-            program,
-            buffer.len() as gl::GLsizei,
-            core::ptr::null_mut(),
-            buffer.as_ptr() as *mut _,
-        );
-        println!("Error compiling program: %s\n\0", buffer.as_ptr());
-        return Err(());
-    }
-
-    println!("Successfully compiled program #%d\n\0", program);
-    Ok(program)
+fn update(frame: u64) {}
+fn render(frame: u64) {
+    unsafe {draw_triangles(frame);}
 }
 
 static VERTEX_SHADER: &'static str = "
@@ -354,34 +352,26 @@ fn setup() -> Result<(), ()> {
         core::ptr::null(),
     );
 
-    let fragment_shader = load_shader(ShaderType::FragmentShader, FRAGMENT_SHADER)?;
-    let vertex_shader = load_shader(ShaderType::VertexShader, VERTEX_SHADER)?;
-    let program = create_program(fragment_shader, vertex_shader)?;
-
+    let fragment_shader = gl_utils::create_shader(gl_utils::ShaderType::FragmentShader(FRAGMENT_SHADER))?;
+    let vertex_shader = gl_utils::create_shader(gl_utils::ShaderType::VertexShader(VERTEX_SHADER))?;
+    let program = gl_utils::create_program(fragment_shader, vertex_shader)?;
     gl_wrapper::glUseProgram(program);
-
-    render();
 
     Ok(())
 }
 
-fn render() {
-    unsafe {
-        gl::glClearColor(0.0, 0.0, 0.0, 1.0);
-        gl::glClear((gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT) as gl::GLbitfield);
-        gl::glDrawArrays(gl::GL_TRIANGLES, 0, 3);
-    }
+unsafe fn draw_triangles(frame: u64) {
+    gl::glClearColor(0.0, 0.0, 0.0, 1.0);
+    gl::glClear((gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT) as gl::GLbitfield);
+    gl::glDrawArrays(gl::GL_TRIANGLES, 0, 3);
 }
 
-/*
-
-fn red(gl: &dyn gl::Gl) {
-    gl.clear_color(1.0, 0.0, 0.0, 1.0);
-    gl.clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
+unsafe fn red() {
+    gl::glClearColor(1.0, 0.0, 0.0, 1.0);
+    gl::glClear((gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT) as gl::GLbitfield);
 }
 
-fn blue(gl: &dyn gl::Gl) {
-    gl.clear_color(0.0, 0.0, 1.0, 1.0);
-    gl.clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
+unsafe fn blue() {
+    gl::glClearColor(0.0, 0.0, 1.0, 1.0);
+    gl::glClear((gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT) as gl::GLbitfield);
 }
-*/
