@@ -186,7 +186,9 @@ fn start(_argc: isize, _argv: *const *const u8) -> isize {
                 &Xlib_constants::Expose => {
                     Xlib::XGetWindowAttributes(display, window, &mut window_attributes);
                     gl::glViewport(0, 0, window_attributes.width, window_attributes.height);
-                    setup();
+                    if let Err(()) = setup() {
+                        return 1;
+                    }
                     glx::glXSwapBuffers(glx_display, window);
                 }
                 &Xlib_constants::ClientMessage => {
@@ -221,6 +223,7 @@ fn start(_argc: isize, _argv: *const *const u8) -> isize {
         // Xlib::XDestroyWindow(display, window);
         // Xlib::XCloseDisplay(display);
     }
+
     0
 }
 
@@ -265,17 +268,59 @@ fn load_shader(shader_type: ShaderType, shader_body: &'static str) -> Result<gl:
             core::ptr::null_mut(),
             buffer.as_ptr() as *mut _,
         );
-        println!("Error log: %s\n\0", buffer.as_ptr());
+        println!("Error compiling shader: %s\n\0", buffer.as_ptr());
         return Err(());
     }
 
+    println!("Successfully compiled shader #%d\n\0", shader);
     Ok(shader)
 }
 
-static VERTEX_SHADER: &'static str = "#version 130\nin vec3 position;\nvoid main() {\ngl_Position = vec4(vec2(position), 0.0, 1.0);\n}\n\0";
-static FRAGMENT_SHADER: &'static str = "#version 130\nvoid main() {\ngl_FragColor = vec4(gl_FragCoord.x / 1024.0, 0.0, gl_FragCoord.y / 768.0, 1.0);\n}\n\0";
+fn create_program(fragment_shader: gl::GLuint, vertex_shader: gl::GLuint) -> Result<gl::GLuint, ()> {
+    let program = gl_wrapper::glCreateProgram();
+    gl_wrapper::glAttachShader(program, fragment_shader);
+    gl_wrapper::glAttachShader(program, vertex_shader);
+    gl_wrapper::glLinkProgram(program);
 
-fn setup() {
+    let mut program_status = 0;
+    gl_wrapper::glGetProgramiv(program, gl::GL_LINK_STATUS, &mut program_status);
+
+    if program_status as u32 == gl::GL_FALSE {
+        let mut max_length: gl::GLint = 0;
+        gl_wrapper::glGetProgramiv(program, gl::GL_INFO_LOG_LENGTH, &mut max_length);
+        println!("Max length is: %d\n\0", max_length);
+
+        let buffer: &mut [libc::c_char] = &mut [0; 1024];
+        gl_wrapper::glGetProgramInfoLog(
+            program,
+            buffer.len() as gl::GLsizei,
+            core::ptr::null_mut(),
+            buffer.as_ptr() as *mut _,
+        );
+        println!("Error compiling program: %s\n\0", buffer.as_ptr());
+        return Err(());
+    }
+
+    println!("Successfully compiled program #%d\n\0", program);
+    Ok(program)
+}
+
+static VERTEX_SHADER: &'static str = "
+#version 130
+in vec3 position;
+void main() {
+    gl_Position = vec4(vec2(position), 0.0, 1.0);
+}
+\0";
+
+static FRAGMENT_SHADER: &'static str = "
+#version 130
+void main() {
+    gl_FragColor = vec4(gl_FragCoord.x / 1024.0, 0.0, gl_FragCoord.y / 768.0, 1.0);
+}
+\0";
+
+fn setup() -> Result<(), ()> {
     const num_vertex_arrays: gl::GLsizei = 1;
     let vertex_arrays: &mut [gl::GLuint] = &mut [0; num_vertex_arrays as usize];
     gl_wrapper::glGenVertexArrays(num_vertex_arrays, vertex_arrays.as_ptr() as *mut _);
@@ -306,33 +351,15 @@ fn setup() {
         core::ptr::null(),
     );
 
-    let fragment_shader = load_shader(ShaderType::FragmentShader, FRAGMENT_SHADER);
-    let vertex_shader = load_shader(ShaderType::VertexShader, VERTEX_SHADER);
-
-    let program = gl_wrapper::glCreateProgram();
-    gl_wrapper::glAttachShader(program, fragment_shader.unwrap());
-    gl_wrapper::glAttachShader(program, vertex_shader.unwrap());
-    gl_wrapper::glLinkProgram(program);
-
-    let mut program_status = 0;
-    gl_wrapper::glGetProgramIv(program, gl::GL_LINK_STATUS, &mut program_status);
-
-    if program_status as u32 == gl::GL_FALSE {
-        let mut max_length: gl::GLint = 0;
-        gl_wrapper::glGetProgramIv(program, gl::GL_INFO_LOG_LENGTH, &mut max_length);
-        let buffer: &mut [libc::c_char] = &mut [0; 1024];
-        gl_wrapper::glGetProgramInfoLog(
-            program,
-            buffer.len() as gl::GLsizei,
-            core::ptr::null_mut(),
-            buffer.as_ptr() as *mut _,
-        );
-        println!("Error log: %s\n\0", buffer.as_ptr());
-    }
+    let fragment_shader = load_shader(ShaderType::FragmentShader, FRAGMENT_SHADER)?;
+    let vertex_shader = load_shader(ShaderType::VertexShader, VERTEX_SHADER)?;
+    let program = create_program(fragment_shader, vertex_shader)?;
 
     gl_wrapper::glUseProgram(program);
 
     render();
+
+    Ok(())
 }
 
 fn render() {

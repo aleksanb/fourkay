@@ -81,7 +81,7 @@ gl_function! {
     fn glAttachShader(program: GLuint, shader: GLuint) -> (),
     fn glLinkProgram(program: GLuint) -> (),
     fn glUseProgram(program: GLuint) -> (),
-    fn glGetProgramIv(program: GLuint, pname: GLenum, params: *mut GLint) -> (),
+    fn glGetProgramiv(program: GLuint, pname: GLenum, params: *mut GLint) -> (),
     fn glGetProgramInfoLog(
         program: GLuint,
         bufSize: GLsizei,
