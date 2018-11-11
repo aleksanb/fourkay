@@ -3,7 +3,7 @@
 
 #[macro_use]
 mod shitty;
-use self::shitty::{println::*, gl_wrapper, gl_utils};
+use self::shitty::{gl_utils, gl_wrapper, println::*};
 
 use core::ffi;
 use core::mem;
@@ -157,25 +157,26 @@ fn main() -> Result<isize, ()> {
         println!("Version: %s\n\0", gl_version as *const libc::c_char);
 
         // // Hook close requests.
-        // let wm_protocols_str = ffi::CString::new("WM_PROTOCOLS").unwrap();
-        // let wm_delete_window_str = ffi::CString::new("WM_DELETE_WINDOW").unwrap();
+        let wm_protocols_str = "WM_PROTOCOLS\0";
+        let wm_protocols_atom = Xlib::XInternAtom(
+            display,
+            wm_protocols_str.as_ptr() as *const _,
+            Xlib_constants::False,
+        );
+        let wm_delete_window_str = "WM_DELETE_WINDOW\0";
+        let wm_delete_window_atom = Xlib::XInternAtom(
+            display,
+            wm_delete_window_str.as_ptr() as *const _,
+            Xlib_constants::False,
+        );
 
-        // let wm_protocols =
-        //     Xlib::XInternAtom(display, wm_protocols_str.as_ptr(), Xlib_constants::False);
-        // let wm_delete_window = Xlib::XInternAtom(
-        //     display,
-        //     wm_delete_window_str.as_ptr(),
-        //     Xlib_constants::False,
-        // );
-
-        // let mut protocols = [wm_delete_window];
-
-        // Xlib::XSetWMProtocols(
-        //     display,
-        //     window,
-        //     protocols.as_mut_ptr(),
-        //     protocols.len() as libc::c_int,
-        // );
+        let mut protocols = [wm_delete_window_atom];
+        Xlib::XSetWMProtocols(
+            display,
+            window,
+            protocols.as_mut_ptr(),
+            protocols.len() as libc::c_int,
+        );
 
         // // Main loop.
         let mut event: Xlib::XEvent = mem::uninitialized();
@@ -211,20 +212,16 @@ fn main() -> Result<isize, ()> {
                 &Xlib_constants::Expose => {
                     Xlib::XGetWindowAttributes(display, window, &mut window_attributes);
                     gl::glViewport(0, 0, window_attributes.width, window_attributes.height);
-                    setup();
-                    break;
+                    setup()?;
                 }
                 &Xlib_constants::ClientMessage => {
-                    //dbg!("We client message now");
-                    // let xclient = Xlib::XClientMessageEvent::from(event);
-
-                    // if xclient.message_type == wm_protocols && xclient.format == 32 {
-                    //     let protocol = xclient.data.get_long(0) as Xlib::Atom;
-
-                    //     if protocol == wm_delete_window {
-                    //         break;
-                    //    }
-                    // }
+                    let xclient = event.xclient.as_ref();
+                    if xclient.message_type == wm_protocols_atom && xclient.format == 32 {
+                        let protocol = xclient.data.l.as_ref()[0] as Xlib::Atom;
+                        if protocol == wm_delete_window_atom {
+                            break;
+                        }
+                    }
                 }
                 &Xlib_constants::KeyPress => {
                     // if count % 2 == 0 {
@@ -239,8 +236,6 @@ fn main() -> Result<isize, ()> {
                 _ => (),
             }
         }
-
-        setup()?;
 
         const FRAMES_PER_SECOND: u64 = 60;
         const FRAME_LENGTH_MILLISECONDS: u64 = 1_000 / FRAMES_PER_SECOND;
@@ -265,17 +260,16 @@ fn main() -> Result<isize, ()> {
 
         loop {
             libc::clock_gettime(libc::CLOCK_REALTIME, &mut current_time);
-            let delta_since_last_wake = (core::time::Duration::new(
-                current_time.tv_sec as u64,
-                current_time.tv_nsec as u32,
-            ) - core::time::Duration::new(
-                previous_time.tv_sec as u64,
-                previous_time.tv_nsec as u32,
-            ));
+            let delta_since_last_wake =
+                core::time::Duration::new(current_time.tv_sec as u64, current_time.tv_nsec as u32)
+                    - core::time::Duration::new(
+                        previous_time.tv_sec as u64,
+                        previous_time.tv_nsec as u32,
+                    );
             delta_time += delta_since_last_wake;
             previous_time = current_time;
 
-            while (delta_time >= FRAME_LENGTH_DURATION) {
+            while delta_time >= FRAME_LENGTH_DURATION {
                 delta_time -= FRAME_LENGTH_DURATION;
                 println!("Frame (update) #%d\n\0", current_frame);
                 update(current_frame);
@@ -309,7 +303,9 @@ fn main() -> Result<isize, ()> {
 
 fn update(frame: u64) {}
 fn render(frame: u64) {
-    unsafe {draw_triangles(frame);}
+    unsafe {
+        draw_triangles(frame);
+    }
 }
 
 static VERTEX_SHADER: &'static str = "
@@ -358,7 +354,8 @@ fn setup() -> Result<(), ()> {
         core::ptr::null(),
     );
 
-    let fragment_shader = gl_utils::create_shader(gl_utils::ShaderType::FragmentShader(FRAGMENT_SHADER))?;
+    let fragment_shader =
+        gl_utils::create_shader(gl_utils::ShaderType::FragmentShader(FRAGMENT_SHADER))?;
     let vertex_shader = gl_utils::create_shader(gl_utils::ShaderType::VertexShader(VERTEX_SHADER))?;
     let program = gl_utils::create_program(fragment_shader, vertex_shader)?;
     gl_wrapper::glUseProgram(program);

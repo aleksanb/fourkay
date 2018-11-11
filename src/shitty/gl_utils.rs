@@ -1,6 +1,6 @@
-use crate::bindings::gl;
 use core::ptr;
-use crate::shitty::{println::*, gl_wrapper};
+use crate::bindings::gl;
+use crate::shitty::{gl_wrapper, println::*};
 
 pub enum ShaderType {
     VertexShader(&'static str),

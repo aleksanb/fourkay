@@ -3,8 +3,8 @@ use crate::shitty::println::*;
 
 #[macro_use]
 pub mod println;
-pub mod gl_wrapper;
 pub mod gl_utils;
+pub mod gl_wrapper;
 
 pub fn sleep(milliseconds: i64) {
     let mut sleep_timeout = libc::timeval {
