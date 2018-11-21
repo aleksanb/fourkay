@@ -11313,8 +11313,11 @@ pub struct _XImage_funcs {
     pub destroy_image:
         ::core::option::Option<unsafe extern "C" fn(arg1: *mut _XImage) -> libc::c_int>,
     pub get_pixel: ::core::option::Option<
-        unsafe extern "C" fn(arg1: *mut _XImage, arg2: libc::c_int, arg3: libc::c_int)
-            -> libc::c_ulong,
+        unsafe extern "C" fn(
+            arg1: *mut _XImage,
+            arg2: libc::c_int,
+            arg3: libc::c_int,
+        ) -> libc::c_ulong,
     >,
     pub put_pixel: ::core::option::Option<
         unsafe extern "C" fn(
@@ -18973,9 +18976,7 @@ extern "C" {
     ) -> ::core::option::Option<
         unsafe extern "C" fn(
             arg1: *mut Display,
-            arg2: ::core::option::Option<
-                unsafe extern "C" fn(arg1: *mut Display) -> libc::c_int,
-            >,
+            arg2: ::core::option::Option<unsafe extern "C" fn(arg1: *mut Display) -> libc::c_int>,
         ) -> libc::c_int,
     >;
 }
@@ -19504,8 +19505,11 @@ extern "C" {
         arg1: *mut Display,
         arg2: *mut XEvent,
         arg3: ::core::option::Option<
-            unsafe extern "C" fn(arg1: *mut Display, arg2: *mut XEvent, arg3: XPointer)
-                -> libc::c_int,
+            unsafe extern "C" fn(
+                arg1: *mut Display,
+                arg2: *mut XEvent,
+                arg3: XPointer,
+            ) -> libc::c_int,
         >,
         arg4: XPointer,
     ) -> libc::c_int;
@@ -20143,8 +20147,11 @@ extern "C" {
         arg1: *mut Display,
         arg2: *mut XEvent,
         arg3: ::core::option::Option<
-            unsafe extern "C" fn(arg1: *mut Display, arg2: *mut XEvent, arg3: XPointer)
-                -> libc::c_int,
+            unsafe extern "C" fn(
+                arg1: *mut Display,
+                arg2: *mut XEvent,
+                arg3: XPointer,
+            ) -> libc::c_int,
         >,
         arg4: XPointer,
     ) -> libc::c_int;
@@ -20240,8 +20247,11 @@ extern "C" {
         arg1: *mut Display,
         arg2: *mut XEvent,
         arg3: ::core::option::Option<
-            unsafe extern "C" fn(arg1: *mut Display, arg2: *mut XEvent, arg3: XPointer)
-                -> libc::c_int,
+            unsafe extern "C" fn(
+                arg1: *mut Display,
+                arg2: *mut XEvent,
+                arg3: XPointer,
+            ) -> libc::c_int,
         >,
         arg4: XPointer,
     ) -> libc::c_int;
@@ -25192,8 +25202,12 @@ pub type PFNGLFRAMEBUFFERTEXTURELAYERPROC = ::core::option::Option<
     ),
 >;
 pub type PFNGLMAPBUFFERRANGEPROC = ::core::option::Option<
-    unsafe extern "C" fn(target: GLenum, offset: GLintptr, length: GLsizeiptr, access: GLbitfield)
-        -> *mut libc::c_void,
+    unsafe extern "C" fn(
+        target: GLenum,
+        offset: GLintptr,
+        length: GLsizeiptr,
+        access: GLbitfield,
+    ) -> *mut libc::c_void,
 >;
 pub type PFNGLFLUSHMAPPEDBUFFERRANGEPROC = ::core::option::Option<
     unsafe extern "C" fn(target: GLenum, offset: GLintptr, length: GLsizeiptr),
@@ -26726,8 +26740,12 @@ pub type PFNGLMAPNAMEDBUFFERPROC = ::core::option::Option<
     unsafe extern "C" fn(buffer: GLuint, access: GLenum) -> *mut libc::c_void,
 >;
 pub type PFNGLMAPNAMEDBUFFERRANGEPROC = ::core::option::Option<
-    unsafe extern "C" fn(buffer: GLuint, offset: GLintptr, length: GLsizeiptr, access: GLbitfield)
-        -> *mut libc::c_void,
+    unsafe extern "C" fn(
+        buffer: GLuint,
+        offset: GLintptr,
+        length: GLsizeiptr,
+        access: GLbitfield,
+    ) -> *mut libc::c_void,
 >;
 pub type PFNGLUNMAPNAMEDBUFFERPROC =
     ::core::option::Option<unsafe extern "C" fn(buffer: GLuint) -> GLboolean>;
@@ -27427,8 +27445,11 @@ pub struct _cl_event {
     _unused: [u8; 0],
 }
 pub type PFNGLCREATESYNCFROMCLEVENTARBPROC = ::core::option::Option<
-    unsafe extern "C" fn(context: *mut _cl_context, event: *mut _cl_event, flags: GLbitfield)
-        -> GLsync,
+    unsafe extern "C" fn(
+        context: *mut _cl_context,
+        event: *mut _cl_event,
+        flags: GLbitfield,
+    ) -> GLsync,
 >;
 pub type PFNGLCLAMPCOLORARBPROC =
     ::core::option::Option<unsafe extern "C" fn(target: GLenum, clamp: GLenum)>;
@@ -31080,8 +31101,12 @@ pub type PFNGLGETVERTEXARRAYPOINTERI_VEXTPROC = ::core::option::Option<
     ),
 >;
 pub type PFNGLMAPNAMEDBUFFERRANGEEXTPROC = ::core::option::Option<
-    unsafe extern "C" fn(buffer: GLuint, offset: GLintptr, length: GLsizeiptr, access: GLbitfield)
-        -> *mut libc::c_void,
+    unsafe extern "C" fn(
+        buffer: GLuint,
+        offset: GLintptr,
+        length: GLsizeiptr,
+        access: GLbitfield,
+    ) -> *mut libc::c_void,
 >;
 pub type PFNGLFLUSHMAPPEDNAMEDBUFFERRANGEEXTPROC = ::core::option::Option<
     unsafe extern "C" fn(buffer: GLuint, offset: GLintptr, length: GLsizeiptr),
@@ -31983,8 +32008,11 @@ pub type PFNGLCLEARCOLORIUIEXTPROC = ::core::option::Option<
     unsafe extern "C" fn(red: GLuint, green: GLuint, blue: GLuint, alpha: GLuint),
 >;
 pub type PFNGLARETEXTURESRESIDENTEXTPROC = ::core::option::Option<
-    unsafe extern "C" fn(n: GLsizei, textures: *const GLuint, residences: *mut GLboolean)
-        -> GLboolean,
+    unsafe extern "C" fn(
+        n: GLsizei,
+        textures: *const GLuint,
+        residences: *mut GLboolean,
+    ) -> GLboolean,
 >;
 pub type PFNGLBINDTEXTUREEXTPROC =
     ::core::option::Option<unsafe extern "C" fn(target: GLenum, texture: GLuint)>;
@@ -32158,8 +32186,12 @@ pub type PFNGLINSERTCOMPONENTEXTPROC =
 pub type PFNGLEXTRACTCOMPONENTEXTPROC =
     ::core::option::Option<unsafe extern "C" fn(res: GLuint, src: GLuint, num: GLuint)>;
 pub type PFNGLGENSYMBOLSEXTPROC = ::core::option::Option<
-    unsafe extern "C" fn(datatype: GLenum, storagetype: GLenum, range: GLenum, components: GLuint)
-        -> GLuint,
+    unsafe extern "C" fn(
+        datatype: GLenum,
+        storagetype: GLenum,
+        range: GLenum,
+        components: GLuint,
+    ) -> GLuint,
 >;
 pub type PFNGLSETINVARIANTEXTPROC = ::core::option::Option<
     unsafe extern "C" fn(id: GLuint, type_: GLenum, addr: *const libc::c_void),
@@ -32238,8 +32270,11 @@ pub type PFNGLRELEASEKEYEDMUTEXWIN32EXTPROC =
 pub type PFNGLWINDOWRECTANGLESEXTPROC =
     ::core::option::Option<unsafe extern "C" fn(mode: GLenum, count: GLsizei, box_: *const GLint)>;
 pub type PFNGLIMPORTSYNCEXTPROC = ::core::option::Option<
-    unsafe extern "C" fn(external_sync_type: GLenum, external_sync: GLintptr, flags: GLbitfield)
-        -> GLsync,
+    unsafe extern "C" fn(
+        external_sync_type: GLenum,
+        external_sync: GLintptr,
+        flags: GLbitfield,
+    ) -> GLsync,
 >;
 pub type PFNGLFRAMETERMINATORGREMEDYPROC = ::core::option::Option<unsafe extern "C" fn()>;
 pub type PFNGLSTRINGMARKERGREMEDYPROC =
@@ -33542,8 +33577,12 @@ pub type PFNGLPRIMITIVERESTARTNVPROC = ::core::option::Option<unsafe extern "C" 
 pub type PFNGLPRIMITIVERESTARTINDEXNVPROC =
     ::core::option::Option<unsafe extern "C" fn(index: GLuint)>;
 pub type PFNGLQUERYRESOURCENVPROC = ::core::option::Option<
-    unsafe extern "C" fn(queryType: GLenum, tagId: GLint, bufSize: GLuint, buffer: *mut GLint)
-        -> GLint,
+    unsafe extern "C" fn(
+        queryType: GLenum,
+        tagId: GLint,
+        bufSize: GLuint,
+        buffer: *mut GLint,
+    ) -> GLint,
 >;
 pub type PFNGLGENQUERYRESOURCETAGNVPROC =
     ::core::option::Option<unsafe extern "C" fn(n: GLsizei, tagIds: *mut GLint)>;
@@ -33934,8 +33973,11 @@ pub type PFNGLGETINTEGERUI64I_VNVPROC = ::core::option::Option<
     unsafe extern "C" fn(value: GLenum, index: GLuint, result: *mut GLuint64EXT),
 >;
 pub type PFNGLAREPROGRAMSRESIDENTNVPROC = ::core::option::Option<
-    unsafe extern "C" fn(n: GLsizei, programs: *const GLuint, residences: *mut GLboolean)
-        -> GLboolean,
+    unsafe extern "C" fn(
+        n: GLsizei,
+        programs: *const GLuint,
+        residences: *mut GLboolean,
+    ) -> GLboolean,
 >;
 pub type PFNGLBINDPROGRAMNVPROC =
     ::core::option::Option<unsafe extern "C" fn(target: GLenum, id: GLuint)>;
@@ -35030,8 +35072,11 @@ extern "C" {
     pub fn glXGetSelectedEvent(dpy: *mut Display, drawable: GLXDrawable, mask: *mut libc::c_ulong);
 }
 pub type PFNGLXGETFBCONFIGSPROC = ::core::option::Option<
-    unsafe extern "C" fn(dpy: *mut Display, screen: libc::c_int, nelements: *mut libc::c_int)
-        -> *mut GLXFBConfig,
+    unsafe extern "C" fn(
+        dpy: *mut Display,
+        screen: libc::c_int,
+        nelements: *mut libc::c_int,
+    ) -> *mut GLXFBConfig,
 >;
 pub type PFNGLXCHOOSEFBCONFIGPROC = ::core::option::Option<
     unsafe extern "C" fn(
@@ -35073,8 +35118,11 @@ pub type PFNGLXCREATEPIXMAPPROC = ::core::option::Option<
 pub type PFNGLXDESTROYPIXMAPPROC =
     ::core::option::Option<unsafe extern "C" fn(dpy: *mut Display, pixmap: GLXPixmap)>;
 pub type PFNGLXCREATEPBUFFERPROC = ::core::option::Option<
-    unsafe extern "C" fn(dpy: *mut Display, config: GLXFBConfig, attrib_list: *const libc::c_int)
-        -> GLXPbuffer,
+    unsafe extern "C" fn(
+        dpy: *mut Display,
+        config: GLXFBConfig,
+        attrib_list: *const libc::c_int,
+    ) -> GLXPbuffer,
 >;
 pub type PFNGLXDESTROYPBUFFERPROC =
     ::core::option::Option<unsafe extern "C" fn(dpy: *mut Display, pbuf: GLXPbuffer)>;
@@ -35096,8 +35144,12 @@ pub type PFNGLXCREATENEWCONTEXTPROC = ::core::option::Option<
     ) -> GLXContext,
 >;
 pub type PFNGLXMAKECONTEXTCURRENTPROC = ::core::option::Option<
-    unsafe extern "C" fn(dpy: *mut Display, draw: GLXDrawable, read: GLXDrawable, ctx: GLXContext)
-        -> libc::c_int,
+    unsafe extern "C" fn(
+        dpy: *mut Display,
+        draw: GLXDrawable,
+        read: GLXDrawable,
+        ctx: GLXContext,
+    ) -> libc::c_int,
 >;
 pub type PFNGLXGETCURRENTREADDRAWABLEPROC =
     ::core::option::Option<unsafe extern "C" fn() -> GLXDrawable>;
@@ -35422,8 +35474,11 @@ pub type PFNGLXDELAYBEFORESWAPNVPROC = ::core::option::Option<
     unsafe extern "C" fn(dpy: *mut Display, drawable: GLXDrawable, seconds: GLfloat) -> libc::c_int,
 >;
 pub type PFNGLXENUMERATEVIDEODEVICESNVPROC = ::core::option::Option<
-    unsafe extern "C" fn(dpy: *mut Display, screen: libc::c_int, nelements: *mut libc::c_int)
-        -> *mut libc::c_uint,
+    unsafe extern "C" fn(
+        dpy: *mut Display,
+        screen: libc::c_int,
+        nelements: *mut libc::c_int,
+    ) -> *mut libc::c_uint,
 >;
 pub type PFNGLXBINDVIDEODEVICENVPROC = ::core::option::Option<
     unsafe extern "C" fn(
@@ -35470,8 +35525,11 @@ pub type PFNGLXBINDVIDEOCAPTUREDEVICENVPROC = ::core::option::Option<
     ) -> libc::c_int,
 >;
 pub type PFNGLXENUMERATEVIDEOCAPTUREDEVICESNVPROC = ::core::option::Option<
-    unsafe extern "C" fn(dpy: *mut Display, screen: libc::c_int, nelements: *mut libc::c_int)
-        -> *mut GLXVideoCaptureDeviceNV,
+    unsafe extern "C" fn(
+        dpy: *mut Display,
+        screen: libc::c_int,
+        nelements: *mut libc::c_int,
+    ) -> *mut GLXVideoCaptureDeviceNV,
 >;
 pub type PFNGLXLOCKVIDEOCAPTUREDEVICENVPROC = ::core::option::Option<
     unsafe extern "C" fn(dpy: *mut Display, device: GLXVideoCaptureDeviceNV),
@@ -35497,8 +35555,11 @@ pub type PFNGLXGETVIDEODEVICENVPROC = ::core::option::Option<
     ) -> libc::c_int,
 >;
 pub type PFNGLXRELEASEVIDEODEVICENVPROC = ::core::option::Option<
-    unsafe extern "C" fn(dpy: *mut Display, screen: libc::c_int, VideoDevice: GLXVideoDeviceNV)
-        -> libc::c_int,
+    unsafe extern "C" fn(
+        dpy: *mut Display,
+        screen: libc::c_int,
+        VideoDevice: GLXVideoDeviceNV,
+    ) -> libc::c_int,
 >;
 pub type PFNGLXBINDVIDEOIMAGENVPROC = ::core::option::Option<
     unsafe extern "C" fn(
@@ -35909,8 +35970,10 @@ fn bindgen_test_layout_GLXPipeRectLimits() {
     );
 }
 pub type PFNGLXQUERYHYPERPIPENETWORKSGIXPROC = ::core::option::Option<
-    unsafe extern "C" fn(dpy: *mut Display, npipes: *mut libc::c_int)
-        -> *mut GLXHyperpipeNetworkSGIX,
+    unsafe extern "C" fn(
+        dpy: *mut Display,
+        npipes: *mut libc::c_int,
+    ) -> *mut GLXHyperpipeNetworkSGIX,
 >;
 pub type PFNGLXHYPERPIPECONFIGSGIXPROC = ::core::option::Option<
     unsafe extern "C" fn(
@@ -35922,8 +35985,11 @@ pub type PFNGLXHYPERPIPECONFIGSGIXPROC = ::core::option::Option<
     ) -> libc::c_int,
 >;
 pub type PFNGLXQUERYHYPERPIPECONFIGSGIXPROC = ::core::option::Option<
-    unsafe extern "C" fn(dpy: *mut Display, hpId: libc::c_int, npipes: *mut libc::c_int)
-        -> *mut GLXHyperpipeConfigSGIX,
+    unsafe extern "C" fn(
+        dpy: *mut Display,
+        hpId: libc::c_int,
+        npipes: *mut libc::c_int,
+    ) -> *mut GLXHyperpipeConfigSGIX,
 >;
 pub type PFNGLXDESTROYHYPERPIPECONFIGSGIXPROC = ::core::option::Option<
     unsafe extern "C" fn(dpy: *mut Display, hpId: libc::c_int) -> libc::c_int,
@@ -35988,8 +36054,11 @@ pub type PFNGLXBINDSWAPBARRIERSGIXPROC = ::core::option::Option<
     unsafe extern "C" fn(dpy: *mut Display, drawable: GLXDrawable, barrier: libc::c_int),
 >;
 pub type PFNGLXQUERYMAXSWAPBARRIERSSGIXPROC = ::core::option::Option<
-    unsafe extern "C" fn(dpy: *mut Display, screen: libc::c_int, max: *mut libc::c_int)
-        -> libc::c_int,
+    unsafe extern "C" fn(
+        dpy: *mut Display,
+        screen: libc::c_int,
+        max: *mut libc::c_int,
+    ) -> libc::c_int,
 >;
 pub type PFNGLXJOINSWAPGROUPSGIXPROC = ::core::option::Option<
     unsafe extern "C" fn(dpy: *mut Display, drawable: GLXDrawable, member: GLXDrawable),
@@ -36047,8 +36116,12 @@ pub type GLXVideoSourceSGIX = XID;
 pub type PFNGLXCUSHIONSGIPROC =
     ::core::option::Option<unsafe extern "C" fn(dpy: *mut Display, window: Window, cushion: f32)>;
 pub type PFNGLXMAKECURRENTREADSGIPROC = ::core::option::Option<
-    unsafe extern "C" fn(dpy: *mut Display, draw: GLXDrawable, read: GLXDrawable, ctx: GLXContext)
-        -> libc::c_int,
+    unsafe extern "C" fn(
+        dpy: *mut Display,
+        draw: GLXDrawable,
+        read: GLXDrawable,
+        ctx: GLXContext,
+    ) -> libc::c_int,
 >;
 pub type PFNGLXGETCURRENTREADDRAWABLESGIPROC =
     ::core::option::Option<unsafe extern "C" fn() -> GLXDrawable>;
@@ -36057,8 +36130,11 @@ pub type PFNGLXSWAPINTERVALSGIPROC =
 pub type PFNGLXGETVIDEOSYNCSGIPROC =
     ::core::option::Option<unsafe extern "C" fn(count: *mut libc::c_uint) -> libc::c_int>;
 pub type PFNGLXWAITVIDEOSYNCSGIPROC = ::core::option::Option<
-    unsafe extern "C" fn(divisor: libc::c_int, remainder: libc::c_int, count: *mut libc::c_uint)
-        -> libc::c_int,
+    unsafe extern "C" fn(
+        divisor: libc::c_int,
+        remainder: libc::c_int,
+        count: *mut libc::c_uint,
+    ) -> libc::c_int,
 >;
 pub type PFNGLXGETTRANSPARENTINDEXSUNPROC = ::core::option::Option<
     unsafe extern "C" fn(
@@ -36080,8 +36156,12 @@ extern "C" {
     pub fn glXFreeMemoryNV(pointer: *mut GLvoid);
 }
 pub type PFNGLXALLOCATEMEMORYNVPROC = ::core::option::Option<
-    unsafe extern "C" fn(size: GLsizei, readfreq: GLfloat, writefreq: GLfloat, priority: GLfloat)
-        -> *mut libc::c_void,
+    unsafe extern "C" fn(
+        size: GLsizei,
+        readfreq: GLfloat,
+        writefreq: GLfloat,
+        priority: GLfloat,
+    ) -> *mut libc::c_void,
 >;
 pub type PFNGLXFREEMEMORYNVPROC =
     ::core::option::Option<unsafe extern "C" fn(pointer: *mut GLvoid)>;

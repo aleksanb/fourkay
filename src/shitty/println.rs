@@ -35,16 +35,15 @@ trivial_prepare!(*mut libc::c_char);
 
 macro_rules! println {
     ($( $args:expr ),* ) => {
-        unsafe {
-            libc::printf(
-                $(
-                   $args.prepare(),
-                )*
-            );
+        #[cfg(feature = "println")]
+        {
+            unsafe {
+                libc::printf(
+                    $(
+                       $args.prepare(),
+                    )*
+                );
+            }
         }
     };
 }
-
-// macro_rules! println {
-//     ($($val:expr),*) => {};
-// }

@@ -8423,8 +8423,12 @@ pub type PFNGLFRAMEBUFFERTEXTURELAYERPROC = ::core::option::Option<
     ),
 >;
 pub type PFNGLMAPBUFFERRANGEPROC = ::core::option::Option<
-    unsafe extern "C" fn(target: GLenum, offset: GLintptr, length: GLsizeiptr, access: GLbitfield)
-        -> *mut libc::c_void,
+    unsafe extern "C" fn(
+        target: GLenum,
+        offset: GLintptr,
+        length: GLsizeiptr,
+        access: GLbitfield,
+    ) -> *mut libc::c_void,
 >;
 pub type PFNGLFLUSHMAPPEDBUFFERRANGEPROC = ::core::option::Option<
     unsafe extern "C" fn(target: GLenum, offset: GLintptr, length: GLsizeiptr),
@@ -10037,8 +10041,12 @@ pub type PFNGLMAPNAMEDBUFFERPROC = ::core::option::Option<
     unsafe extern "C" fn(buffer: GLuint, access: GLenum) -> *mut libc::c_void,
 >;
 pub type PFNGLMAPNAMEDBUFFERRANGEPROC = ::core::option::Option<
-    unsafe extern "C" fn(buffer: GLuint, offset: GLintptr, length: GLsizeiptr, access: GLbitfield)
-        -> *mut libc::c_void,
+    unsafe extern "C" fn(
+        buffer: GLuint,
+        offset: GLintptr,
+        length: GLsizeiptr,
+        access: GLbitfield,
+    ) -> *mut libc::c_void,
 >;
 pub type PFNGLUNMAPNAMEDBUFFERPROC =
     ::core::option::Option<unsafe extern "C" fn(buffer: GLuint) -> GLboolean>;
@@ -10738,8 +10746,11 @@ pub struct _cl_event {
     _unused: [u8; 0],
 }
 pub type PFNGLCREATESYNCFROMCLEVENTARBPROC = ::core::option::Option<
-    unsafe extern "C" fn(context: *mut _cl_context, event: *mut _cl_event, flags: GLbitfield)
-        -> GLsync,
+    unsafe extern "C" fn(
+        context: *mut _cl_context,
+        event: *mut _cl_event,
+        flags: GLbitfield,
+    ) -> GLsync,
 >;
 pub type PFNGLCLAMPCOLORARBPROC =
     ::core::option::Option<unsafe extern "C" fn(target: GLenum, clamp: GLenum)>;
@@ -14391,8 +14402,12 @@ pub type PFNGLGETVERTEXARRAYPOINTERI_VEXTPROC = ::core::option::Option<
     ),
 >;
 pub type PFNGLMAPNAMEDBUFFERRANGEEXTPROC = ::core::option::Option<
-    unsafe extern "C" fn(buffer: GLuint, offset: GLintptr, length: GLsizeiptr, access: GLbitfield)
-        -> *mut libc::c_void,
+    unsafe extern "C" fn(
+        buffer: GLuint,
+        offset: GLintptr,
+        length: GLsizeiptr,
+        access: GLbitfield,
+    ) -> *mut libc::c_void,
 >;
 pub type PFNGLFLUSHMAPPEDNAMEDBUFFERRANGEEXTPROC = ::core::option::Option<
     unsafe extern "C" fn(buffer: GLuint, offset: GLintptr, length: GLsizeiptr),
@@ -15294,8 +15309,11 @@ pub type PFNGLCLEARCOLORIUIEXTPROC = ::core::option::Option<
     unsafe extern "C" fn(red: GLuint, green: GLuint, blue: GLuint, alpha: GLuint),
 >;
 pub type PFNGLARETEXTURESRESIDENTEXTPROC = ::core::option::Option<
-    unsafe extern "C" fn(n: GLsizei, textures: *const GLuint, residences: *mut GLboolean)
-        -> GLboolean,
+    unsafe extern "C" fn(
+        n: GLsizei,
+        textures: *const GLuint,
+        residences: *mut GLboolean,
+    ) -> GLboolean,
 >;
 pub type PFNGLBINDTEXTUREEXTPROC =
     ::core::option::Option<unsafe extern "C" fn(target: GLenum, texture: GLuint)>;
@@ -15469,8 +15487,12 @@ pub type PFNGLINSERTCOMPONENTEXTPROC =
 pub type PFNGLEXTRACTCOMPONENTEXTPROC =
     ::core::option::Option<unsafe extern "C" fn(res: GLuint, src: GLuint, num: GLuint)>;
 pub type PFNGLGENSYMBOLSEXTPROC = ::core::option::Option<
-    unsafe extern "C" fn(datatype: GLenum, storagetype: GLenum, range: GLenum, components: GLuint)
-        -> GLuint,
+    unsafe extern "C" fn(
+        datatype: GLenum,
+        storagetype: GLenum,
+        range: GLenum,
+        components: GLuint,
+    ) -> GLuint,
 >;
 pub type PFNGLSETINVARIANTEXTPROC = ::core::option::Option<
     unsafe extern "C" fn(id: GLuint, type_: GLenum, addr: *const libc::c_void),
@@ -15549,8 +15571,11 @@ pub type PFNGLRELEASEKEYEDMUTEXWIN32EXTPROC =
 pub type PFNGLWINDOWRECTANGLESEXTPROC =
     ::core::option::Option<unsafe extern "C" fn(mode: GLenum, count: GLsizei, box_: *const GLint)>;
 pub type PFNGLIMPORTSYNCEXTPROC = ::core::option::Option<
-    unsafe extern "C" fn(external_sync_type: GLenum, external_sync: GLintptr, flags: GLbitfield)
-        -> GLsync,
+    unsafe extern "C" fn(
+        external_sync_type: GLenum,
+        external_sync: GLintptr,
+        flags: GLbitfield,
+    ) -> GLsync,
 >;
 pub type PFNGLFRAMETERMINATORGREMEDYPROC = ::core::option::Option<unsafe extern "C" fn()>;
 pub type PFNGLSTRINGMARKERGREMEDYPROC =
@@ -16853,8 +16878,12 @@ pub type PFNGLPRIMITIVERESTARTNVPROC = ::core::option::Option<unsafe extern "C" 
 pub type PFNGLPRIMITIVERESTARTINDEXNVPROC =
     ::core::option::Option<unsafe extern "C" fn(index: GLuint)>;
 pub type PFNGLQUERYRESOURCENVPROC = ::core::option::Option<
-    unsafe extern "C" fn(queryType: GLenum, tagId: GLint, bufSize: GLuint, buffer: *mut GLint)
-        -> GLint,
+    unsafe extern "C" fn(
+        queryType: GLenum,
+        tagId: GLint,
+        bufSize: GLuint,
+        buffer: *mut GLint,
+    ) -> GLint,
 >;
 pub type PFNGLGENQUERYRESOURCETAGNVPROC =
     ::core::option::Option<unsafe extern "C" fn(n: GLsizei, tagIds: *mut GLint)>;
@@ -17245,8 +17274,11 @@ pub type PFNGLGETINTEGERUI64I_VNVPROC = ::core::option::Option<
     unsafe extern "C" fn(value: GLenum, index: GLuint, result: *mut GLuint64EXT),
 >;
 pub type PFNGLAREPROGRAMSRESIDENTNVPROC = ::core::option::Option<
-    unsafe extern "C" fn(n: GLsizei, programs: *const GLuint, residences: *mut GLboolean)
-        -> GLboolean,
+    unsafe extern "C" fn(
+        n: GLsizei,
+        programs: *const GLuint,
+        residences: *mut GLboolean,
+    ) -> GLboolean,
 >;
 pub type PFNGLBINDPROGRAMNVPROC =
     ::core::option::Option<unsafe extern "C" fn(target: GLenum, id: GLuint)>;

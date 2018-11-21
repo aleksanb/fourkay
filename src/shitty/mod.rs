@@ -1,6 +1,6 @@
+use crate::bindings::Xlib;
 use core::mem;
 use core::ptr;
-use crate::bindings::Xlib;
 
 #[macro_use]
 pub mod println;

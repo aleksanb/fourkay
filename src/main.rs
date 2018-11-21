@@ -179,80 +179,7 @@ fn main() -> Result<isize, ()> {
             protocols.len() as libc::c_int,
         );
 
-        let program = create_and_use_initial_program()?;
-
-        const FRAMES_PER_SECOND: u64 = 60;
-        const FRAME_LENGTH_MILLISECONDS: u64 = 1_000 / FRAMES_PER_SECOND;
-        const FRAME_LENGTH_DURATION: core::time::Duration =
-            core::time::Duration::from_millis(FRAME_LENGTH_MILLISECONDS);
-
-        let mut current_frame: u64 = 0;
-
-        let mut current_time = libc::timespec {
-            tv_sec: 0,
-            tv_nsec: 0,
-        };
-        libc::clock_gettime(libc::CLOCK_REALTIME, &mut current_time);
-
-        let mut previous_time = libc::timespec {
-            tv_sec: 0,
-            tv_nsec: 0,
-        };
-        libc::clock_gettime(libc::CLOCK_REALTIME, &mut previous_time);
-
-        let mut delta_time = core::time::Duration::new(0, 0);
-
-        'main_loop: loop {
-            libc::clock_gettime(libc::CLOCK_REALTIME, &mut current_time);
-            let delta_since_last_wake =
-                core::time::Duration::new(current_time.tv_sec as u64, current_time.tv_nsec as u32)
-                    - core::time::Duration::new(
-                        previous_time.tv_sec as u64,
-                        previous_time.tv_nsec as u32,
-                    );
-            delta_time += delta_since_last_wake;
-            previous_time = current_time;
-
-            while delta_time >= FRAME_LENGTH_DURATION {
-                delta_time -= FRAME_LENGTH_DURATION;
-                //println!("Frame (update) #%d\n\0", current_frame);
-                update(program, current_frame);
-                current_frame += 1;
-            }
-
-            render(current_frame);
-            glx::glXSwapBuffers(glx_display, window);
-
-            let events_pending = Xlib::XPending(display);
-            for _ in 0..events_pending {
-                let mut event: Xlib::XEvent = mem::uninitialized();
-                Xlib::XNextEvent(display, &mut event);
-
-                println!("event.type = %d\n\0", event.type_.as_ref());
-                match event.type_.as_ref() {
-                    &Xlib_constants::Expose => {
-                        println!("Window attributes!\n\0");
-                        let mut window_attributes: Xlib::XWindowAttributes = mem::uninitialized();
-                        Xlib::XGetWindowAttributes(display, window, &mut window_attributes);
-                        gl::glViewport(0, 0, window_attributes.width, window_attributes.height);
-                    }
-                    &Xlib_constants::ClientMessage => {
-                        println!("ClientMessage\n\0");
-                        let xclient = event.xclient.as_ref();
-                        if xclient.message_type == wm_protocols_atom && xclient.format == 32 {
-                            let protocol = xclient.data.l.as_ref()[0] as Xlib::Atom;
-                            if protocol == wm_delete_window_atom {
-                                break 'main_loop;
-                            }
-                        }
-                    }
-                    &Xlib_constants::KeyPress => {
-                        println!("Keyboard was pressed\n\0");
-                    }
-                    _ => (),
-                }
-            }
-        }
+        main_loop(display, window, wm_protocols_atom, wm_delete_window_atom);
 
         match glx::glXMakeCurrent(glx_display, glx::GLX_NONE as u64, ptr::null_mut()) {
             0 => return Err(()),
@@ -273,36 +200,113 @@ fn main() -> Result<isize, ()> {
     Ok(0)
 }
 
+fn main_loop(
+    display: *mut Xlib::_XDisplay,
+    window: Xlib::Window,
+    wm_protocols_atom: Xlib::Atom,
+    wm_delete_window_atom: Xlib::Atom,
+) -> Result<(), ()> {
+    let program = create_and_use_initial_program()?;
+
+    const FRAMES_PER_SECOND: u64 = 60;
+    const FRAME_LENGTH_MILLISECONDS: u64 = 1_000 / FRAMES_PER_SECOND;
+    const FRAME_LENGTH_DURATION: core::time::Duration =
+        core::time::Duration::from_millis(FRAME_LENGTH_MILLISECONDS);
+
+    let mut current_frame: u64 = 0;
+
+    let mut current_time = libc::timespec {
+        tv_sec: 0,
+        tv_nsec: 0,
+    };
+    unsafe {
+        libc::clock_gettime(libc::CLOCK_REALTIME, &mut current_time);
+    }
+
+    let mut previous_time = libc::timespec {
+        tv_sec: 0,
+        tv_nsec: 0,
+    };
+    unsafe {
+        libc::clock_gettime(libc::CLOCK_REALTIME, &mut previous_time);
+    }
+
+    let mut delta_time = core::time::Duration::new(0, 0);
+
+    loop {
+        unsafe {
+            libc::clock_gettime(libc::CLOCK_REALTIME, &mut current_time);
+        }
+        let delta_since_last_wake =
+            core::time::Duration::new(current_time.tv_sec as u64, current_time.tv_nsec as u32)
+                - core::time::Duration::new(
+                    previous_time.tv_sec as u64,
+                    previous_time.tv_nsec as u32,
+                );
+        delta_time += delta_since_last_wake;
+        previous_time = current_time;
+
+        while delta_time >= FRAME_LENGTH_DURATION {
+            delta_time -= FRAME_LENGTH_DURATION;
+            //println!("Frame (update) #%d\n\0", current_frame);
+            update(program, current_frame);
+            current_frame += 1;
+        }
+
+        unsafe {
+            render(current_frame);
+            glx::glXSwapBuffers(mem::transmute(display), window);
+
+            let events_pending = Xlib::XPending(display);
+            for _ in 0..events_pending {
+                let mut event: Xlib::XEvent = mem::uninitialized();
+                Xlib::XNextEvent(display, &mut event);
+
+                println!("event.type = %d\n\0", event.type_.as_ref());
+                match event.type_.as_ref() {
+                    &Xlib_constants::Expose => {
+                        println!("Window attributes!\n\0");
+                        unsafe {
+                            let mut window_attributes: Xlib::XWindowAttributes =
+                                mem::uninitialized();
+                            Xlib::XGetWindowAttributes(display, window, &mut window_attributes);
+                            gl::glViewport(0, 0, window_attributes.width, window_attributes.height);
+                        }
+                    }
+                    &Xlib_constants::ClientMessage => {
+                        println!("ClientMessage\n\0");
+                        let xclient = event.xclient.as_ref();
+                        if xclient.message_type == wm_protocols_atom && xclient.format == 32 {
+                            let protocol = xclient.data.l.as_ref()[0] as Xlib::Atom;
+                            if protocol == wm_delete_window_atom {
+                                return Ok(());
+                            }
+                        }
+                    }
+                    &Xlib_constants::KeyPress => {
+                        println!("Keyboard was pressed\n\0");
+                    }
+                    _ => (),
+                }
+            }
+        }
+    }
+}
+
 fn update(program: gl::GLuint, frame: u64) {
     let uniform_name = "frame\0";
     let location = gl_wrapper::glGetUniformLocation(program, uniform_name.as_ptr() as *const _);
     gl_wrapper::glUniform1f(location, frame as f32);
 }
 
-fn render(frame: u64) {
-    unsafe {
-        gl::glClearColor(0.0, 0.0, 0.0, 1.0);
-        gl::glClear((gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT) as gl::GLbitfield);
-        gl::glDrawArrays(gl::GL_TRIANGLES, 0, 3);
-    }
+unsafe fn render(frame: u64) {
+    gl::glClearColor(0.0, 0.0, 0.0, 1.0);
+    gl::glClear((gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT) as gl::GLbitfield);
+    gl::glDrawArrays(gl::GL_TRIANGLES, 0, 3);
 }
 
-static VERTEX_SHADER: &'static str = "
-#version 130
-in vec3 position;
-void main() {
-    gl_Position = vec4(vec2(position), 0.0, 1.0);
-}
-\0";
-
-static FRAGMENT_SHADER: &'static str = "
-#version 130
-uniform float frame;
-
-void main() {
-    gl_FragColor = vec4(gl_FragCoord.x / 1024.0, cos(frame / 10.0) / 2.0 + 0.5, gl_FragCoord.y / 768.0, 1.0);
-}
-\0";
+static VERTEX_SHADER: &'static str = concat!(include_str!("shaders/quad-vertex.glsl"), "\0");
+static FRAGMENT_SHADER: &'static str = concat!(include_str!("shaders/quad-fragment.glsl"), "\0");
 
 fn create_and_use_initial_program() -> Result<gl::GLuint, ()> {
     const num_vertex_arrays: gl::GLsizei = 1;

@@ -3372,8 +3372,11 @@ pub struct _XImage_funcs {
     pub destroy_image:
         ::core::option::Option<unsafe extern "C" fn(arg1: *mut _XImage) -> libc::c_int>,
     pub get_pixel: ::core::option::Option<
-        unsafe extern "C" fn(arg1: *mut _XImage, arg2: libc::c_int, arg3: libc::c_int)
-            -> libc::c_ulong,
+        unsafe extern "C" fn(
+            arg1: *mut _XImage,
+            arg2: libc::c_int,
+            arg3: libc::c_int,
+        ) -> libc::c_ulong,
     >,
     pub put_pixel: ::core::option::Option<
         unsafe extern "C" fn(
@@ -11033,9 +11036,7 @@ extern "C" {
     ) -> ::core::option::Option<
         unsafe extern "C" fn(
             arg1: *mut Display,
-            arg2: ::core::option::Option<
-                unsafe extern "C" fn(arg1: *mut Display) -> libc::c_int,
-            >,
+            arg2: ::core::option::Option<unsafe extern "C" fn(arg1: *mut Display) -> libc::c_int>,
         ) -> libc::c_int,
     >;
 }
@@ -11564,8 +11565,11 @@ extern "C" {
         arg1: *mut Display,
         arg2: *mut XEvent,
         arg3: ::core::option::Option<
-            unsafe extern "C" fn(arg1: *mut Display, arg2: *mut XEvent, arg3: XPointer)
-                -> libc::c_int,
+            unsafe extern "C" fn(
+                arg1: *mut Display,
+                arg2: *mut XEvent,
+                arg3: XPointer,
+            ) -> libc::c_int,
         >,
         arg4: XPointer,
     ) -> libc::c_int;
@@ -12203,8 +12207,11 @@ extern "C" {
         arg1: *mut Display,
         arg2: *mut XEvent,
         arg3: ::core::option::Option<
-            unsafe extern "C" fn(arg1: *mut Display, arg2: *mut XEvent, arg3: XPointer)
-                -> libc::c_int,
+            unsafe extern "C" fn(
+                arg1: *mut Display,
+                arg2: *mut XEvent,
+                arg3: XPointer,
+            ) -> libc::c_int,
         >,
         arg4: XPointer,
     ) -> libc::c_int;
@@ -12300,8 +12307,11 @@ extern "C" {
         arg1: *mut Display,
         arg2: *mut XEvent,
         arg3: ::core::option::Option<
-            unsafe extern "C" fn(arg1: *mut Display, arg2: *mut XEvent, arg3: XPointer)
-                -> libc::c_int,
+            unsafe extern "C" fn(
+                arg1: *mut Display,
+                arg2: *mut XEvent,
+                arg3: XPointer,
+            ) -> libc::c_int,
         >,
         arg4: XPointer,
     ) -> libc::c_int;

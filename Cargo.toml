@@ -5,6 +5,10 @@ authors = ["Aleksander Vognild Burkow <aleksanderburkow@gmail.com>"]
 edition = "2018"
 build = "build.rs"
 
+[features]
+default = ["println"]
+println = []
+
 [dependencies]
 libc = {version = "0.2.*", default-features = false}
 # bindings = { path = "bindings" }
@@ -12,10 +16,13 @@ libc = {version = "0.2.*", default-features = false}
 [build-dependencies]
 # bindgen = "0.42.*"
 
+
+[profile.debug]
+# panic = "abort"
+# opt-level = "z"
+# lto = true
+
 [profile.release]
+panic = "abort"
 opt-level = "z"
 lto = true
-panic = "abort"
-
-# [workspace]
-# members = ["bindings"]
