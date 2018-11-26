@@ -76,10 +76,10 @@ pub fn create_program(
             core::ptr::null_mut(),
             buffer.as_ptr() as *mut _,
         );
-        println!("Error compiling program: %s\n\0", buffer.as_ptr());
+        println!("Error compiling programs: %s\n\0", buffer.as_ptr());
         return Err(());
     }
 
-    println!("Successfully compiled program #%d\n\0", program);
+    println!("Successfully compiled programs #%d\n\0", program);
     Ok(program)
 }

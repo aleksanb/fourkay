@@ -5,11 +5,13 @@
 mod shitty;
 use self::shitty::{gl_utils, gl_wrapper, println::*};
 
+use self::programs::Program;
 use core::mem;
 use core::panic::PanicInfo;
 use core::ptr;
 
 mod bindings;
+mod programs;
 
 use self::bindings::{gl, glx, Xlib, Xlib_constants};
 
@@ -206,7 +208,7 @@ fn main_loop(
     wm_protocols_atom: Xlib::Atom,
     wm_delete_window_atom: Xlib::Atom,
 ) -> Result<(), ()> {
-    let program = create_and_use_initial_program()?;
+    let mut quad_program = programs::Quad::new()?;
 
     const FRAMES_PER_SECOND: u64 = 60;
     const FRAME_LENGTH_MILLISECONDS: u64 = 1_000 / FRAMES_PER_SECOND;
@@ -248,13 +250,13 @@ fn main_loop(
 
         while delta_time >= FRAME_LENGTH_DURATION {
             delta_time -= FRAME_LENGTH_DURATION;
-            //println!("Frame (update) #%d\n\0", current_frame);
-            update(program, current_frame);
+            quad_program.update(current_frame);
             current_frame += 1;
         }
 
+        quad_program.render(current_frame);
+
         unsafe {
-            render(current_frame);
             glx::glXSwapBuffers(mem::transmute(display), window);
 
             let events_pending = Xlib::XPending(display);
@@ -291,60 +293,4 @@ fn main_loop(
             }
         }
     }
-}
-
-fn update(program: gl::GLuint, frame: u64) {
-    let uniform_name = "frame\0";
-    let location = gl_wrapper::glGetUniformLocation(program, uniform_name.as_ptr() as *const _);
-    gl_wrapper::glUniform1f(location, frame as f32);
-}
-
-unsafe fn render(frame: u64) {
-    gl::glClearColor(0.0, 0.0, 0.0, 1.0);
-    gl::glClear((gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT) as gl::GLbitfield);
-    gl::glDrawArrays(gl::GL_TRIANGLES, 0, 3);
-}
-
-static VERTEX_SHADER: &'static str = concat!(include_str!("shaders/quad-vertex.glsl"), "\0");
-static FRAGMENT_SHADER: &'static str = concat!(include_str!("shaders/quad-fragment.glsl"), "\0");
-
-fn create_and_use_initial_program() -> Result<gl::GLuint, ()> {
-    const num_vertex_arrays: gl::GLsizei = 1;
-    let vertex_arrays: &mut [gl::GLuint] = &mut [0; num_vertex_arrays as usize];
-    gl_wrapper::glGenVertexArrays(num_vertex_arrays, vertex_arrays.as_ptr() as *mut _);
-    let vao = vertex_arrays[0];
-    println!("vao = %d\n\0", vao);
-    gl_wrapper::glBindVertexArray(vao);
-
-    const num_buffers: gl::GLsizei = 1;
-    let buffers: &mut [gl::GLuint] = &mut [0; num_buffers as usize];
-    gl_wrapper::glGenBuffers(num_buffers, buffers.as_ptr() as *mut _);
-    let vbo = buffers[0];
-
-    let quad: &[f32] = &[0.0, 0.5, 0.0, 0.5, -0.5, 0.0, -0.5, -0.5, 0.0];
-    gl_wrapper::glBindBuffer(gl::GL_ARRAY_BUFFER, vbo);
-    gl_wrapper::glBufferData(
-        gl::GL_ARRAY_BUFFER,
-        (quad.len() * mem::size_of::<f32>()) as gl::GLsizeiptr,
-        quad.as_ptr() as *const _,
-        gl::GL_STATIC_DRAW,
-    );
-    gl_wrapper::glEnableVertexAttribArray(0);
-    gl_wrapper::glVertexAttribPointer(
-        0 as _,
-        3,
-        gl::GL_FLOAT,
-        gl::GL_FALSE as gl::GLboolean,
-        0,
-        core::ptr::null(),
-    );
-
-    let fragment_shader =
-        gl_utils::create_shader(&gl_utils::ShaderType::FragmentShader(FRAGMENT_SHADER))?;
-    let vertex_shader =
-        gl_utils::create_shader(&gl_utils::ShaderType::VertexShader(VERTEX_SHADER))?;
-    let program = gl_utils::create_program(fragment_shader, vertex_shader)?;
-    gl_wrapper::glUseProgram(program);
-
-    Ok(program)
 }
