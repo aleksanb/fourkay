@@ -1,5 +1,8 @@
-mod quad;
-pub use self::quad::Quad;
+mod raymarcher;
+mod simple_shader;
+
+pub use self::raymarcher::Raymarcher;
+pub use self::simple_shader::Quad;
 
 pub trait Program: Sized {
     fn new() -> Result<Self, ()>;

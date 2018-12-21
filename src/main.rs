@@ -15,11 +15,13 @@ mod programs;
 
 use self::bindings::{gl, glx, Xlib, Xlib_constants};
 
+#[cfg(not(test))]
 #[panic_handler]
 fn panic(_panic: &PanicInfo<'_>) -> ! {
     loop {}
 }
 
+#[cfg(not(test))]
 #[lang = "eh_personality"]
 extern "C" fn eh_personality() {}
 
@@ -41,7 +43,7 @@ fn main() -> Result<isize, ()> {
             return Err(());
         }
 
-        let glx_display: *mut glx::Display = mem::transmute(display);
+        let glx_display = display as *mut glx::Display;
 
         let mut glx_major: libc::c_int = 0;
         let mut glx_minor: libc::c_int = 0;
@@ -181,21 +183,19 @@ fn main() -> Result<isize, ()> {
             protocols.len() as libc::c_int,
         );
 
-        main_loop(display, window, wm_protocols_atom, wm_delete_window_atom);
+        main_loop(display, window, wm_protocols_atom, wm_delete_window_atom)?;
 
-        match glx::glXMakeCurrent(glx_display, glx::GLX_NONE as u64, ptr::null_mut()) {
-            0 => return Err(()),
-            _ => (),
+        if glx::glXMakeCurrent(glx_display, glx::GLX_NONE.into(), ptr::null_mut()) == 0 {
+            return Err(());
         };
 
         glx::glXDestroyContext(glx_display, gl_context);
-        match Xlib::XDestroyWindow(display, window) {
-            0 => return Err(()),
-            _ => (),
+        if Xlib::XDestroyWindow(display, window) == 0 {
+            return Err(());
         };
-        match Xlib::XCloseDisplay(display) {
-            0 => return Err(()),
-            _ => (),
+
+        if Xlib::XCloseDisplay(display) == 0 {
+            return Err(());
         };
     }
 
@@ -208,56 +208,38 @@ fn main_loop(
     wm_protocols_atom: Xlib::Atom,
     wm_delete_window_atom: Xlib::Atom,
 ) -> Result<(), ()> {
-    let mut quad_program = programs::Quad::new()?;
+    //let mut quad_program = programs::Quad::new()?;
+    let mut raymarcher = programs::Raymarcher::new()?;
 
     const FRAMES_PER_SECOND: u64 = 60;
     const FRAME_LENGTH_MILLISECONDS: u64 = 1_000 / FRAMES_PER_SECOND;
     const FRAME_LENGTH_DURATION: core::time::Duration =
         core::time::Duration::from_millis(FRAME_LENGTH_MILLISECONDS);
 
-    let mut current_frame: u64 = 0;
+    let mut current_frame = 0;
 
-    let mut current_time = libc::timespec {
-        tv_sec: 0,
-        tv_nsec: 0,
-    };
-    unsafe {
-        libc::clock_gettime(libc::CLOCK_REALTIME, &mut current_time);
-    }
-
-    let mut previous_time = libc::timespec {
-        tv_sec: 0,
-        tv_nsec: 0,
-    };
-    unsafe {
-        libc::clock_gettime(libc::CLOCK_REALTIME, &mut previous_time);
-    }
+    let mut current_time = shitty::time::now();
+    let mut previous_time = shitty::time::now();
 
     let mut delta_time = core::time::Duration::new(0, 0);
 
     loop {
-        unsafe {
-            libc::clock_gettime(libc::CLOCK_REALTIME, &mut current_time);
-        }
-        let delta_since_last_wake =
-            core::time::Duration::new(current_time.tv_sec as u64, current_time.tv_nsec as u32)
-                - core::time::Duration::new(
-                    previous_time.tv_sec as u64,
-                    previous_time.tv_nsec as u32,
-                );
+        shitty::time::update(&mut current_time);
+        let delta_since_last_wake = shitty::time::subtract(&current_time, &previous_time);
         delta_time += delta_since_last_wake;
         previous_time = current_time;
 
         while delta_time >= FRAME_LENGTH_DURATION {
+            //quad_program.update(current_frame);
+            raymarcher.update(current_frame);
+
             delta_time -= FRAME_LENGTH_DURATION;
-            quad_program.update(current_frame);
             current_frame += 1;
         }
-
-        quad_program.render(current_frame);
+        raymarcher.render(current_frame);
 
         unsafe {
-            glx::glXSwapBuffers(mem::transmute(display), window);
+            glx::glXSwapBuffers(display as *mut bindings::glx::_XDisplay, window);
 
             let events_pending = Xlib::XPending(display);
             for _ in 0..events_pending {

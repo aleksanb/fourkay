@@ -14,7 +14,7 @@ pub struct Quad {
 }
 
 impl Program for Quad {
-    fn new() -> Result<Quad, ()> {
+    fn new() -> Result<Self, ()> {
         let fragment_shader =
             gl_utils::create_shader(&gl_utils::ShaderType::FragmentShader(FRAGMENT_SHADER))?;
         let vertex_shader =
@@ -22,16 +22,16 @@ impl Program for Quad {
         let program = gl_utils::create_program(fragment_shader, vertex_shader)?;
         gl_wrapper::glUseProgram(program);
 
-        const num_vertex_arrays: gl::GLsizei = 1;
-        let vertex_arrays: &mut [gl::GLuint] = &mut [0; num_vertex_arrays as usize];
-        gl_wrapper::glGenVertexArrays(num_vertex_arrays, vertex_arrays.as_ptr() as *mut _);
+        const NUM_VERTEX_ARRAYS: gl::GLsizei = 1;
+        let vertex_arrays: &mut [gl::GLuint] = &mut [0; NUM_VERTEX_ARRAYS as usize];
+        gl_wrapper::glGenVertexArrays(NUM_VERTEX_ARRAYS, vertex_arrays.as_ptr() as *mut _);
         let vao = vertex_arrays[0];
         println!("vao = %d\n\0", vao);
         gl_wrapper::glBindVertexArray(vao);
 
-        const num_buffers: gl::GLsizei = 1;
-        let buffers: &mut [gl::GLuint] = &mut [0; num_buffers as usize];
-        gl_wrapper::glGenBuffers(num_buffers, buffers.as_ptr() as *mut _);
+        const NUM_BUFFERS: gl::GLsizei = 1;
+        let buffers: &mut [gl::GLuint] = &mut [0; NUM_BUFFERS as usize];
+        gl_wrapper::glGenBuffers(NUM_BUFFERS, buffers.as_ptr() as *mut _);
         let vbo = buffers[0];
 
         let quad: &[f32] = &[
@@ -55,10 +55,10 @@ impl Program for Quad {
             core::ptr::null(),
         );
 
-        Ok(Quad { program })
+        Ok(Self { program })
     }
 
-    fn update(&mut self, frame: u64) {}
+    fn update(&mut self, _frame: u64) {}
 
     fn render(&self, frame: u64) {
         gl_wrapper::glUseProgram(self.program);
