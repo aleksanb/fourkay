@@ -7732,6 +7732,7 @@ pub type PFNGLBLENDEQUATIONPROC = ::core::option::Option<unsafe extern "C" fn(mo
 pub type wchar_t = libc::c_int;
 #[repr(C)]
 #[repr(align(16))]
+#[derive(Copy, Clone)]
 pub struct max_align_t {
     pub __clang_max_align_nonce1: libc::c_longlong,
     pub __bindgen_padding_0: u64,
@@ -8511,6 +8512,7 @@ pub type PFNGLUNIFORMBLOCKBINDINGPROC = ::core::option::Option<
     unsafe extern "C" fn(program: GLuint, uniformBlockIndex: GLuint, uniformBlockBinding: GLuint),
 >;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct __GLsync {
     _unused: [u8; 0],
 }
@@ -8542,6 +8544,7 @@ pub type __off_t = libc::c_long;
 pub type __off64_t = libc::c_long;
 pub type __pid_t = libc::c_int;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct __fsid_t {
     pub __val: [libc::c_int; 2usize],
 }
@@ -8615,6 +8618,7 @@ pub type intmax_t = __intmax_t;
 pub type uintmax_t = __uintmax_t;
 pub type __gwchar_t = libc::c_int;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct imaxdiv_t {
     pub quot: libc::c_long,
     pub rem: libc::c_long,
@@ -10733,10 +10737,12 @@ pub type PFNGLGETVERTEXATTRIBLUI64VARBPROC = ::core::option::Option<
     unsafe extern "C" fn(index: GLuint, pname: GLenum, params: *mut GLuint64EXT),
 >;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct _cl_context {
     _unused: [u8; 0],
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct _cl_event {
     _unused: [u8; 0],
 }

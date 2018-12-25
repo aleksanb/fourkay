@@ -246,9 +246,9 @@ fn main_loop(
                 let mut event: Xlib::XEvent = mem::uninitialized();
                 Xlib::XNextEvent(display, &mut event);
 
-                println!("event.type = %d\n\0", event.type_.as_ref());
-                match event.type_.as_ref() {
-                    &Xlib_constants::Expose => {
+                println!("event.type = %d\n\0", event.type_);
+                match event.type_ {
+                    Xlib_constants::Expose => {
                         println!("Window attributes!\n\0");
                         unsafe {
                             let mut window_attributes: Xlib::XWindowAttributes =
@@ -257,9 +257,9 @@ fn main_loop(
                             gl::glViewport(0, 0, window_attributes.width, window_attributes.height);
                         }
                     }
-                    &Xlib_constants::ClientMessage => {
+                    Xlib_constants::ClientMessage => {
                         println!("ClientMessage\n\0");
-                        let xclient = event.xclient.as_ref();
+                        let xclient = event.xclient;
                         if xclient.message_type == wm_protocols_atom && xclient.format == 32 {
                             let protocol = xclient.data.l.as_ref()[0] as Xlib::Atom;
                             if protocol == wm_delete_window_atom {
@@ -267,7 +267,7 @@ fn main_loop(
                             }
                         }
                     }
-                    &Xlib_constants::KeyPress => {
+                    Xlib_constants::KeyPress => {
                         println!("Keyboard was pressed\n\0");
                     }
                     _ => (),

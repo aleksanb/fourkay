@@ -5,49 +5,6 @@
 #[link(name="GLX")]
 extern "C" {}
 
-#[repr(C)]
-pub struct __BindgenUnionField<T>(::core::marker::PhantomData<T>);
-impl<T> __BindgenUnionField<T> {
-    #[inline]
-    pub fn new() -> Self {
-        __BindgenUnionField(::core::marker::PhantomData)
-    }
-    #[inline]
-    pub unsafe fn as_ref(&self) -> &T {
-        ::core::mem::transmute(self)
-    }
-    #[inline]
-    pub unsafe fn as_mut(&mut self) -> &mut T {
-        ::core::mem::transmute(self)
-    }
-}
-impl<T> ::core::default::Default for __BindgenUnionField<T> {
-    #[inline]
-    fn default() -> Self {
-        Self::new()
-    }
-}
-impl<T> ::core::clone::Clone for __BindgenUnionField<T> {
-    #[inline]
-    fn clone(&self) -> Self {
-        Self::new()
-    }
-}
-impl<T> ::core::marker::Copy for __BindgenUnionField<T> {}
-impl<T> ::core::fmt::Debug for __BindgenUnionField<T> {
-    fn fmt(&self, fmt: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
-        fmt.write_str("__BindgenUnionField")
-    }
-}
-impl<T> ::core::hash::Hash for __BindgenUnionField<T> {
-    fn hash<H: ::core::hash::Hasher>(&self, _state: &mut H) {}
-}
-impl<T> ::core::cmp::PartialEq for __BindgenUnionField<T> {
-    fn eq(&self, _other: &__BindgenUnionField<T>) -> bool {
-        true
-    }
-}
-impl<T> ::core::cmp::Eq for __BindgenUnionField<T> {}
 pub const XlibSpecificationRelease: u32 = 6;
 pub const _SYS_TYPES_H: u32 = 1;
 pub const _FEATURES_H: u32 = 1;
@@ -8572,6 +8529,7 @@ pub type __off_t = libc::c_long;
 pub type __off64_t = libc::c_long;
 pub type __pid_t = libc::c_int;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct __fsid_t {
     pub __val: [libc::c_int; 2usize],
 }
@@ -8658,6 +8616,7 @@ pub type u_int32_t = libc::c_uint;
 pub type u_int64_t = libc::c_ulong;
 pub type register_t = libc::c_long;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct __sigset_t {
     pub __val: [libc::c_ulong; 16usize],
 }
@@ -8686,6 +8645,7 @@ fn bindgen_test_layout___sigset_t() {
 }
 pub type sigset_t = __sigset_t;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct timeval {
     pub tv_sec: __time_t,
     pub tv_usec: __suseconds_t,
@@ -8724,6 +8684,7 @@ fn bindgen_test_layout_timeval() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct timespec {
     pub tv_sec: __time_t,
     pub tv_nsec: __syscall_slong_t,
@@ -8764,6 +8725,7 @@ fn bindgen_test_layout_timespec() {
 pub type suseconds_t = __suseconds_t;
 pub type __fd_mask = libc::c_long;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct fd_set {
     pub __fds_bits: [__fd_mask; 16usize],
 }
@@ -8824,6 +8786,7 @@ pub type blkcnt_t = __blkcnt_t;
 pub type fsblkcnt_t = __fsblkcnt_t;
 pub type fsfilcnt_t = __fsfilcnt_t;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct __pthread_rwlock_arch_t {
     pub __readers: libc::c_uint,
     pub __writers: libc::c_uint,
@@ -8990,6 +8953,7 @@ fn bindgen_test_layout___pthread_rwlock_arch_t() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct __pthread_internal_list {
     pub __prev: *mut __pthread_internal_list,
     pub __next: *mut __pthread_internal_list,
@@ -9029,6 +8993,7 @@ fn bindgen_test_layout___pthread_internal_list() {
 }
 pub type __pthread_list_t = __pthread_internal_list;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct __pthread_mutex_s {
     pub __lock: libc::c_int,
     pub __count: libc::c_uint,
@@ -9133,6 +9098,7 @@ fn bindgen_test_layout___pthread_mutex_s() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct __pthread_cond_s {
     pub __bindgen_anon_1: __pthread_cond_s__bindgen_ty_1,
     pub __bindgen_anon_2: __pthread_cond_s__bindgen_ty_2,
@@ -9144,12 +9110,14 @@ pub struct __pthread_cond_s {
 }
 #[repr(C)]
 #[repr(align(8))]
-pub struct __pthread_cond_s__bindgen_ty_1 {
-    pub __wseq: __BindgenUnionField<libc::c_ulonglong>,
-    pub __wseq32: __BindgenUnionField<__pthread_cond_s__bindgen_ty_1__bindgen_ty_1>,
-    pub bindgen_union_field: u64,
+#[derive(Copy, Clone)]
+pub union __pthread_cond_s__bindgen_ty_1 {
+    pub __wseq: libc::c_ulonglong,
+    pub __wseq32: __pthread_cond_s__bindgen_ty_1__bindgen_ty_1,
+    _bindgen_union_align: u64,
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct __pthread_cond_s__bindgen_ty_1__bindgen_ty_1 {
     pub __low: libc::c_uint,
     pub __high: libc::c_uint,
@@ -9239,12 +9207,14 @@ fn bindgen_test_layout___pthread_cond_s__bindgen_ty_1() {
 }
 #[repr(C)]
 #[repr(align(8))]
-pub struct __pthread_cond_s__bindgen_ty_2 {
-    pub __g1_start: __BindgenUnionField<libc::c_ulonglong>,
-    pub __g1_start32: __BindgenUnionField<__pthread_cond_s__bindgen_ty_2__bindgen_ty_1>,
-    pub bindgen_union_field: u64,
+#[derive(Copy, Clone)]
+pub union __pthread_cond_s__bindgen_ty_2 {
+    pub __g1_start: libc::c_ulonglong,
+    pub __g1_start32: __pthread_cond_s__bindgen_ty_2__bindgen_ty_1,
+    _bindgen_union_align: u64,
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct __pthread_cond_s__bindgen_ty_2__bindgen_ty_1 {
     pub __low: libc::c_uint,
     pub __high: libc::c_uint,
@@ -9401,10 +9371,11 @@ fn bindgen_test_layout___pthread_cond_s() {
 pub type pthread_t = libc::c_ulong;
 #[repr(C)]
 #[repr(align(4))]
-pub struct pthread_mutexattr_t {
-    pub __size: __BindgenUnionField<[libc::c_char; 4usize]>,
-    pub __align: __BindgenUnionField<libc::c_int>,
-    pub bindgen_union_field: u32,
+#[derive(Copy, Clone)]
+pub union pthread_mutexattr_t {
+    pub __size: [libc::c_char; 4usize],
+    pub __align: libc::c_int,
+    _bindgen_union_align: u32,
 }
 #[test]
 fn bindgen_test_layout_pthread_mutexattr_t() {
@@ -9441,10 +9412,11 @@ fn bindgen_test_layout_pthread_mutexattr_t() {
 }
 #[repr(C)]
 #[repr(align(4))]
-pub struct pthread_condattr_t {
-    pub __size: __BindgenUnionField<[libc::c_char; 4usize]>,
-    pub __align: __BindgenUnionField<libc::c_int>,
-    pub bindgen_union_field: u32,
+#[derive(Copy, Clone)]
+pub union pthread_condattr_t {
+    pub __size: [libc::c_char; 4usize],
+    pub __align: libc::c_int,
+    _bindgen_union_align: u32,
 }
 #[test]
 fn bindgen_test_layout_pthread_condattr_t() {
@@ -9483,10 +9455,11 @@ pub type pthread_key_t = libc::c_uint;
 pub type pthread_once_t = libc::c_int;
 #[repr(C)]
 #[repr(align(8))]
-pub struct pthread_attr_t {
-    pub __size: __BindgenUnionField<[libc::c_char; 56usize]>,
-    pub __align: __BindgenUnionField<libc::c_long>,
-    pub bindgen_union_field: [u64; 7usize],
+#[derive(Copy, Clone)]
+pub union pthread_attr_t {
+    pub __size: [libc::c_char; 56usize],
+    pub __align: libc::c_long,
+    _bindgen_union_align: [u64; 7usize],
 }
 #[test]
 fn bindgen_test_layout_pthread_attr_t() {
@@ -9523,11 +9496,12 @@ fn bindgen_test_layout_pthread_attr_t() {
 }
 #[repr(C)]
 #[repr(align(8))]
-pub struct pthread_mutex_t {
-    pub __data: __BindgenUnionField<__pthread_mutex_s>,
-    pub __size: __BindgenUnionField<[libc::c_char; 40usize]>,
-    pub __align: __BindgenUnionField<libc::c_long>,
-    pub bindgen_union_field: [u64; 5usize],
+#[derive(Copy, Clone)]
+pub union pthread_mutex_t {
+    pub __data: __pthread_mutex_s,
+    pub __size: [libc::c_char; 40usize],
+    pub __align: libc::c_long,
+    _bindgen_union_align: [u64; 5usize],
 }
 #[test]
 fn bindgen_test_layout_pthread_mutex_t() {
@@ -9574,11 +9548,12 @@ fn bindgen_test_layout_pthread_mutex_t() {
 }
 #[repr(C)]
 #[repr(align(8))]
-pub struct pthread_cond_t {
-    pub __data: __BindgenUnionField<__pthread_cond_s>,
-    pub __size: __BindgenUnionField<[libc::c_char; 48usize]>,
-    pub __align: __BindgenUnionField<libc::c_longlong>,
-    pub bindgen_union_field: [u64; 6usize],
+#[derive(Copy, Clone)]
+pub union pthread_cond_t {
+    pub __data: __pthread_cond_s,
+    pub __size: [libc::c_char; 48usize],
+    pub __align: libc::c_longlong,
+    _bindgen_union_align: [u64; 6usize],
 }
 #[test]
 fn bindgen_test_layout_pthread_cond_t() {
@@ -9625,11 +9600,12 @@ fn bindgen_test_layout_pthread_cond_t() {
 }
 #[repr(C)]
 #[repr(align(8))]
-pub struct pthread_rwlock_t {
-    pub __data: __BindgenUnionField<__pthread_rwlock_arch_t>,
-    pub __size: __BindgenUnionField<[libc::c_char; 56usize]>,
-    pub __align: __BindgenUnionField<libc::c_long>,
-    pub bindgen_union_field: [u64; 7usize],
+#[derive(Copy, Clone)]
+pub union pthread_rwlock_t {
+    pub __data: __pthread_rwlock_arch_t,
+    pub __size: [libc::c_char; 56usize],
+    pub __align: libc::c_long,
+    _bindgen_union_align: [u64; 7usize],
 }
 #[test]
 fn bindgen_test_layout_pthread_rwlock_t() {
@@ -9676,10 +9652,11 @@ fn bindgen_test_layout_pthread_rwlock_t() {
 }
 #[repr(C)]
 #[repr(align(8))]
-pub struct pthread_rwlockattr_t {
-    pub __size: __BindgenUnionField<[libc::c_char; 8usize]>,
-    pub __align: __BindgenUnionField<libc::c_long>,
-    pub bindgen_union_field: u64,
+#[derive(Copy, Clone)]
+pub union pthread_rwlockattr_t {
+    pub __size: [libc::c_char; 8usize],
+    pub __align: libc::c_long,
+    _bindgen_union_align: u64,
 }
 #[test]
 fn bindgen_test_layout_pthread_rwlockattr_t() {
@@ -9717,10 +9694,11 @@ fn bindgen_test_layout_pthread_rwlockattr_t() {
 pub type pthread_spinlock_t = libc::c_int;
 #[repr(C)]
 #[repr(align(8))]
-pub struct pthread_barrier_t {
-    pub __size: __BindgenUnionField<[libc::c_char; 32usize]>,
-    pub __align: __BindgenUnionField<libc::c_long>,
-    pub bindgen_union_field: [u64; 4usize],
+#[derive(Copy, Clone)]
+pub union pthread_barrier_t {
+    pub __size: [libc::c_char; 32usize],
+    pub __align: libc::c_long,
+    _bindgen_union_align: [u64; 4usize],
 }
 #[test]
 fn bindgen_test_layout_pthread_barrier_t() {
@@ -9757,10 +9735,11 @@ fn bindgen_test_layout_pthread_barrier_t() {
 }
 #[repr(C)]
 #[repr(align(4))]
-pub struct pthread_barrierattr_t {
-    pub __size: __BindgenUnionField<[libc::c_char; 4usize]>,
-    pub __align: __BindgenUnionField<libc::c_int>,
-    pub bindgen_union_field: u32,
+#[derive(Copy, Clone)]
+pub union pthread_barrierattr_t {
+    pub __size: [libc::c_char; 4usize],
+    pub __align: libc::c_int,
+    _bindgen_union_align: u32,
 }
 #[test]
 fn bindgen_test_layout_pthread_barrierattr_t() {
@@ -9812,6 +9791,7 @@ pub type KeyCode = libc::c_uchar;
 pub type wchar_t = libc::c_int;
 #[repr(C)]
 #[repr(align(16))]
+#[derive(Copy, Clone)]
 pub struct max_align_t {
     pub __clang_max_align_nonce1: libc::c_longlong,
     pub __bindgen_padding_0: u64,
@@ -9859,6 +9839,7 @@ extern "C" {
 }
 pub type XPointer = *mut libc::c_char;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct _XExtData {
     pub number: libc::c_int,
     pub next: *mut _XExtData,
@@ -9921,6 +9902,7 @@ fn bindgen_test_layout__XExtData() {
 }
 pub type XExtData = _XExtData;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XExtCodes {
     pub extension: libc::c_int,
     pub major_opcode: libc::c_int,
@@ -9981,6 +9963,7 @@ fn bindgen_test_layout_XExtCodes() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XPixmapFormatValues {
     pub depth: libc::c_int,
     pub bits_per_pixel: libc::c_int,
@@ -10034,6 +10017,7 @@ fn bindgen_test_layout_XPixmapFormatValues() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XGCValues {
     pub function: libc::c_int,
     pub plane_mask: libc::c_ulong,
@@ -10303,11 +10287,13 @@ fn bindgen_test_layout_XGCValues() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct _XGC {
     _unused: [u8; 0],
 }
 pub type GC = *mut _XGC;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct Visual {
     pub ext_data: *mut XExtData,
     pub visualid: VisualID,
@@ -10412,6 +10398,7 @@ fn bindgen_test_layout_Visual() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct Depth {
     pub depth: libc::c_int,
     pub nvisuals: libc::c_int,
@@ -10461,10 +10448,12 @@ fn bindgen_test_layout_Depth() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct _XDisplay {
     _unused: [u8; 0],
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct Screen {
     pub ext_data: *mut XExtData,
     pub display: *mut _XDisplay,
@@ -10701,6 +10690,7 @@ fn bindgen_test_layout_Screen() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ScreenFormat {
     pub ext_data: *mut XExtData,
     pub depth: libc::c_int,
@@ -10761,6 +10751,7 @@ fn bindgen_test_layout_ScreenFormat() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XSetWindowAttributes {
     pub background_pixmap: Pixmap,
     pub background_pixel: libc::c_ulong,
@@ -10969,6 +10960,7 @@ fn bindgen_test_layout_XSetWindowAttributes() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XWindowAttributes {
     pub x: libc::c_int,
     pub y: libc::c_int,
@@ -11255,6 +11247,7 @@ fn bindgen_test_layout_XWindowAttributes() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XHostAddress {
     pub family: libc::c_int,
     pub length: libc::c_int,
@@ -11304,6 +11297,7 @@ fn bindgen_test_layout_XHostAddress() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XServerInterpretedAddress {
     pub typelength: libc::c_int,
     pub valuelength: libc::c_int,
@@ -11372,6 +11366,7 @@ fn bindgen_test_layout_XServerInterpretedAddress() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct _XImage {
     pub width: libc::c_int,
     pub height: libc::c_int,
@@ -11392,6 +11387,7 @@ pub struct _XImage {
     pub f: _XImage_funcs,
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct _XImage_funcs {
     pub create_image: ::core::option::Option<
         unsafe extern "C" fn(
@@ -11695,6 +11691,7 @@ fn bindgen_test_layout__XImage() {
 }
 pub type XImage = _XImage;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XWindowChanges {
     pub x: libc::c_int,
     pub y: libc::c_int,
@@ -11788,6 +11785,7 @@ fn bindgen_test_layout_XWindowChanges() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XColor {
     pub pixel: libc::c_ulong,
     pub red: libc::c_ushort,
@@ -11870,6 +11868,7 @@ fn bindgen_test_layout_XColor() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XSegment {
     pub x1: libc::c_short,
     pub y1: libc::c_short,
@@ -11930,6 +11929,7 @@ fn bindgen_test_layout_XSegment() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XPoint {
     pub x: libc::c_short,
     pub y: libc::c_short,
@@ -11958,6 +11958,7 @@ fn bindgen_test_layout_XPoint() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XRectangle {
     pub x: libc::c_short,
     pub y: libc::c_short,
@@ -12018,6 +12019,7 @@ fn bindgen_test_layout_XRectangle() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XArc {
     pub x: libc::c_short,
     pub y: libc::c_short,
@@ -12090,6 +12092,7 @@ fn bindgen_test_layout_XArc() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XKeyboardControl {
     pub key_click_percent: libc::c_int,
     pub bell_percent: libc::c_int,
@@ -12198,6 +12201,7 @@ fn bindgen_test_layout_XKeyboardControl() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XKeyboardState {
     pub key_click_percent: libc::c_int,
     pub bell_percent: libc::c_int,
@@ -12295,6 +12299,7 @@ fn bindgen_test_layout_XKeyboardState() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XTimeCoord {
     pub time: Time,
     pub x: libc::c_short,
@@ -12344,6 +12349,7 @@ fn bindgen_test_layout_XTimeCoord() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XModifierKeymap {
     pub max_keypermod: libc::c_int,
     pub modifiermap: *mut KeyCode,
@@ -12383,14 +12389,17 @@ fn bindgen_test_layout_XModifierKeymap() {
 }
 pub type Display = _XDisplay;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct _XPrivate {
     _unused: [u8; 0],
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct _XrmHashBucketRec {
     _unused: [u8; 0],
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct _bindgen_ty_1 {
     pub ext_data: *mut XExtData,
     pub private1: *mut _XPrivate,
@@ -12899,6 +12908,7 @@ fn bindgen_test_layout__bindgen_ty_1() {
 }
 pub type _XPrivDisplay = *mut _bindgen_ty_1;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XKeyEvent {
     pub type_: libc::c_int,
     pub serial: libc::c_ulong,
@@ -13082,6 +13092,7 @@ fn bindgen_test_layout_XKeyEvent() {
 pub type XKeyPressedEvent = XKeyEvent;
 pub type XKeyReleasedEvent = XKeyEvent;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XButtonEvent {
     pub type_: libc::c_int,
     pub serial: libc::c_ulong,
@@ -13265,6 +13276,7 @@ fn bindgen_test_layout_XButtonEvent() {
 pub type XButtonPressedEvent = XButtonEvent;
 pub type XButtonReleasedEvent = XButtonEvent;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XMotionEvent {
     pub type_: libc::c_int,
     pub serial: libc::c_ulong,
@@ -13447,6 +13459,7 @@ fn bindgen_test_layout_XMotionEvent() {
 }
 pub type XPointerMovedEvent = XMotionEvent;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XCrossingEvent {
     pub type_: libc::c_int,
     pub serial: libc::c_ulong,
@@ -13652,6 +13665,7 @@ fn bindgen_test_layout_XCrossingEvent() {
 pub type XEnterWindowEvent = XCrossingEvent;
 pub type XLeaveWindowEvent = XCrossingEvent;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XFocusChangeEvent {
     pub type_: libc::c_int,
     pub serial: libc::c_ulong,
@@ -13747,6 +13761,7 @@ fn bindgen_test_layout_XFocusChangeEvent() {
 pub type XFocusInEvent = XFocusChangeEvent;
 pub type XFocusOutEvent = XFocusChangeEvent;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XKeymapEvent {
     pub type_: libc::c_int,
     pub serial: libc::c_ulong,
@@ -13829,6 +13844,7 @@ fn bindgen_test_layout_XKeymapEvent() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XExposeEvent {
     pub type_: libc::c_int,
     pub serial: libc::c_ulong,
@@ -13955,6 +13971,7 @@ fn bindgen_test_layout_XExposeEvent() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XGraphicsExposeEvent {
     pub type_: libc::c_int,
     pub serial: libc::c_ulong,
@@ -14109,6 +14126,7 @@ fn bindgen_test_layout_XGraphicsExposeEvent() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XNoExposeEvent {
     pub type_: libc::c_int,
     pub serial: libc::c_ulong,
@@ -14202,6 +14220,7 @@ fn bindgen_test_layout_XNoExposeEvent() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XVisibilityEvent {
     pub type_: libc::c_int,
     pub serial: libc::c_ulong,
@@ -14284,6 +14303,7 @@ fn bindgen_test_layout_XVisibilityEvent() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XCreateWindowEvent {
     pub type_: libc::c_int,
     pub serial: libc::c_ulong,
@@ -14436,6 +14456,7 @@ fn bindgen_test_layout_XCreateWindowEvent() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XDestroyWindowEvent {
     pub type_: libc::c_int,
     pub serial: libc::c_ulong,
@@ -14518,6 +14539,7 @@ fn bindgen_test_layout_XDestroyWindowEvent() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XUnmapEvent {
     pub type_: libc::c_int,
     pub serial: libc::c_ulong,
@@ -14611,6 +14633,7 @@ fn bindgen_test_layout_XUnmapEvent() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XMapEvent {
     pub type_: libc::c_int,
     pub serial: libc::c_ulong,
@@ -14704,6 +14727,7 @@ fn bindgen_test_layout_XMapEvent() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XMapRequestEvent {
     pub type_: libc::c_int,
     pub serial: libc::c_ulong,
@@ -14786,6 +14810,7 @@ fn bindgen_test_layout_XMapRequestEvent() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XReparentEvent {
     pub type_: libc::c_int,
     pub serial: libc::c_ulong,
@@ -14914,6 +14939,7 @@ fn bindgen_test_layout_XReparentEvent() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XConfigureEvent {
     pub type_: libc::c_int,
     pub serial: libc::c_ulong,
@@ -15075,6 +15101,7 @@ fn bindgen_test_layout_XConfigureEvent() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XGravityEvent {
     pub type_: libc::c_int,
     pub serial: libc::c_ulong,
@@ -15179,6 +15206,7 @@ fn bindgen_test_layout_XGravityEvent() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XResizeRequestEvent {
     pub type_: libc::c_int,
     pub serial: libc::c_ulong,
@@ -15272,6 +15300,7 @@ fn bindgen_test_layout_XResizeRequestEvent() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XConfigureRequestEvent {
     pub type_: libc::c_int,
     pub serial: libc::c_ulong,
@@ -15448,6 +15477,7 @@ fn bindgen_test_layout_XConfigureRequestEvent() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XCirculateEvent {
     pub type_: libc::c_int,
     pub serial: libc::c_ulong,
@@ -15541,6 +15571,7 @@ fn bindgen_test_layout_XCirculateEvent() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XCirculateRequestEvent {
     pub type_: libc::c_int,
     pub serial: libc::c_ulong,
@@ -15636,6 +15667,7 @@ fn bindgen_test_layout_XCirculateRequestEvent() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XPropertyEvent {
     pub type_: libc::c_int,
     pub serial: libc::c_ulong,
@@ -15740,6 +15772,7 @@ fn bindgen_test_layout_XPropertyEvent() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XSelectionClearEvent {
     pub type_: libc::c_int,
     pub serial: libc::c_ulong,
@@ -15835,6 +15868,7 @@ fn bindgen_test_layout_XSelectionClearEvent() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XSelectionRequestEvent {
     pub type_: libc::c_int,
     pub serial: libc::c_ulong,
@@ -15969,6 +16003,7 @@ fn bindgen_test_layout_XSelectionRequestEvent() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XSelectionEvent {
     pub type_: libc::c_int,
     pub serial: libc::c_ulong,
@@ -16084,6 +16119,7 @@ fn bindgen_test_layout_XSelectionEvent() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XColormapEvent {
     pub type_: libc::c_int,
     pub serial: libc::c_ulong,
@@ -16188,6 +16224,7 @@ fn bindgen_test_layout_XColormapEvent() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XClientMessageEvent {
     pub type_: libc::c_int,
     pub serial: libc::c_ulong,
@@ -16200,11 +16237,12 @@ pub struct XClientMessageEvent {
 }
 #[repr(C)]
 #[repr(align(8))]
-pub struct XClientMessageEvent__bindgen_ty_1 {
-    pub b: __BindgenUnionField<[libc::c_char; 20usize]>,
-    pub s: __BindgenUnionField<[libc::c_short; 10usize]>,
-    pub l: __BindgenUnionField<[libc::c_long; 5usize]>,
-    pub bindgen_union_field: [u64; 5usize],
+#[derive(Copy, Clone)]
+pub union XClientMessageEvent__bindgen_ty_1 {
+    pub b: [libc::c_char; 20usize],
+    pub s: [libc::c_short; 10usize],
+    pub l: [libc::c_long; 5usize],
+    _bindgen_union_align: [u64; 5usize],
 }
 #[test]
 fn bindgen_test_layout_XClientMessageEvent__bindgen_ty_1() {
@@ -16354,6 +16392,7 @@ fn bindgen_test_layout_XClientMessageEvent() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XMappingEvent {
     pub type_: libc::c_int,
     pub serial: libc::c_ulong,
@@ -16458,6 +16497,7 @@ fn bindgen_test_layout_XMappingEvent() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XErrorEvent {
     pub type_: libc::c_int,
     pub display: *mut Display,
@@ -16551,6 +16591,7 @@ fn bindgen_test_layout_XErrorEvent() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XAnyEvent {
     pub type_: libc::c_int,
     pub serial: libc::c_ulong,
@@ -16622,6 +16663,7 @@ fn bindgen_test_layout_XAnyEvent() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XGenericEvent {
     pub type_: libc::c_int,
     pub serial: libc::c_ulong,
@@ -16704,6 +16746,7 @@ fn bindgen_test_layout_XGenericEvent() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XGenericEventCookie {
     pub type_: libc::c_int,
     pub serial: libc::c_ulong,
@@ -16809,43 +16852,44 @@ fn bindgen_test_layout_XGenericEventCookie() {
 }
 #[repr(C)]
 #[repr(align(8))]
-pub struct _XEvent {
-    pub type_: __BindgenUnionField<libc::c_int>,
-    pub xany: __BindgenUnionField<XAnyEvent>,
-    pub xkey: __BindgenUnionField<XKeyEvent>,
-    pub xbutton: __BindgenUnionField<XButtonEvent>,
-    pub xmotion: __BindgenUnionField<XMotionEvent>,
-    pub xcrossing: __BindgenUnionField<XCrossingEvent>,
-    pub xfocus: __BindgenUnionField<XFocusChangeEvent>,
-    pub xexpose: __BindgenUnionField<XExposeEvent>,
-    pub xgraphicsexpose: __BindgenUnionField<XGraphicsExposeEvent>,
-    pub xnoexpose: __BindgenUnionField<XNoExposeEvent>,
-    pub xvisibility: __BindgenUnionField<XVisibilityEvent>,
-    pub xcreatewindow: __BindgenUnionField<XCreateWindowEvent>,
-    pub xdestroywindow: __BindgenUnionField<XDestroyWindowEvent>,
-    pub xunmap: __BindgenUnionField<XUnmapEvent>,
-    pub xmap: __BindgenUnionField<XMapEvent>,
-    pub xmaprequest: __BindgenUnionField<XMapRequestEvent>,
-    pub xreparent: __BindgenUnionField<XReparentEvent>,
-    pub xconfigure: __BindgenUnionField<XConfigureEvent>,
-    pub xgravity: __BindgenUnionField<XGravityEvent>,
-    pub xresizerequest: __BindgenUnionField<XResizeRequestEvent>,
-    pub xconfigurerequest: __BindgenUnionField<XConfigureRequestEvent>,
-    pub xcirculate: __BindgenUnionField<XCirculateEvent>,
-    pub xcirculaterequest: __BindgenUnionField<XCirculateRequestEvent>,
-    pub xproperty: __BindgenUnionField<XPropertyEvent>,
-    pub xselectionclear: __BindgenUnionField<XSelectionClearEvent>,
-    pub xselectionrequest: __BindgenUnionField<XSelectionRequestEvent>,
-    pub xselection: __BindgenUnionField<XSelectionEvent>,
-    pub xcolormap: __BindgenUnionField<XColormapEvent>,
-    pub xclient: __BindgenUnionField<XClientMessageEvent>,
-    pub xmapping: __BindgenUnionField<XMappingEvent>,
-    pub xerror: __BindgenUnionField<XErrorEvent>,
-    pub xkeymap: __BindgenUnionField<XKeymapEvent>,
-    pub xgeneric: __BindgenUnionField<XGenericEvent>,
-    pub xcookie: __BindgenUnionField<XGenericEventCookie>,
-    pub pad: __BindgenUnionField<[libc::c_long; 24usize]>,
-    pub bindgen_union_field: [u64; 24usize],
+#[derive(Copy, Clone)]
+pub union _XEvent {
+    pub type_: libc::c_int,
+    pub xany: XAnyEvent,
+    pub xkey: XKeyEvent,
+    pub xbutton: XButtonEvent,
+    pub xmotion: XMotionEvent,
+    pub xcrossing: XCrossingEvent,
+    pub xfocus: XFocusChangeEvent,
+    pub xexpose: XExposeEvent,
+    pub xgraphicsexpose: XGraphicsExposeEvent,
+    pub xnoexpose: XNoExposeEvent,
+    pub xvisibility: XVisibilityEvent,
+    pub xcreatewindow: XCreateWindowEvent,
+    pub xdestroywindow: XDestroyWindowEvent,
+    pub xunmap: XUnmapEvent,
+    pub xmap: XMapEvent,
+    pub xmaprequest: XMapRequestEvent,
+    pub xreparent: XReparentEvent,
+    pub xconfigure: XConfigureEvent,
+    pub xgravity: XGravityEvent,
+    pub xresizerequest: XResizeRequestEvent,
+    pub xconfigurerequest: XConfigureRequestEvent,
+    pub xcirculate: XCirculateEvent,
+    pub xcirculaterequest: XCirculateRequestEvent,
+    pub xproperty: XPropertyEvent,
+    pub xselectionclear: XSelectionClearEvent,
+    pub xselectionrequest: XSelectionRequestEvent,
+    pub xselection: XSelectionEvent,
+    pub xcolormap: XColormapEvent,
+    pub xclient: XClientMessageEvent,
+    pub xmapping: XMappingEvent,
+    pub xerror: XErrorEvent,
+    pub xkeymap: XKeymapEvent,
+    pub xgeneric: XGenericEvent,
+    pub xcookie: XGenericEventCookie,
+    pub pad: [libc::c_long; 24usize],
+    _bindgen_union_align: [u64; 24usize],
 }
 #[test]
 fn bindgen_test_layout__XEvent() {
@@ -17212,6 +17256,7 @@ fn bindgen_test_layout__XEvent() {
 }
 pub type XEvent = _XEvent;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XCharStruct {
     pub lbearing: libc::c_short,
     pub rbearing: libc::c_short,
@@ -17294,6 +17339,7 @@ fn bindgen_test_layout_XCharStruct() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XFontProp {
     pub name: Atom,
     pub card32: libc::c_ulong,
@@ -17332,6 +17378,7 @@ fn bindgen_test_layout_XFontProp() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XFontStruct {
     pub ext_data: *mut XExtData,
     pub fid: Font,
@@ -17524,6 +17571,7 @@ fn bindgen_test_layout_XFontStruct() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XTextItem {
     pub chars: *mut libc::c_char,
     pub nchars: libc::c_int,
@@ -17584,6 +17632,7 @@ fn bindgen_test_layout_XTextItem() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XChar2b {
     pub byte1: libc::c_uchar,
     pub byte2: libc::c_uchar,
@@ -17622,6 +17671,7 @@ fn bindgen_test_layout_XChar2b() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XTextItem16 {
     pub chars: *mut XChar2b,
     pub nchars: libc::c_int,
@@ -17683,14 +17733,15 @@ fn bindgen_test_layout_XTextItem16() {
 }
 #[repr(C)]
 #[repr(align(8))]
-pub struct XEDataObject {
-    pub display: __BindgenUnionField<*mut Display>,
-    pub gc: __BindgenUnionField<GC>,
-    pub visual: __BindgenUnionField<*mut Visual>,
-    pub screen: __BindgenUnionField<*mut Screen>,
-    pub pixmap_format: __BindgenUnionField<*mut ScreenFormat>,
-    pub font: __BindgenUnionField<*mut XFontStruct>,
-    pub bindgen_union_field: u64,
+#[derive(Copy, Clone)]
+pub union XEDataObject {
+    pub display: *mut Display,
+    pub gc: GC,
+    pub visual: *mut Visual,
+    pub screen: *mut Screen,
+    pub pixmap_format: *mut ScreenFormat,
+    pub font: *mut XFontStruct,
+    _bindgen_union_align: u64,
 }
 #[test]
 fn bindgen_test_layout_XEDataObject() {
@@ -17766,6 +17817,7 @@ fn bindgen_test_layout_XEDataObject() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XFontSetExtents {
     pub max_ink_extent: XRectangle,
     pub max_logical_extent: XRectangle,
@@ -17806,17 +17858,20 @@ fn bindgen_test_layout_XFontSetExtents() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct _XOM {
     _unused: [u8; 0],
 }
 pub type XOM = *mut _XOM;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct _XOC {
     _unused: [u8; 0],
 }
 pub type XOC = *mut _XOC;
 pub type XFontSet = *mut _XOC;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XmbTextItem {
     pub chars: *mut libc::c_char,
     pub nchars: libc::c_int,
@@ -17877,6 +17932,7 @@ fn bindgen_test_layout_XmbTextItem() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XwcTextItem {
     pub chars: *mut wchar_t,
     pub nchars: libc::c_int,
@@ -17937,6 +17993,7 @@ fn bindgen_test_layout_XwcTextItem() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XOMCharSetList {
     pub charset_count: libc::c_int,
     pub charset_list: *mut *mut libc::c_char,
@@ -17981,6 +18038,7 @@ pub const XOrientation_XOMOrientation_TTB_RTL: XOrientation = 3;
 pub const XOrientation_XOMOrientation_Context: XOrientation = 4;
 pub type XOrientation = u32;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XOMOrientation {
     pub num_orientation: libc::c_int,
     pub orientation: *mut XOrientation,
@@ -18019,6 +18077,7 @@ fn bindgen_test_layout_XOMOrientation() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XOMFontInfo {
     pub num_font: libc::c_int,
     pub font_struct_list: *mut *mut XFontStruct,
@@ -18068,11 +18127,13 @@ fn bindgen_test_layout_XOMFontInfo() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct _XIM {
     _unused: [u8; 0],
 }
 pub type XIM = *mut _XIM;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct _XIC {
     _unused: [u8; 0],
 }
@@ -18087,6 +18148,7 @@ pub type XIDProc = ::core::option::Option<
 >;
 pub type XIMStyle = libc::c_ulong;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XIMStyles {
     pub count_styles: libc::c_ushort,
     pub supported_styles: *mut XIMStyle,
@@ -18126,6 +18188,7 @@ fn bindgen_test_layout_XIMStyles() {
 }
 pub type XVaNestedList = *mut libc::c_void;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XIMCallback {
     pub client_data: XPointer,
     pub callback: XIMProc,
@@ -18164,6 +18227,7 @@ fn bindgen_test_layout_XIMCallback() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XICCallback {
     pub client_data: XPointer,
     pub callback: XICProc,
@@ -18203,6 +18267,7 @@ fn bindgen_test_layout_XICCallback() {
 }
 pub type XIMFeedback = libc::c_ulong;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct _XIMText {
     pub length: libc::c_ushort,
     pub feedback: *mut XIMFeedback,
@@ -18211,10 +18276,11 @@ pub struct _XIMText {
 }
 #[repr(C)]
 #[repr(align(8))]
-pub struct _XIMText__bindgen_ty_1 {
-    pub multi_byte: __BindgenUnionField<*mut libc::c_char>,
-    pub wide_char: __BindgenUnionField<*mut wchar_t>,
-    pub bindgen_union_field: u64,
+#[derive(Copy, Clone)]
+pub union _XIMText__bindgen_ty_1 {
+    pub multi_byte: *mut libc::c_char,
+    pub wide_char: *mut wchar_t,
+    _bindgen_union_align: u64,
 }
 #[test]
 fn bindgen_test_layout__XIMText__bindgen_ty_1() {
@@ -18309,6 +18375,7 @@ fn bindgen_test_layout__XIMText() {
 pub type XIMText = _XIMText;
 pub type XIMPreeditState = libc::c_ulong;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct _XIMPreeditStateNotifyCallbackStruct {
     pub state: XIMPreeditState,
 }
@@ -18348,6 +18415,7 @@ pub type XIMPreeditStateNotifyCallbackStruct = _XIMPreeditStateNotifyCallbackStr
 pub type XIMResetState = libc::c_ulong;
 pub type XIMStringConversionFeedback = libc::c_ulong;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct _XIMStringConversionText {
     pub length: libc::c_ushort,
     pub feedback: *mut XIMStringConversionFeedback,
@@ -18356,10 +18424,11 @@ pub struct _XIMStringConversionText {
 }
 #[repr(C)]
 #[repr(align(8))]
-pub struct _XIMStringConversionText__bindgen_ty_1 {
-    pub mbs: __BindgenUnionField<*mut libc::c_char>,
-    pub wcs: __BindgenUnionField<*mut wchar_t>,
-    pub bindgen_union_field: u64,
+#[derive(Copy, Clone)]
+pub union _XIMStringConversionText__bindgen_ty_1 {
+    pub mbs: *mut libc::c_char,
+    pub wcs: *mut wchar_t,
+    _bindgen_union_align: u64,
 }
 #[test]
 fn bindgen_test_layout__XIMStringConversionText__bindgen_ty_1() {
@@ -18486,6 +18555,7 @@ pub const XIMCaretDirection_XIMAbsolutePosition: XIMCaretDirection = 10;
 pub const XIMCaretDirection_XIMDontChange: XIMCaretDirection = 11;
 pub type XIMCaretDirection = u32;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct _XIMStringConversionCallbackStruct {
     pub position: XIMStringConversionPosition,
     pub direction: XIMCaretDirection,
@@ -18576,6 +18646,7 @@ fn bindgen_test_layout__XIMStringConversionCallbackStruct() {
 }
 pub type XIMStringConversionCallbackStruct = _XIMStringConversionCallbackStruct;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct _XIMPreeditDrawCallbackStruct {
     pub caret: libc::c_int,
     pub chg_first: libc::c_int,
@@ -18651,6 +18722,7 @@ pub const XIMCaretStyle_XIMIsPrimary: XIMCaretStyle = 1;
 pub const XIMCaretStyle_XIMIsSecondary: XIMCaretStyle = 2;
 pub type XIMCaretStyle = u32;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct _XIMPreeditCaretCallbackStruct {
     pub position: libc::c_int,
     pub direction: XIMCaretDirection,
@@ -18712,16 +18784,18 @@ pub const XIMStatusDataType_XIMTextType: XIMStatusDataType = 0;
 pub const XIMStatusDataType_XIMBitmapType: XIMStatusDataType = 1;
 pub type XIMStatusDataType = u32;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct _XIMStatusDrawCallbackStruct {
     pub type_: XIMStatusDataType,
     pub data: _XIMStatusDrawCallbackStruct__bindgen_ty_1,
 }
 #[repr(C)]
 #[repr(align(8))]
-pub struct _XIMStatusDrawCallbackStruct__bindgen_ty_1 {
-    pub text: __BindgenUnionField<*mut XIMText>,
-    pub bitmap: __BindgenUnionField<Pixmap>,
-    pub bindgen_union_field: u64,
+#[derive(Copy, Clone)]
+pub union _XIMStatusDrawCallbackStruct__bindgen_ty_1 {
+    pub text: *mut XIMText,
+    pub bitmap: Pixmap,
+    _bindgen_union_align: u64,
 }
 #[test]
 fn bindgen_test_layout__XIMStatusDrawCallbackStruct__bindgen_ty_1() {
@@ -18807,6 +18881,7 @@ fn bindgen_test_layout__XIMStatusDrawCallbackStruct() {
 }
 pub type XIMStatusDrawCallbackStruct = _XIMStatusDrawCallbackStruct;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct _XIMHotKeyTrigger {
     pub keysym: KeySym,
     pub modifier: libc::c_int,
@@ -18859,6 +18934,7 @@ fn bindgen_test_layout__XIMHotKeyTrigger() {
 }
 pub type XIMHotKeyTrigger = _XIMHotKeyTrigger;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct _XIMHotKeyTriggers {
     pub num_hot_key: libc::c_int,
     pub key: *mut XIMHotKeyTrigger,
@@ -18899,6 +18975,7 @@ fn bindgen_test_layout__XIMHotKeyTriggers() {
 pub type XIMHotKeyTriggers = _XIMHotKeyTriggers;
 pub type XIMHotKeyState = libc::c_ulong;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XIMValuesList {
     pub count_values: libc::c_ushort,
     pub supported_values: *mut *mut libc::c_char,
@@ -21393,6 +21470,7 @@ extern "C" {
     pub fn XFreeEventData(arg1: *mut Display, arg2: *mut XGenericEventCookie);
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XSizeHints {
     pub flags: libc::c_long,
     pub x: libc::c_int,
@@ -21412,6 +21490,7 @@ pub struct XSizeHints {
     pub win_gravity: libc::c_int,
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XSizeHints__bindgen_ty_1 {
     pub x: libc::c_int,
     pub y: libc::c_int,
@@ -21623,6 +21702,7 @@ fn bindgen_test_layout_XSizeHints() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XWMHints {
     pub flags: libc::c_long,
     pub input: libc::c_int,
@@ -21738,6 +21818,7 @@ fn bindgen_test_layout_XWMHints() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XTextProperty {
     pub value: *mut libc::c_uchar,
     pub encoding: Atom,
@@ -21804,6 +21885,7 @@ pub const XICCEncodingStyle_XStdICCTextStyle: XICCEncodingStyle = 3;
 pub const XICCEncodingStyle_XUTF8StringStyle: XICCEncodingStyle = 4;
 pub type XICCEncodingStyle = u32;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XIconSize {
     pub min_width: libc::c_int,
     pub min_height: libc::c_int,
@@ -21886,6 +21968,7 @@ fn bindgen_test_layout_XIconSize() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XClassHint {
     pub res_name: *mut libc::c_char,
     pub res_class: *mut libc::c_char,
@@ -21924,6 +22007,7 @@ fn bindgen_test_layout_XClassHint() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct _XComposeStatus {
     pub compose_ptr: XPointer,
     pub chars_matched: libc::c_int,
@@ -21963,11 +22047,13 @@ fn bindgen_test_layout__XComposeStatus() {
 }
 pub type XComposeStatus = _XComposeStatus;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct _XRegion {
     _unused: [u8; 0],
 }
 pub type Region = *mut _XRegion;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XVisualInfo {
     pub visual: *mut Visual,
     pub visualid: VisualID,
@@ -22094,6 +22180,7 @@ fn bindgen_test_layout_XVisualInfo() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct XStandardColormap {
     pub colormap: Colormap,
     pub red_max: libc::c_ulong,
@@ -25392,6 +25479,7 @@ pub type PFNGLUNIFORMBLOCKBINDINGPROC = ::core::option::Option<
     unsafe extern "C" fn(program: GLuint, uniformBlockIndex: GLuint, uniformBlockBinding: GLuint),
 >;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct __GLsync {
     _unused: [u8; 0],
 }
@@ -25416,6 +25504,7 @@ pub type intmax_t = __intmax_t;
 pub type uintmax_t = __uintmax_t;
 pub type __gwchar_t = libc::c_int;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct imaxdiv_t {
     pub quot: libc::c_long,
     pub rem: libc::c_long,
@@ -27534,10 +27623,12 @@ pub type PFNGLGETVERTEXATTRIBLUI64VARBPROC = ::core::option::Option<
     unsafe extern "C" fn(index: GLuint, pname: GLenum, params: *mut GLuint64EXT),
 >;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct _cl_context {
     _unused: [u8; 0],
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct _cl_event {
     _unused: [u8; 0],
 }
@@ -34959,6 +35050,7 @@ pub type PFNGLEGLIMAGETARGETTEXTURE2DOESPROC =
 pub type PFNGLEGLIMAGETARGETRENDERBUFFERSTORAGEOESPROC =
     ::core::option::Option<unsafe extern "C" fn(target: GLenum, image: GLeglImageOES)>;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct __GLXcontextRec {
     _unused: [u8; 0],
 }
@@ -34966,6 +35058,7 @@ pub type GLXContext = *mut __GLXcontextRec;
 pub type GLXPixmap = XID;
 pub type GLXDrawable = XID;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct __GLXFBConfigRec {
     _unused: [u8; 0],
 }
@@ -35349,6 +35442,7 @@ pub type PFNGLXIMPORTCONTEXTEXTPROC = ::core::option::Option<
 pub type PFNGLXFREECONTEXTEXTPROC =
     ::core::option::Option<unsafe extern "C" fn(dpy: *mut Display, context: GLXContext)>;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct GLXStereoNotifyEventEXT {
     pub type_: libc::c_int,
     pub serial: libc::c_ulong,
@@ -35772,6 +35866,7 @@ pub type PFNGLXGETFBCONFIGFROMVISUALSGIXPROC = ::core::option::Option<
     unsafe extern "C" fn(dpy: *mut Display, vis: *mut XVisualInfo) -> GLXFBConfigSGIX,
 >;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct GLXHyperpipeNetworkSGIX {
     pub pipeName: [libc::c_char; 80usize],
     pub networkId: libc::c_int,
@@ -35814,6 +35909,7 @@ fn bindgen_test_layout_GLXHyperpipeNetworkSGIX() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct GLXHyperpipeConfigSGIX {
     pub pipeName: [libc::c_char; 80usize],
     pub channel: libc::c_int,
@@ -35881,6 +35977,7 @@ fn bindgen_test_layout_GLXHyperpipeConfigSGIX() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct GLXPipeRect {
     pub pipeName: [libc::c_char; 80usize],
     pub srcXOrigin: libc::c_int,
@@ -35996,6 +36093,7 @@ fn bindgen_test_layout_GLXPipeRect() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct GLXPipeRectLimits {
     pub pipeName: [libc::c_char; 80usize],
     pub XOrigin: libc::c_int,
@@ -36335,6 +36433,7 @@ pub type PFNGLXGETSWAPINTERVALMESAPROC =
     ::core::option::Option<unsafe extern "C" fn() -> libc::c_int>;
 #[doc = " Should these go here, or in another header?"]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct GLXPbufferClobberEvent {
     pub event_type: libc::c_int,
     pub draw_type: libc::c_int,
@@ -36506,6 +36605,7 @@ fn bindgen_test_layout_GLXPbufferClobberEvent() {
     );
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct GLXBufferSwapComplete {
     pub type_: libc::c_int,
     pub serial: libc::c_ulong,
@@ -36626,11 +36726,12 @@ fn bindgen_test_layout_GLXBufferSwapComplete() {
 }
 #[repr(C)]
 #[repr(align(8))]
-pub struct __GLXEvent {
-    pub glxpbufferclobber: __BindgenUnionField<GLXPbufferClobberEvent>,
-    pub glxbufferswapcomplete: __BindgenUnionField<GLXBufferSwapComplete>,
-    pub pad: __BindgenUnionField<[libc::c_long; 24usize]>,
-    pub bindgen_union_field: [u64; 24usize],
+#[derive(Copy, Clone)]
+pub union __GLXEvent {
+    pub glxpbufferclobber: GLXPbufferClobberEvent,
+    pub glxbufferswapcomplete: GLXBufferSwapComplete,
+    pub pad: [libc::c_long; 24usize],
+    _bindgen_union_align: [u64; 24usize],
 }
 #[test]
 fn bindgen_test_layout___GLXEvent() {
