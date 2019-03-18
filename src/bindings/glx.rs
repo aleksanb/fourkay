@@ -30,10 +30,9 @@ pub const _STDC_PREDEF_H: u32 = 1;
 pub const __STDC_IEC_559__: u32 = 1;
 pub const __STDC_IEC_559_COMPLEX__: u32 = 1;
 pub const __STDC_ISO_10646__: u32 = 201706;
-pub const __STDC_NO_THREADS__: u32 = 1;
 pub const __GNU_LIBRARY__: u32 = 6;
 pub const __GLIBC__: u32 = 2;
-pub const __GLIBC_MINOR__: u32 = 27;
+pub const __GLIBC_MINOR__: u32 = 28;
 pub const _SYS_CDEFS_H: u32 = 1;
 pub const __glibc_c99_flexarr_available: u32 = 1;
 pub const __WORDSIZE: u32 = 64;
@@ -68,10 +67,8 @@ pub const _SYS_SELECT_H: u32 = 1;
 pub const __FD_ZERO_STOS: &'static [u8; 6usize] = b"stosq\0";
 pub const __sigset_t_defined: u32 = 1;
 pub const __timeval_defined: u32 = 1;
-pub const __timespec_defined: u32 = 1;
+pub const _STRUCT_TIMESPEC: u32 = 1;
 pub const FD_SETSIZE: u32 = 1024;
-pub const _SYS_SYSMACROS_H: u32 = 1;
-pub const _BITS_SYSMACROS_H: u32 = 1;
 pub const _BITS_PTHREADTYPES_COMMON_H: u32 = 1;
 pub const _THREAD_SHARED_TYPES_H: u32 = 1;
 pub const _BITS_PTHREADTYPES_ARCH_H: u32 = 1;
@@ -8514,6 +8511,14 @@ pub type __int32_t = libc::c_int;
 pub type __uint32_t = libc::c_uint;
 pub type __int64_t = libc::c_long;
 pub type __uint64_t = libc::c_ulong;
+pub type __int_least8_t = __int8_t;
+pub type __uint_least8_t = __uint8_t;
+pub type __int_least16_t = __int16_t;
+pub type __uint_least16_t = __uint16_t;
+pub type __int_least32_t = __int32_t;
+pub type __uint_least32_t = __uint32_t;
+pub type __int_least64_t = __int64_t;
+pub type __uint_least64_t = __uint64_t;
 pub type __quad_t = libc::c_long;
 pub type __u_quad_t = libc::c_ulong;
 pub type __intmax_t = libc::c_long;
@@ -8771,15 +8776,6 @@ extern "C" {
         __timeout: *const timespec,
         __sigmask: *const __sigset_t,
     ) -> libc::c_int;
-}
-extern "C" {
-    pub fn gnu_dev_major(__dev: __dev_t) -> libc::c_uint;
-}
-extern "C" {
-    pub fn gnu_dev_minor(__dev: __dev_t) -> libc::c_uint;
-}
-extern "C" {
-    pub fn gnu_dev_makedev(__major: libc::c_uint, __minor: libc::c_uint) -> __dev_t;
 }
 pub type blksize_t = __blksize_t;
 pub type blkcnt_t = __blkcnt_t;
@@ -25484,14 +25480,14 @@ pub struct __GLsync {
     _unused: [u8; 0],
 }
 pub type GLsync = *mut __GLsync;
-pub type int_least8_t = libc::c_schar;
-pub type int_least16_t = libc::c_short;
-pub type int_least32_t = libc::c_int;
-pub type int_least64_t = libc::c_long;
-pub type uint_least8_t = libc::c_uchar;
-pub type uint_least16_t = libc::c_ushort;
-pub type uint_least32_t = libc::c_uint;
-pub type uint_least64_t = libc::c_ulong;
+pub type int_least8_t = __int_least8_t;
+pub type int_least16_t = __int_least16_t;
+pub type int_least32_t = __int_least32_t;
+pub type int_least64_t = __int_least64_t;
+pub type uint_least8_t = __uint_least8_t;
+pub type uint_least16_t = __uint_least16_t;
+pub type uint_least32_t = __uint_least32_t;
+pub type uint_least64_t = __uint_least64_t;
 pub type int_fast8_t = libc::c_schar;
 pub type int_fast16_t = libc::c_long;
 pub type int_fast32_t = libc::c_long;
