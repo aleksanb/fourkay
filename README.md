@@ -6,3 +6,7 @@ https://github.com/google/elfling
 https://github.com/servo/webrender/blob/master/examples/common/boilerplate.rs
 https://github.com/Beluki/4kGL/blob/master/Source/4kGL.cpp
 https://jamesmunns.com/blog/tinyrocket/
+
+➜  fourkay git:(master) ✗ xprop -id 60817410 -f _NET_WM_STATE 32a -set _NET_WM_STATE _NET_WM_STATE_FULLSCREEN
+➜  fourkay git:(master) ✗ xprop _NET_WM_STATE                                                                
+

@@ -172,21 +172,35 @@ fn main() -> Result<isize, ()> {
         set_window_attributes.colormap = color_map;
         set_window_attributes.event_mask =
             Xlib_constants::ExposureMask | Xlib_constants::KeyPressMask;
+        //| Xlib_constants::SubstructureRedirectMask
+        //| Xlib_constants::SubstructureNotifyMask;
         set_window_attributes.background_pixel = Xlib::XWhitePixel(display, (*visual_info).screen);
 
-        let window: Xlib::Window = Xlib::XCreateWindow(
+        /*let window = Xlib::XCreateWindow(
             display,
             root_window,
             0,
             0,
-            get_window_attributes.width as libc::c_uint,
-            get_window_attributes.height as libc::c_uint,
+            get_window_attributes.width as libc::c_uint / 2,
+            get_window_attributes.height as libc::c_uint / 2,
             0,
             (*visual_info).depth,
             Xlib::InputOutput as libc::c_uint,
-            visual_info as *mut Xlib::Visual,
+            (*visual_info).visual as *mut Xlib::Visual,
             Xlib_constants::CWColormap | Xlib_constants::CWEventMask | Xlib_constants::CWBackPixel,
             &mut set_window_attributes,
+        );*/
+
+        let window = Xlib::XCreateSimpleWindow(
+            display,
+            root_window,
+            0,
+            0,
+            get_window_attributes.width as libc::c_uint / 2,
+            get_window_attributes.height as libc::c_uint / 2,
+            0,
+            0,
+            0,
         );
         println!("Window: %lu\n\0", window);
 
@@ -194,26 +208,15 @@ fn main() -> Result<isize, ()> {
         let title = "fourkay\0";
         Xlib::XStoreName(display, window, title.as_ptr() as *mut _);
 
-        let gl_context = glx::glXCreateContext(
-            glx_display,
-            visual_info,
-            ptr::null_mut(),
-            gl::GL_TRUE as i32,
-        );
-        println!("GL Context: %p\n\0", gl_context as *const libc::c_char);
-        glx::glXMakeCurrent(glx_display, window, gl_context);
-
-        gl::glEnable(gl::GL_DEPTH_TEST);
-        gl_wrapper::load_extensions();
-
-        let gl_version = gl_wrapper::glGetString(gl::GL_VERSION);
-        println!("Version: %s\n\0", gl_version as *const libc::c_char);
-
         // // Hook close requests.
         let wm_protocols_atom = intern_atom!(display, WM_PROTOCOLS);
         let wm_delete_window_atom = intern_atom!(display, WM_DELETE_WINDOW);
-        let wm_state_atom = intern_atom!(display, _NET_WM_STATE);
-        let wm_state_fullscreen_atom = intern_atom!(display, _NET_WM_STATE_FULLSCREEN);
+        let _net_wm_state_atom = intern_atom!(display, _NET_WM_STATE);
+        // Clean up the naming scheme here
+        let _net_wm_action_fullscreen_atom = intern_atom!(display, _NET_WM_ACTION_FULLSCREEN);
+        let _net_wm_allowed_atom = intern_atom!(display, _NET_WM_ALLOWED_ACTIONS);
+        let _net_wm_allowed_fullscreen_atom = intern_atom!(display, _NET_WM_ACTION_FULLSCREEN);
+        let wm_a_atom = intern_atom!(display, a);
 
         let mut protocols = [wm_delete_window_atom];
         Xlib::XSetWMProtocols(
@@ -227,13 +230,34 @@ fn main() -> Result<isize, ()> {
         let _NET_WM_STATE_ADD = 1; /* add/set property */
         let _NET_WM_STATE_TOGGLE = 2; /* toggle property  */
 
-        let mut fullscreen_event = Xlib::XEvent {
+        Xlib::XChangeProperty(
+            display,
+            window,
+            _net_wm_allowed_atom,
+            wm_a_atom,
+            32,
+            Xlib::PropModeReplace as libc::c_int,
+            &_net_wm_allowed_fullscreen_atom,
+            1,
+        );
+        Xlib::XChangeProperty(
+            display,
+            window,
+            _net_wm_state_atom,
+            wm_a_atom,
+            32,
+            Xlib::PropModeReplace as libc::c_int,
+            _net_wm_state_fullscreen_atom,
+            1,
+        );
+
+        /*let mut fullscreen_event = Xlib::XEvent {
             xclient: Xlib::XClientMessageEvent {
                 type_: Xlib::ClientMessage as libc::c_int,
                 serial: 0,
                 send_event: 0,
-                display,
-                window: root_window,
+                display: display,
+                window: window,
                 message_type: wm_state_atom as libc::c_ulong,
                 format: 32,
                 data: Xlib::XClientMessageEvent__bindgen_ty_1 {
@@ -250,14 +274,34 @@ fn main() -> Result<isize, ()> {
 
         let res = Xlib::XSendEvent(
             display,
-            root_window,
+            window,
             Xlib::False as libc::c_int,
             (Xlib::SubstructureRedirectMask | Xlib::SubstructureNotifyMask) as libc::c_long,
-            &mut fullscreen_event as *mut Xlib::XEvent,
+            &mut fullscreen_event,
         );
-        println!("res: %d\n\0", res);
+        match res as libc::c_uint {
+            Xlib::BadValue => {println!("bad value :(\n\0")},
+            Xlib::BadWindow => {println!("bad window :(\n\0")},
+            _ => {println!("Ok sendevent\n\0")},
+        }*/
+
         let res = Xlib::XFlush(display);
         println!("res: %d\n\0", res);
+
+        let gl_context = glx::glXCreateContext(
+            glx_display,
+            visual_info,
+            ptr::null_mut(),
+            gl::GL_TRUE as i32,
+        );
+        println!("GL Context: %p\n\0", gl_context as *const libc::c_char);
+        glx::glXMakeCurrent(glx_display, window, gl_context);
+
+        gl::glEnable(gl::GL_DEPTH_TEST);
+        gl_wrapper::load_extensions();
+
+        let gl_version = gl_wrapper::glGetString(gl::GL_VERSION);
+        println!("Version: %s\n\0", gl_version as *const libc::c_char);
 
         main_loop(display, window, wm_protocols_atom, wm_delete_window_atom)?;
 
@@ -342,6 +386,7 @@ fn main_loop(
                                 return Ok(());
                             }
                         }
+                        println!("Received event type of %d\n\0", xclient.message_type);
                     }
                     Xlib_constants::KeyPress => {
                         println!("Keyboard was pressed\n\0");
