@@ -2,7 +2,7 @@
 
 #![allow(warnings)]
 
-#[link(name="GL")]
+#[link(name = "GL")]
 extern "C" {}
 
 pub const GL_VERSION_1_1: u32 = 1;
@@ -786,8 +786,8 @@ pub const GL_TEXTURE31_ARB: u32 = 34015;
 pub const GL_ACTIVE_TEXTURE_ARB: u32 = 34016;
 pub const GL_CLIENT_ACTIVE_TEXTURE_ARB: u32 = 34017;
 pub const GL_MAX_TEXTURE_UNITS_ARB: u32 = 34018;
-pub const __glext_h_: u32 = 1;
-pub const GL_GLEXT_VERSION: u32 = 20171010;
+pub const __gl_glext_h_: u32 = 1;
+pub const GL_GLEXT_VERSION: u32 = 20180725;
 pub const GL_VERSION_1_4: u32 = 1;
 pub const GL_BLEND_DST_RGB: u32 = 32968;
 pub const GL_BLEND_SRC_RGB: u32 = 32969;
@@ -829,6 +829,92 @@ pub const GL_TEXTURE_FILTER_CONTROL: u32 = 34048;
 pub const GL_DEPTH_TEXTURE_MODE: u32 = 34891;
 pub const GL_COMPARE_R_TO_TEXTURE: u32 = 34894;
 pub const GL_VERSION_1_5: u32 = 1;
+pub const _STDINT_H: u32 = 1;
+pub const _FEATURES_H: u32 = 1;
+pub const _DEFAULT_SOURCE: u32 = 1;
+pub const __USE_ISOC11: u32 = 1;
+pub const __USE_ISOC99: u32 = 1;
+pub const __USE_ISOC95: u32 = 1;
+pub const __USE_POSIX_IMPLICITLY: u32 = 1;
+pub const _POSIX_SOURCE: u32 = 1;
+pub const _POSIX_C_SOURCE: u32 = 200809;
+pub const __USE_POSIX: u32 = 1;
+pub const __USE_POSIX2: u32 = 1;
+pub const __USE_POSIX199309: u32 = 1;
+pub const __USE_POSIX199506: u32 = 1;
+pub const __USE_XOPEN2K: u32 = 1;
+pub const __USE_XOPEN2K8: u32 = 1;
+pub const _ATFILE_SOURCE: u32 = 1;
+pub const __USE_MISC: u32 = 1;
+pub const __USE_ATFILE: u32 = 1;
+pub const __USE_FORTIFY_LEVEL: u32 = 0;
+pub const __GLIBC_USE_DEPRECATED_GETS: u32 = 0;
+pub const _STDC_PREDEF_H: u32 = 1;
+pub const __STDC_IEC_559__: u32 = 1;
+pub const __STDC_IEC_559_COMPLEX__: u32 = 1;
+pub const __STDC_ISO_10646__: u32 = 201706;
+pub const __GNU_LIBRARY__: u32 = 6;
+pub const __GLIBC__: u32 = 2;
+pub const __GLIBC_MINOR__: u32 = 28;
+pub const _SYS_CDEFS_H: u32 = 1;
+pub const __glibc_c99_flexarr_available: u32 = 1;
+pub const __WORDSIZE: u32 = 64;
+pub const __WORDSIZE_TIME64_COMPAT32: u32 = 1;
+pub const __SYSCALL_WORDSIZE: u32 = 64;
+pub const __HAVE_GENERIC_SELECTION: u32 = 1;
+pub const __GLIBC_USE_LIB_EXT2: u32 = 0;
+pub const __GLIBC_USE_IEC_60559_BFP_EXT: u32 = 0;
+pub const __GLIBC_USE_IEC_60559_FUNCS_EXT: u32 = 0;
+pub const __GLIBC_USE_IEC_60559_TYPES_EXT: u32 = 0;
+pub const _BITS_TYPES_H: u32 = 1;
+pub const _BITS_TYPESIZES_H: u32 = 1;
+pub const __OFF_T_MATCHES_OFF64_T: u32 = 1;
+pub const __INO_T_MATCHES_INO64_T: u32 = 1;
+pub const __RLIM_T_MATCHES_RLIM64_T: u32 = 1;
+pub const __FD_SETSIZE: u32 = 1024;
+pub const _BITS_WCHAR_H: u32 = 1;
+pub const _BITS_STDINT_INTN_H: u32 = 1;
+pub const _BITS_STDINT_UINTN_H: u32 = 1;
+pub const INT8_MIN: i32 = -128;
+pub const INT16_MIN: i32 = -32768;
+pub const INT32_MIN: i32 = -2147483648;
+pub const INT8_MAX: u32 = 127;
+pub const INT16_MAX: u32 = 32767;
+pub const INT32_MAX: u32 = 2147483647;
+pub const UINT8_MAX: u32 = 255;
+pub const UINT16_MAX: u32 = 65535;
+pub const UINT32_MAX: u32 = 4294967295;
+pub const INT_LEAST8_MIN: i32 = -128;
+pub const INT_LEAST16_MIN: i32 = -32768;
+pub const INT_LEAST32_MIN: i32 = -2147483648;
+pub const INT_LEAST8_MAX: u32 = 127;
+pub const INT_LEAST16_MAX: u32 = 32767;
+pub const INT_LEAST32_MAX: u32 = 2147483647;
+pub const UINT_LEAST8_MAX: u32 = 255;
+pub const UINT_LEAST16_MAX: u32 = 65535;
+pub const UINT_LEAST32_MAX: u32 = 4294967295;
+pub const INT_FAST8_MIN: i32 = -128;
+pub const INT_FAST16_MIN: i64 = -9223372036854775808;
+pub const INT_FAST32_MIN: i64 = -9223372036854775808;
+pub const INT_FAST8_MAX: u32 = 127;
+pub const INT_FAST16_MAX: u64 = 9223372036854775807;
+pub const INT_FAST32_MAX: u64 = 9223372036854775807;
+pub const UINT_FAST8_MAX: u32 = 255;
+pub const UINT_FAST16_MAX: i32 = -1;
+pub const UINT_FAST32_MAX: i32 = -1;
+pub const INTPTR_MIN: i64 = -9223372036854775808;
+pub const INTPTR_MAX: u64 = 9223372036854775807;
+pub const UINTPTR_MAX: i32 = -1;
+pub const PTRDIFF_MIN: i64 = -9223372036854775808;
+pub const PTRDIFF_MAX: u64 = 9223372036854775807;
+pub const SIG_ATOMIC_MIN: i32 = -2147483648;
+pub const SIG_ATOMIC_MAX: u32 = 2147483647;
+pub const SIZE_MAX: i32 = -1;
+pub const WINT_MIN: u32 = 0;
+pub const WINT_MAX: u32 = 4294967295;
+pub const KHRONOS_SUPPORT_INT64: u32 = 1;
+pub const KHRONOS_SUPPORT_FLOAT: u32 = 1;
+pub const KHRONOS_MAX_ENUM: u32 = 2147483647;
 pub const GL_BUFFER_SIZE: u32 = 34660;
 pub const GL_BUFFER_USAGE: u32 = 34661;
 pub const GL_QUERY_COUNTER_BITS: u32 = 34916;
@@ -1290,89 +1376,6 @@ pub const GL_UNIFORM_BLOCK_REFERENCED_BY_FRAGMENT_SHADER: u32 = 35398;
 pub const GL_INVALID_INDEX: u32 = 4294967295;
 pub const GL_VERSION_3_2: u32 = 1;
 pub const _INTTYPES_H: u32 = 1;
-pub const _FEATURES_H: u32 = 1;
-pub const _DEFAULT_SOURCE: u32 = 1;
-pub const __USE_ISOC11: u32 = 1;
-pub const __USE_ISOC99: u32 = 1;
-pub const __USE_ISOC95: u32 = 1;
-pub const __USE_POSIX_IMPLICITLY: u32 = 1;
-pub const _POSIX_SOURCE: u32 = 1;
-pub const _POSIX_C_SOURCE: u32 = 200809;
-pub const __USE_POSIX: u32 = 1;
-pub const __USE_POSIX2: u32 = 1;
-pub const __USE_POSIX199309: u32 = 1;
-pub const __USE_POSIX199506: u32 = 1;
-pub const __USE_XOPEN2K: u32 = 1;
-pub const __USE_XOPEN2K8: u32 = 1;
-pub const _ATFILE_SOURCE: u32 = 1;
-pub const __USE_MISC: u32 = 1;
-pub const __USE_ATFILE: u32 = 1;
-pub const __USE_FORTIFY_LEVEL: u32 = 0;
-pub const __GLIBC_USE_DEPRECATED_GETS: u32 = 0;
-pub const _STDC_PREDEF_H: u32 = 1;
-pub const __STDC_IEC_559__: u32 = 1;
-pub const __STDC_IEC_559_COMPLEX__: u32 = 1;
-pub const __STDC_ISO_10646__: u32 = 201706;
-pub const __GNU_LIBRARY__: u32 = 6;
-pub const __GLIBC__: u32 = 2;
-pub const __GLIBC_MINOR__: u32 = 28;
-pub const _SYS_CDEFS_H: u32 = 1;
-pub const __glibc_c99_flexarr_available: u32 = 1;
-pub const __WORDSIZE: u32 = 64;
-pub const __WORDSIZE_TIME64_COMPAT32: u32 = 1;
-pub const __SYSCALL_WORDSIZE: u32 = 64;
-pub const __HAVE_GENERIC_SELECTION: u32 = 1;
-pub const _STDINT_H: u32 = 1;
-pub const __GLIBC_USE_LIB_EXT2: u32 = 0;
-pub const __GLIBC_USE_IEC_60559_BFP_EXT: u32 = 0;
-pub const __GLIBC_USE_IEC_60559_FUNCS_EXT: u32 = 0;
-pub const __GLIBC_USE_IEC_60559_TYPES_EXT: u32 = 0;
-pub const _BITS_TYPES_H: u32 = 1;
-pub const _BITS_TYPESIZES_H: u32 = 1;
-pub const __OFF_T_MATCHES_OFF64_T: u32 = 1;
-pub const __INO_T_MATCHES_INO64_T: u32 = 1;
-pub const __RLIM_T_MATCHES_RLIM64_T: u32 = 1;
-pub const __FD_SETSIZE: u32 = 1024;
-pub const _BITS_WCHAR_H: u32 = 1;
-pub const _BITS_STDINT_INTN_H: u32 = 1;
-pub const _BITS_STDINT_UINTN_H: u32 = 1;
-pub const INT8_MIN: i32 = -128;
-pub const INT16_MIN: i32 = -32768;
-pub const INT32_MIN: i32 = -2147483648;
-pub const INT8_MAX: u32 = 127;
-pub const INT16_MAX: u32 = 32767;
-pub const INT32_MAX: u32 = 2147483647;
-pub const UINT8_MAX: u32 = 255;
-pub const UINT16_MAX: u32 = 65535;
-pub const UINT32_MAX: u32 = 4294967295;
-pub const INT_LEAST8_MIN: i32 = -128;
-pub const INT_LEAST16_MIN: i32 = -32768;
-pub const INT_LEAST32_MIN: i32 = -2147483648;
-pub const INT_LEAST8_MAX: u32 = 127;
-pub const INT_LEAST16_MAX: u32 = 32767;
-pub const INT_LEAST32_MAX: u32 = 2147483647;
-pub const UINT_LEAST8_MAX: u32 = 255;
-pub const UINT_LEAST16_MAX: u32 = 65535;
-pub const UINT_LEAST32_MAX: u32 = 4294967295;
-pub const INT_FAST8_MIN: i32 = -128;
-pub const INT_FAST16_MIN: i64 = -9223372036854775808;
-pub const INT_FAST32_MIN: i64 = -9223372036854775808;
-pub const INT_FAST8_MAX: u32 = 127;
-pub const INT_FAST16_MAX: u64 = 9223372036854775807;
-pub const INT_FAST32_MAX: u64 = 9223372036854775807;
-pub const UINT_FAST8_MAX: u32 = 255;
-pub const UINT_FAST16_MAX: i32 = -1;
-pub const UINT_FAST32_MAX: i32 = -1;
-pub const INTPTR_MIN: i64 = -9223372036854775808;
-pub const INTPTR_MAX: u64 = 9223372036854775807;
-pub const UINTPTR_MAX: i32 = -1;
-pub const PTRDIFF_MIN: i64 = -9223372036854775808;
-pub const PTRDIFF_MAX: u64 = 9223372036854775807;
-pub const SIG_ATOMIC_MIN: i32 = -2147483648;
-pub const SIG_ATOMIC_MAX: u32 = 2147483647;
-pub const SIZE_MAX: i32 = -1;
-pub const WINT_MIN: u32 = 0;
-pub const WINT_MAX: u32 = 4294967295;
 pub const ____gwchar_t_defined: u32 = 1;
 pub const __PRI64_PREFIX: &'static [u8; 2usize] = b"l\0";
 pub const __PRIPTR_PREFIX: &'static [u8; 2usize] = b"l\0";
@@ -2929,6 +2932,13 @@ pub const GL_AMD_depth_clamp_separate: u32 = 1;
 pub const GL_DEPTH_CLAMP_NEAR_AMD: u32 = 36894;
 pub const GL_DEPTH_CLAMP_FAR_AMD: u32 = 36895;
 pub const GL_AMD_draw_buffers_blend: u32 = 1;
+pub const GL_AMD_framebuffer_multisample_advanced: u32 = 1;
+pub const GL_RENDERBUFFER_STORAGE_SAMPLES_AMD: u32 = 37298;
+pub const GL_MAX_COLOR_FRAMEBUFFER_SAMPLES_AMD: u32 = 37299;
+pub const GL_MAX_COLOR_FRAMEBUFFER_STORAGE_SAMPLES_AMD: u32 = 37300;
+pub const GL_MAX_DEPTH_STENCIL_FRAMEBUFFER_SAMPLES_AMD: u32 = 37301;
+pub const GL_NUM_SUPPORTED_MULTISAMPLE_MODES_AMD: u32 = 37302;
+pub const GL_SUPPORTED_MULTISAMPLE_MODES_AMD: u32 = 37303;
 pub const GL_AMD_framebuffer_sample_positions: u32 = 1;
 pub const GL_SUBSAMPLE_DISTANCE_AMD: u32 = 34879;
 pub const GL_PIXELS_PER_SAMPLE_PATTERN_X_AMD: u32 = 37294;
@@ -3011,6 +3021,7 @@ pub const GL_AMD_seamless_cubemap_per_texture: u32 = 1;
 pub const GL_AMD_shader_atomic_counter_ops: u32 = 1;
 pub const GL_AMD_shader_ballot: u32 = 1;
 pub const GL_AMD_shader_explicit_vertex_parameter: u32 = 1;
+pub const GL_AMD_shader_gpu_shader_half_float_fetch: u32 = 1;
 pub const GL_AMD_shader_image_load_store_lod: u32 = 1;
 pub const GL_AMD_shader_stencil_export: u32 = 1;
 pub const GL_AMD_shader_trinary_minmax: u32 = 1;
@@ -3327,6 +3338,7 @@ pub const GL_422_EXT: u32 = 32972;
 pub const GL_422_REV_EXT: u32 = 32973;
 pub const GL_422_AVERAGE_EXT: u32 = 32974;
 pub const GL_422_REV_AVERAGE_EXT: u32 = 32975;
+pub const GL_EXT_EGL_image_storage: u32 = 1;
 pub const GL_EXT_abgr: u32 = 1;
 pub const GL_ABGR_EXT: u32 = 32768;
 pub const GL_EXT_bgra: u32 = 1;
@@ -3730,6 +3742,8 @@ pub const GL_LAYOUT_DEPTH_STENCIL_READ_ONLY_EXT: u32 = 38288;
 pub const GL_LAYOUT_SHADER_READ_ONLY_EXT: u32 = 38289;
 pub const GL_LAYOUT_TRANSFER_SRC_EXT: u32 = 38290;
 pub const GL_LAYOUT_TRANSFER_DST_EXT: u32 = 38291;
+pub const GL_LAYOUT_DEPTH_READ_ONLY_STENCIL_ATTACHMENT_EXT: u32 = 38192;
+pub const GL_LAYOUT_DEPTH_ATTACHMENT_STENCIL_READ_ONLY_EXT: u32 = 38193;
 pub const GL_EXT_semaphore_fd: u32 = 1;
 pub const GL_EXT_semaphore_win32: u32 = 1;
 pub const GL_HANDLE_TYPE_D3D12_FENCE_EXT: u32 = 38292;
@@ -3740,6 +3754,9 @@ pub const GL_EXT_separate_specular_color: u32 = 1;
 pub const GL_LIGHT_MODEL_COLOR_CONTROL_EXT: u32 = 33272;
 pub const GL_SINGLE_COLOR_EXT: u32 = 33273;
 pub const GL_SEPARATE_SPECULAR_COLOR_EXT: u32 = 33274;
+pub const GL_EXT_shader_framebuffer_fetch: u32 = 1;
+pub const GL_FRAGMENT_SHADER_DISCARDS_SAMPLES_EXT: u32 = 35410;
+pub const GL_EXT_shader_framebuffer_fetch_non_coherent: u32 = 1;
 pub const GL_EXT_shader_image_load_formatted: u32 = 1;
 pub const GL_EXT_shader_image_load_store: u32 = 1;
 pub const GL_MAX_IMAGE_UNITS_EXT: u32 = 36664;
@@ -3939,6 +3956,8 @@ pub const GL_EXT_texture_filter_anisotropic: u32 = 1;
 pub const GL_TEXTURE_MAX_ANISOTROPY_EXT: u32 = 34046;
 pub const GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT: u32 = 34047;
 pub const GL_EXT_texture_filter_minmax: u32 = 1;
+pub const GL_TEXTURE_REDUCTION_MODE_EXT: u32 = 37734;
+pub const GL_WEIGHTED_AVERAGE_EXT: u32 = 37735;
 pub const GL_EXT_texture_integer: u32 = 1;
 pub const GL_RGBA32UI_EXT: u32 = 36208;
 pub const GL_RGB32UI_EXT: u32 = 36209;
@@ -4321,6 +4340,8 @@ pub const GL_BLUE_MAX_CLAMP_INGR: u32 = 34150;
 pub const GL_ALPHA_MAX_CLAMP_INGR: u32 = 34151;
 pub const GL_INGR_interlace_read: u32 = 1;
 pub const GL_INTERLACE_READ_INGR: u32 = 34152;
+pub const GL_INTEL_blackhole_render: u32 = 1;
+pub const GL_BLACKHOLE_RENDER_INTEL: u32 = 33788;
 pub const GL_INTEL_conservative_rasterization: u32 = 1;
 pub const GL_CONSERVATIVE_RASTERIZATION_INTEL: u32 = 33790;
 pub const GL_INTEL_fragment_shader_ordering: u32 = 1;
@@ -4493,10 +4514,13 @@ pub const GL_NV_conservative_raster_dilate: u32 = 1;
 pub const GL_CONSERVATIVE_RASTER_DILATE_NV: u32 = 37753;
 pub const GL_CONSERVATIVE_RASTER_DILATE_RANGE_NV: u32 = 37754;
 pub const GL_CONSERVATIVE_RASTER_DILATE_GRANULARITY_NV: u32 = 37755;
+pub const GL_NV_conservative_raster_pre_snap: u32 = 1;
+pub const GL_CONSERVATIVE_RASTER_MODE_PRE_SNAP_NV: u32 = 38224;
 pub const GL_NV_conservative_raster_pre_snap_triangles: u32 = 1;
 pub const GL_CONSERVATIVE_RASTER_MODE_NV: u32 = 38221;
 pub const GL_CONSERVATIVE_RASTER_MODE_POST_SNAP_NV: u32 = 38222;
 pub const GL_CONSERVATIVE_RASTER_MODE_PRE_SNAP_TRIANGLES_NV: u32 = 38223;
+pub const GL_NV_conservative_raster_underestimation: u32 = 1;
 pub const GL_NV_copy_depth_to_color: u32 = 1;
 pub const GL_DEPTH_STENCIL_TO_RGBA_NV: u32 = 34926;
 pub const GL_DEPTH_STENCIL_TO_BGRA_NV: u32 = 34927;
@@ -7728,54 +7752,135 @@ pub type PFNGLBLENDCOLORPROC = ::core::option::Option<
     unsafe extern "C" fn(red: GLfloat, green: GLfloat, blue: GLfloat, alpha: GLfloat),
 >;
 pub type PFNGLBLENDEQUATIONPROC = ::core::option::Option<unsafe extern "C" fn(mode: GLenum)>;
-pub type wchar_t = libc::c_int;
+pub type __u_char = libc::c_uchar;
+pub type __u_short = libc::c_ushort;
+pub type __u_int = libc::c_uint;
+pub type __u_long = libc::c_ulong;
+pub type __int8_t = libc::c_schar;
+pub type __uint8_t = libc::c_uchar;
+pub type __int16_t = libc::c_short;
+pub type __uint16_t = libc::c_ushort;
+pub type __int32_t = libc::c_int;
+pub type __uint32_t = libc::c_uint;
+pub type __int64_t = libc::c_long;
+pub type __uint64_t = libc::c_ulong;
+pub type __int_least8_t = __int8_t;
+pub type __uint_least8_t = __uint8_t;
+pub type __int_least16_t = __int16_t;
+pub type __uint_least16_t = __uint16_t;
+pub type __int_least32_t = __int32_t;
+pub type __uint_least32_t = __uint32_t;
+pub type __int_least64_t = __int64_t;
+pub type __uint_least64_t = __uint64_t;
+pub type __quad_t = libc::c_long;
+pub type __u_quad_t = libc::c_ulong;
+pub type __intmax_t = libc::c_long;
+pub type __uintmax_t = libc::c_ulong;
+pub type __dev_t = libc::c_ulong;
+pub type __uid_t = libc::c_uint;
+pub type __gid_t = libc::c_uint;
+pub type __ino_t = libc::c_ulong;
+pub type __ino64_t = libc::c_ulong;
+pub type __mode_t = libc::c_uint;
+pub type __nlink_t = libc::c_ulong;
+pub type __off_t = libc::c_long;
+pub type __off64_t = libc::c_long;
+pub type __pid_t = libc::c_int;
 #[repr(C)]
-#[repr(align(16))]
 #[derive(Copy, Clone)]
-pub struct max_align_t {
-    pub __clang_max_align_nonce1: libc::c_longlong,
-    pub __bindgen_padding_0: u64,
-    pub __clang_max_align_nonce2: u128,
+pub struct __fsid_t {
+    pub __val: [libc::c_int; 2usize],
 }
 #[test]
-fn bindgen_test_layout_max_align_t() {
+fn bindgen_test_layout___fsid_t() {
     assert_eq!(
-        ::core::mem::size_of::<max_align_t>(),
-        32usize,
-        concat!("Size of: ", stringify!(max_align_t))
+        ::core::mem::size_of::<__fsid_t>(),
+        8usize,
+        concat!("Size of: ", stringify!(__fsid_t))
     );
     assert_eq!(
-        ::core::mem::align_of::<max_align_t>(),
-        16usize,
-        concat!("Alignment of ", stringify!(max_align_t))
+        ::core::mem::align_of::<__fsid_t>(),
+        4usize,
+        concat!("Alignment of ", stringify!(__fsid_t))
     );
     assert_eq!(
-        unsafe {
-            &(*(::core::ptr::null::<max_align_t>())).__clang_max_align_nonce1 as *const _ as usize
-        },
+        unsafe { &(*(::core::ptr::null::<__fsid_t>())).__val as *const _ as usize },
         0usize,
         concat!(
             "Offset of field: ",
-            stringify!(max_align_t),
+            stringify!(__fsid_t),
             "::",
-            stringify!(__clang_max_align_nonce1)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::core::ptr::null::<max_align_t>())).__clang_max_align_nonce2 as *const _ as usize
-        },
-        16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(max_align_t),
-            "::",
-            stringify!(__clang_max_align_nonce2)
+            stringify!(__val)
         )
     );
 }
-pub type GLsizeiptr = isize;
-pub type GLintptr = isize;
+pub type __clock_t = libc::c_long;
+pub type __rlim_t = libc::c_ulong;
+pub type __rlim64_t = libc::c_ulong;
+pub type __id_t = libc::c_uint;
+pub type __time_t = libc::c_long;
+pub type __useconds_t = libc::c_uint;
+pub type __suseconds_t = libc::c_long;
+pub type __daddr_t = libc::c_int;
+pub type __key_t = libc::c_int;
+pub type __clockid_t = libc::c_int;
+pub type __timer_t = *mut libc::c_void;
+pub type __blksize_t = libc::c_long;
+pub type __blkcnt_t = libc::c_long;
+pub type __blkcnt64_t = libc::c_long;
+pub type __fsblkcnt_t = libc::c_ulong;
+pub type __fsblkcnt64_t = libc::c_ulong;
+pub type __fsfilcnt_t = libc::c_ulong;
+pub type __fsfilcnt64_t = libc::c_ulong;
+pub type __fsword_t = libc::c_long;
+pub type __ssize_t = libc::c_long;
+pub type __syscall_slong_t = libc::c_long;
+pub type __syscall_ulong_t = libc::c_ulong;
+pub type __loff_t = __off64_t;
+pub type __caddr_t = *mut libc::c_char;
+pub type __intptr_t = libc::c_long;
+pub type __socklen_t = libc::c_uint;
+pub type __sig_atomic_t = libc::c_int;
+pub type int_least8_t = __int_least8_t;
+pub type int_least16_t = __int_least16_t;
+pub type int_least32_t = __int_least32_t;
+pub type int_least64_t = __int_least64_t;
+pub type uint_least8_t = __uint_least8_t;
+pub type uint_least16_t = __uint_least16_t;
+pub type uint_least32_t = __uint_least32_t;
+pub type uint_least64_t = __uint_least64_t;
+pub type int_fast8_t = libc::c_schar;
+pub type int_fast16_t = libc::c_long;
+pub type int_fast32_t = libc::c_long;
+pub type int_fast64_t = libc::c_long;
+pub type uint_fast8_t = libc::c_uchar;
+pub type uint_fast16_t = libc::c_ulong;
+pub type uint_fast32_t = libc::c_ulong;
+pub type uint_fast64_t = libc::c_ulong;
+pub type intmax_t = __intmax_t;
+pub type uintmax_t = __uintmax_t;
+pub type khronos_int32_t = i32;
+pub type khronos_uint32_t = u32;
+pub type khronos_int64_t = i64;
+pub type khronos_uint64_t = u64;
+pub type khronos_int8_t = libc::c_schar;
+pub type khronos_uint8_t = libc::c_uchar;
+pub type khronos_int16_t = libc::c_short;
+pub type khronos_uint16_t = libc::c_ushort;
+pub type khronos_intptr_t = libc::c_long;
+pub type khronos_uintptr_t = libc::c_ulong;
+pub type khronos_ssize_t = libc::c_long;
+pub type khronos_usize_t = libc::c_ulong;
+pub type khronos_float_t = f32;
+pub type khronos_utime_nanoseconds_t = khronos_uint64_t;
+pub type khronos_stime_nanoseconds_t = khronos_int64_t;
+pub const khronos_boolean_enum_t_KHRONOS_FALSE: khronos_boolean_enum_t = 0;
+pub const khronos_boolean_enum_t_KHRONOS_TRUE: khronos_boolean_enum_t = 1;
+pub const khronos_boolean_enum_t_KHRONOS_BOOLEAN_ENUM_FORCE_SIZE: khronos_boolean_enum_t =
+    2147483647;
+pub type khronos_boolean_enum_t = u32;
+pub type GLsizeiptr = khronos_ssize_t;
+pub type GLintptr = khronos_intptr_t;
 pub type PFNGLGENQUERIESPROC =
     ::core::option::Option<unsafe extern "C" fn(n: GLsizei, ids: *mut GLuint)>;
 pub type PFNGLDELETEQUERIESPROC =
@@ -8516,113 +8621,6 @@ pub struct __GLsync {
     _unused: [u8; 0],
 }
 pub type GLsync = *mut __GLsync;
-pub type __u_char = libc::c_uchar;
-pub type __u_short = libc::c_ushort;
-pub type __u_int = libc::c_uint;
-pub type __u_long = libc::c_ulong;
-pub type __int8_t = libc::c_schar;
-pub type __uint8_t = libc::c_uchar;
-pub type __int16_t = libc::c_short;
-pub type __uint16_t = libc::c_ushort;
-pub type __int32_t = libc::c_int;
-pub type __uint32_t = libc::c_uint;
-pub type __int64_t = libc::c_long;
-pub type __uint64_t = libc::c_ulong;
-pub type __int_least8_t = __int8_t;
-pub type __uint_least8_t = __uint8_t;
-pub type __int_least16_t = __int16_t;
-pub type __uint_least16_t = __uint16_t;
-pub type __int_least32_t = __int32_t;
-pub type __uint_least32_t = __uint32_t;
-pub type __int_least64_t = __int64_t;
-pub type __uint_least64_t = __uint64_t;
-pub type __quad_t = libc::c_long;
-pub type __u_quad_t = libc::c_ulong;
-pub type __intmax_t = libc::c_long;
-pub type __uintmax_t = libc::c_ulong;
-pub type __dev_t = libc::c_ulong;
-pub type __uid_t = libc::c_uint;
-pub type __gid_t = libc::c_uint;
-pub type __ino_t = libc::c_ulong;
-pub type __ino64_t = libc::c_ulong;
-pub type __mode_t = libc::c_uint;
-pub type __nlink_t = libc::c_ulong;
-pub type __off_t = libc::c_long;
-pub type __off64_t = libc::c_long;
-pub type __pid_t = libc::c_int;
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct __fsid_t {
-    pub __val: [libc::c_int; 2usize],
-}
-#[test]
-fn bindgen_test_layout___fsid_t() {
-    assert_eq!(
-        ::core::mem::size_of::<__fsid_t>(),
-        8usize,
-        concat!("Size of: ", stringify!(__fsid_t))
-    );
-    assert_eq!(
-        ::core::mem::align_of::<__fsid_t>(),
-        4usize,
-        concat!("Alignment of ", stringify!(__fsid_t))
-    );
-    assert_eq!(
-        unsafe { &(*(::core::ptr::null::<__fsid_t>())).__val as *const _ as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(__fsid_t),
-            "::",
-            stringify!(__val)
-        )
-    );
-}
-pub type __clock_t = libc::c_long;
-pub type __rlim_t = libc::c_ulong;
-pub type __rlim64_t = libc::c_ulong;
-pub type __id_t = libc::c_uint;
-pub type __time_t = libc::c_long;
-pub type __useconds_t = libc::c_uint;
-pub type __suseconds_t = libc::c_long;
-pub type __daddr_t = libc::c_int;
-pub type __key_t = libc::c_int;
-pub type __clockid_t = libc::c_int;
-pub type __timer_t = *mut libc::c_void;
-pub type __blksize_t = libc::c_long;
-pub type __blkcnt_t = libc::c_long;
-pub type __blkcnt64_t = libc::c_long;
-pub type __fsblkcnt_t = libc::c_ulong;
-pub type __fsblkcnt64_t = libc::c_ulong;
-pub type __fsfilcnt_t = libc::c_ulong;
-pub type __fsfilcnt64_t = libc::c_ulong;
-pub type __fsword_t = libc::c_long;
-pub type __ssize_t = libc::c_long;
-pub type __syscall_slong_t = libc::c_long;
-pub type __syscall_ulong_t = libc::c_ulong;
-pub type __loff_t = __off64_t;
-pub type __caddr_t = *mut libc::c_char;
-pub type __intptr_t = libc::c_long;
-pub type __socklen_t = libc::c_uint;
-pub type __sig_atomic_t = libc::c_int;
-pub type int_least8_t = __int_least8_t;
-pub type int_least16_t = __int_least16_t;
-pub type int_least32_t = __int_least32_t;
-pub type int_least64_t = __int_least64_t;
-pub type uint_least8_t = __uint_least8_t;
-pub type uint_least16_t = __uint_least16_t;
-pub type uint_least32_t = __uint_least32_t;
-pub type uint_least64_t = __uint_least64_t;
-pub type int_fast8_t = libc::c_schar;
-pub type int_fast16_t = libc::c_long;
-pub type int_fast32_t = libc::c_long;
-pub type int_fast64_t = libc::c_long;
-pub type uint_fast8_t = libc::c_uchar;
-pub type uint_fast16_t = libc::c_ulong;
-pub type uint_fast32_t = libc::c_ulong;
-pub type uint_fast64_t = libc::c_ulong;
-pub type intmax_t = __intmax_t;
-pub type uintmax_t = __uintmax_t;
 pub type __gwchar_t = libc::c_int;
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -11560,6 +11558,52 @@ pub type PFNGLWEIGHTPOINTERARBPROC = ::core::option::Option<
     unsafe extern "C" fn(size: GLint, type_: GLenum, stride: GLsizei, pointer: *const libc::c_void),
 >;
 pub type PFNGLVERTEXBLENDARBPROC = ::core::option::Option<unsafe extern "C" fn(count: GLint)>;
+pub type wchar_t = libc::c_int;
+#[repr(C)]
+#[repr(align(16))]
+#[derive(Copy, Clone)]
+pub struct max_align_t {
+    pub __clang_max_align_nonce1: libc::c_longlong,
+    pub __bindgen_padding_0: u64,
+    pub __clang_max_align_nonce2: u128,
+}
+#[test]
+fn bindgen_test_layout_max_align_t() {
+    assert_eq!(
+        ::core::mem::size_of::<max_align_t>(),
+        32usize,
+        concat!("Size of: ", stringify!(max_align_t))
+    );
+    assert_eq!(
+        ::core::mem::align_of::<max_align_t>(),
+        16usize,
+        concat!("Alignment of ", stringify!(max_align_t))
+    );
+    assert_eq!(
+        unsafe {
+            &(*(::core::ptr::null::<max_align_t>())).__clang_max_align_nonce1 as *const _ as usize
+        },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(max_align_t),
+            "::",
+            stringify!(__clang_max_align_nonce1)
+        )
+    );
+    assert_eq!(
+        unsafe {
+            &(*(::core::ptr::null::<max_align_t>())).__clang_max_align_nonce2 as *const _ as usize
+        },
+        16usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(max_align_t),
+            "::",
+            stringify!(__clang_max_align_nonce2)
+        )
+    );
+}
 pub type GLsizeiptrARB = isize;
 pub type GLintptrARB = isize;
 pub type PFNGLBINDBUFFERARBPROC =
@@ -12119,6 +12163,26 @@ pub type PFNGLBLENDEQUATIONINDEXEDAMDPROC =
     ::core::option::Option<unsafe extern "C" fn(buf: GLuint, mode: GLenum)>;
 pub type PFNGLBLENDEQUATIONSEPARATEINDEXEDAMDPROC =
     ::core::option::Option<unsafe extern "C" fn(buf: GLuint, modeRGB: GLenum, modeAlpha: GLenum)>;
+pub type PFNGLRENDERBUFFERSTORAGEMULTISAMPLEADVANCEDAMDPROC = ::core::option::Option<
+    unsafe extern "C" fn(
+        target: GLenum,
+        samples: GLsizei,
+        storageSamples: GLsizei,
+        internalformat: GLenum,
+        width: GLsizei,
+        height: GLsizei,
+    ),
+>;
+pub type PFNGLNAMEDRENDERBUFFERSTORAGEMULTISAMPLEADVANCEDAMDPROC = ::core::option::Option<
+    unsafe extern "C" fn(
+        renderbuffer: GLuint,
+        samples: GLsizei,
+        storageSamples: GLsizei,
+        internalformat: GLenum,
+        width: GLsizei,
+        height: GLsizei,
+    ),
+>;
 pub type PFNGLFRAMEBUFFERSAMPLEPOSITIONSFVAMDPROC = ::core::option::Option<
     unsafe extern "C" fn(
         target: GLenum,
@@ -12869,6 +12933,13 @@ pub type PFNGLVERTEXBLENDENVIATIPROC =
     ::core::option::Option<unsafe extern "C" fn(pname: GLenum, param: GLint)>;
 pub type PFNGLVERTEXBLENDENVFATIPROC =
     ::core::option::Option<unsafe extern "C" fn(pname: GLenum, param: GLfloat)>;
+pub type GLeglImageOES = *mut libc::c_void;
+pub type PFNGLEGLIMAGETARGETTEXSTORAGEEXTPROC = ::core::option::Option<
+    unsafe extern "C" fn(target: GLenum, image: GLeglImageOES, attrib_list: *const GLint),
+>;
+pub type PFNGLEGLIMAGETARGETTEXTURESTORAGEEXTPROC = ::core::option::Option<
+    unsafe extern "C" fn(texture: GLuint, image: GLeglImageOES, attrib_list: *const GLint),
+>;
 pub type PFNGLUNIFORMBUFFEREXTPROC =
     ::core::option::Option<unsafe extern "C" fn(program: GLuint, location: GLint, buffer: GLuint)>;
 pub type PFNGLGETUNIFORMBUFFERSIZEEXTPROC =
@@ -15218,6 +15289,7 @@ pub type PFNGLUSESHADERPROGRAMEXTPROC =
 pub type PFNGLACTIVEPROGRAMEXTPROC = ::core::option::Option<unsafe extern "C" fn(program: GLuint)>;
 pub type PFNGLCREATESHADERPROGRAMEXTPROC =
     ::core::option::Option<unsafe extern "C" fn(type_: GLenum, string: *const GLchar) -> GLuint>;
+pub type PFNGLFRAMEBUFFERFETCHBARRIEREXTPROC = ::core::option::Option<unsafe extern "C" fn()>;
 pub type PFNGLBINDIMAGETEXTUREEXTPROC = ::core::option::Option<
     unsafe extern "C" fn(
         index: GLuint,
@@ -15751,7 +15823,7 @@ pub type PFNGLGETPERFQUERYDATAINTELPROC = ::core::option::Option<
         queryHandle: GLuint,
         flags: GLuint,
         dataSize: GLsizei,
-        data: *mut GLvoid,
+        data: *mut libc::c_void,
         bytesWritten: *mut GLuint,
     ),
 >;
@@ -16206,7 +16278,7 @@ pub type PFNGLMULTICASTBUFFERSUBDATANVPROC = ::core::option::Option<
         buffer: GLuint,
         offset: GLintptr,
         size: GLsizeiptr,
-        data: *const GLvoid,
+        data: *const libc::c_void,
     ),
 >;
 pub type PFNGLMULTICASTCOPYBUFFERSUBDATANVPROC = ::core::option::Option<
@@ -18165,7 +18237,6 @@ extern "C" {
 }
 pub type PFNGLBLENDEQUATIONSEPARATEATIPROC =
     ::core::option::Option<unsafe extern "C" fn(modeRGB: GLenum, modeA: GLenum)>;
-pub type GLeglImageOES = *mut libc::c_void;
 pub type PFNGLEGLIMAGETARGETTEXTURE2DOESPROC =
     ::core::option::Option<unsafe extern "C" fn(target: GLenum, image: GLeglImageOES)>;
 pub type PFNGLEGLIMAGETARGETRENDERBUFFERSTORAGEOESPROC =

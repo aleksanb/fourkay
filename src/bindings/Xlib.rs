@@ -2,7 +2,7 @@
 
 #![allow(warnings)]
 
-#[link(name="X11")]
+#[link(name = "X11")]
 extern "C" {}
 
 pub const XlibSpecificationRelease: u32 = 6;
@@ -1144,7 +1144,6 @@ pub struct __pthread_cond_s {
     pub __g_signals: [libc::c_uint; 2usize],
 }
 #[repr(C)]
-#[repr(align(8))]
 #[derive(Copy, Clone)]
 pub union __pthread_cond_s__bindgen_ty_1 {
     pub __wseq: libc::c_ulonglong,
@@ -1241,7 +1240,6 @@ fn bindgen_test_layout___pthread_cond_s__bindgen_ty_1() {
     );
 }
 #[repr(C)]
-#[repr(align(8))]
 #[derive(Copy, Clone)]
 pub union __pthread_cond_s__bindgen_ty_2 {
     pub __g1_start: libc::c_ulonglong,
@@ -1405,7 +1403,6 @@ fn bindgen_test_layout___pthread_cond_s() {
 }
 pub type pthread_t = libc::c_ulong;
 #[repr(C)]
-#[repr(align(4))]
 #[derive(Copy, Clone)]
 pub union pthread_mutexattr_t {
     pub __size: [libc::c_char; 4usize],
@@ -1446,7 +1443,6 @@ fn bindgen_test_layout_pthread_mutexattr_t() {
     );
 }
 #[repr(C)]
-#[repr(align(4))]
 #[derive(Copy, Clone)]
 pub union pthread_condattr_t {
     pub __size: [libc::c_char; 4usize],
@@ -1489,7 +1485,6 @@ fn bindgen_test_layout_pthread_condattr_t() {
 pub type pthread_key_t = libc::c_uint;
 pub type pthread_once_t = libc::c_int;
 #[repr(C)]
-#[repr(align(8))]
 #[derive(Copy, Clone)]
 pub union pthread_attr_t {
     pub __size: [libc::c_char; 56usize],
@@ -1530,7 +1525,6 @@ fn bindgen_test_layout_pthread_attr_t() {
     );
 }
 #[repr(C)]
-#[repr(align(8))]
 #[derive(Copy, Clone)]
 pub union pthread_mutex_t {
     pub __data: __pthread_mutex_s,
@@ -1582,7 +1576,6 @@ fn bindgen_test_layout_pthread_mutex_t() {
     );
 }
 #[repr(C)]
-#[repr(align(8))]
 #[derive(Copy, Clone)]
 pub union pthread_cond_t {
     pub __data: __pthread_cond_s,
@@ -1634,7 +1627,6 @@ fn bindgen_test_layout_pthread_cond_t() {
     );
 }
 #[repr(C)]
-#[repr(align(8))]
 #[derive(Copy, Clone)]
 pub union pthread_rwlock_t {
     pub __data: __pthread_rwlock_arch_t,
@@ -1686,7 +1678,6 @@ fn bindgen_test_layout_pthread_rwlock_t() {
     );
 }
 #[repr(C)]
-#[repr(align(8))]
 #[derive(Copy, Clone)]
 pub union pthread_rwlockattr_t {
     pub __size: [libc::c_char; 8usize],
@@ -1728,7 +1719,6 @@ fn bindgen_test_layout_pthread_rwlockattr_t() {
 }
 pub type pthread_spinlock_t = libc::c_int;
 #[repr(C)]
-#[repr(align(8))]
 #[derive(Copy, Clone)]
 pub union pthread_barrier_t {
     pub __size: [libc::c_char; 32usize],
@@ -1769,7 +1759,6 @@ fn bindgen_test_layout_pthread_barrier_t() {
     );
 }
 #[repr(C)]
-#[repr(align(4))]
 #[derive(Copy, Clone)]
 pub union pthread_barrierattr_t {
     pub __size: [libc::c_char; 4usize],
@@ -8271,7 +8260,6 @@ pub struct XClientMessageEvent {
     pub data: XClientMessageEvent__bindgen_ty_1,
 }
 #[repr(C)]
-#[repr(align(8))]
 #[derive(Copy, Clone)]
 pub union XClientMessageEvent__bindgen_ty_1 {
     pub b: [libc::c_char; 20usize],
@@ -8887,7 +8875,6 @@ fn bindgen_test_layout_XGenericEventCookie() {
     );
 }
 #[repr(C)]
-#[repr(align(8))]
 #[derive(Copy, Clone)]
 pub union _XEvent {
     pub type_: libc::c_int,
@@ -9768,7 +9755,6 @@ fn bindgen_test_layout_XTextItem16() {
     );
 }
 #[repr(C)]
-#[repr(align(8))]
 #[derive(Copy, Clone)]
 pub union XEDataObject {
     pub display: *mut Display,
@@ -10311,7 +10297,6 @@ pub struct _XIMText {
     pub string: _XIMText__bindgen_ty_1,
 }
 #[repr(C)]
-#[repr(align(8))]
 #[derive(Copy, Clone)]
 pub union _XIMText__bindgen_ty_1 {
     pub multi_byte: *mut libc::c_char,
@@ -10459,7 +10444,6 @@ pub struct _XIMStringConversionText {
     pub string: _XIMStringConversionText__bindgen_ty_1,
 }
 #[repr(C)]
-#[repr(align(8))]
 #[derive(Copy, Clone)]
 pub union _XIMStringConversionText__bindgen_ty_1 {
     pub mbs: *mut libc::c_char,
@@ -10826,7 +10810,6 @@ pub struct _XIMStatusDrawCallbackStruct {
     pub data: _XIMStatusDrawCallbackStruct__bindgen_ty_1,
 }
 #[repr(C)]
-#[repr(align(8))]
 #[derive(Copy, Clone)]
 pub union _XIMStatusDrawCallbackStruct__bindgen_ty_1 {
     pub text: *mut XIMText,
@@ -11175,20 +11158,13 @@ extern "C" {
     pub fn XSynchronize(
         arg1: *mut Display,
         arg2: libc::c_int,
-    ) -> ::core::option::Option<
-        unsafe extern "C" fn(arg1: *mut Display, arg2: libc::c_int) -> libc::c_int,
-    >;
+    ) -> ::core::option::Option<unsafe extern "C" fn(arg1: *mut Display) -> libc::c_int>;
 }
 extern "C" {
     pub fn XSetAfterFunction(
         arg1: *mut Display,
         arg2: ::core::option::Option<unsafe extern "C" fn(arg1: *mut Display) -> libc::c_int>,
-    ) -> ::core::option::Option<
-        unsafe extern "C" fn(
-            arg1: *mut Display,
-            arg2: ::core::option::Option<unsafe extern "C" fn(arg1: *mut Display) -> libc::c_int>,
-        ) -> libc::c_int,
-    >;
+    ) -> ::core::option::Option<unsafe extern "C" fn(arg1: *mut Display) -> libc::c_int>;
 }
 extern "C" {
     pub fn XInternAtom(arg1: *mut Display, arg2: *const libc::c_char, arg3: libc::c_int) -> Atom;
