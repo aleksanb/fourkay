@@ -30,11 +30,7 @@ extern "C" fn eh_personality() {}
 
 #[start]
 fn start(_argc: isize, _argv: *const *const u8) -> isize {
-    if let Err(()) = main() {
-        println!("Program failed with error code %d\n\0", 1u32);
-        return 1;
-    }
-
+    main().unwrap();
     0
 }
 
@@ -75,12 +71,6 @@ fn main() -> Result<isize, ()> {
         let default_screen = Xlib::XDefaultScreen(display);
         println!("default_screen: %d\n\0", default_screen);
 
-        //let visual = Xlib::XDefaultVisual(display, default_screen);
-        //if visual.is_null() {
-        //    println!("Couldn't acquire visual :(\n\0");
-        //    return Err(());
-        //}
-        //println!("visual: %p\n\0", visual as *const libc::c_char);
         let mut attribute_list: &mut [libc::c_int] = &mut [
             glx::GLX_RGBA as libc::c_int,
             glx::GLX_RED_SIZE as libc::c_int,
@@ -96,61 +86,6 @@ fn main() -> Result<isize, ()> {
             glx::glXChooseVisual(glx_display, default_screen, attribute_list.as_mut_ptr());
         println!("Visual info %p\n\0", visual_info as *const libc::c_char);
 
-        //let visual = glx::glXChooseVisual(glx_display, 0, visual_attributes.as_ptr() as *mut _);
-
-        //let mut visual_attributes: &[libc::c_int] = &[
-        //    glx::GLX_X_RENDERABLE as libc::c_int,
-        //    glx::True as libc::c_int,
-        //    glx::GLX_DRAWABLE_TYPE as libc::c_int,
-        //    glx::GLX_WINDOW_BIT as libc::c_int,
-        //    glx::GLX_RENDER_TYPE as libc::c_int,
-        //    glx::GLX_RGBA_BIT as libc::c_int,
-        //    glx::GLX_X_VISUAL_TYPE as libc::c_int,
-        //    glx::GLX_TRUE_COLOR as libc::c_int,
-        //    glx::GLX_RED_SIZE as libc::c_int,
-        //    8,
-        //    glx::GLX_GREEN_SIZE as libc::c_int,
-        //    8,
-        //    glx::GLX_BLUE_SIZE as libc::c_int,
-        //    8,
-        //    glx::GLX_ALPHA_SIZE as libc::c_int,
-        //    8,
-        //    glx::GLX_DEPTH_SIZE as libc::c_int,
-        //    24,
-        //    glx::GLX_STENCIL_SIZE as libc::c_int,
-        //    8,
-        //    glx::GLX_DOUBLEBUFFER as libc::c_int,
-        //    glx::True as libc::c_int,
-        //    glx::GLX_NONE as libc::c_int,
-        //];
-
-        //let visual_attributes: &[libc::c_int] = &[
-        //    //glx::GLX_DEPTH_SIZE as libc::c_int,
-        //    //0,
-        //    //glx::GLX_DOUBLEBUFFER as libc::c_int,
-        //    glx::GLX_NONE as libc::c_int,
-        //];
-
-        //let mut fb_count: libc::c_int = mem::uninitialized();
-        //let fb_config = glx::glXChooseFBConfig(
-        //    glx_display,
-        //    default_screen,
-        //    null(),
-        //    //visual_attributes.as_ptr(),
-        //    &mut fb_count,
-        //);
-
-        //println!("fb_count: %d\n\0", fb_count);
-        //println!("fb_config: %p\n\0", fb_config as *const libc::c_char);
-        /*
-        // if fb_config.is_null() {
-        //     println!("Failed to retrieve a framebuffer config\n\0");
-        //     return 1;
-        // }
-
-        // let visual = glx::glXGetVisualFromFBConfig(glx_display, *fb_config);;
-        // println!("%d\n\0", visual as * const libc::c_char);
-        */
         let root_window = Xlib::XRootWindow(display, (*visual_info).screen);
         println!("Root window: %p\n\0", root_window as *const libc::c_char);
 
@@ -162,43 +97,15 @@ fn main() -> Result<isize, ()> {
         );
         println!("Color map: %lu\n\0", color_map);
 
-        let mut window_attributes: Xlib::XWindowAttributes = mem::uninitialized();
-        Xlib::XGetWindowAttributes(display, root_window, &mut window_attributes);
-        println!(
-            "Width %d, height %d\n\0",
-            window_attributes.width, window_attributes.height
-        );
-
-        let mut set_window_attributes: Xlib::XSetWindowAttributes = mem::uninitialized();
-        set_window_attributes.colormap = color_map;
-        set_window_attributes.event_mask =
-            Xlib_constants::ExposureMask | Xlib_constants::KeyPressMask;
-        //| Xlib_constants::SubstructureRedirectMask
-        //| Xlib_constants::SubstructureNotifyMask;
-        set_window_attributes.background_pixel = Xlib::XWhitePixel(display, (*visual_info).screen);
-
-        /*let window = Xlib::XCreateWindow(
-            display,
-            root_window,
-            0,
-            0,
-            window_attributes.width as libc::c_uint / 2,
-            window_attributes.height as libc::c_uint / 2,
-            0,
-            (*visual_info).depth,
-            Xlib::InputOutput as libc::c_uint,
-            (*visual_info).visual as *mut Xlib::Visual,
-            Xlib_constants::CWColormap | Xlib_constants::CWEventMask | Xlib_constants::CWBackPixel,
-            &mut set_window_attributes,
-        );*/
-
         let window = Xlib::XCreateSimpleWindow(
             display,
             root_window,
             0,
             0,
-            window_attributes.width as libc::c_uint,
-            window_attributes.height as libc::c_uint,
+            //window_attributes.width as libc::c_uint,
+            //window_attributes.height as libc::c_uint,
+            1920,
+            1080,
             0,
             0,
             0,
@@ -206,8 +113,6 @@ fn main() -> Result<isize, ()> {
         println!("Window: %lu\n\0", window);
 
         Xlib::XMapWindow(display, window);
-        let title = "fourkay\0";
-        Xlib::XStoreName(display, window, title.as_ptr() as *mut _);
 
         // // Hook close requests.
         let wm_protocols_atom = intern_atom!(display, WM_PROTOCOLS);
@@ -252,43 +157,6 @@ fn main() -> Result<isize, ()> {
             &_net_wm_state_fullscreen_atom as *const libc::c_ulong as *const libc::c_uchar,
             1,
         );
-
-        /*let mut fullscreen_event = Xlib::XEvent {
-            xclient: Xlib::XClientMessageEvent {
-                type_: Xlib::ClientMessage as libc::c_int,
-                serial: 0,
-                send_event: 0,
-                display: display,
-                window: window,
-                message_type: wm_state_atom as libc::c_ulong,
-                format: 32,
-                data: Xlib::XClientMessageEvent__bindgen_ty_1 {
-                    l: [
-                        _NET_WM_STATE_ADD,
-                        wm_state_fullscreen_atom as libc::c_long,
-                        0,
-                        0,
-                        0,
-                    ],
-                },
-            },
-        };
-
-        let res = Xlib::XSendEvent(
-            display,
-            window,
-            Xlib::False as libc::c_int,
-            (Xlib::SubstructureRedirectMask | Xlib::SubstructureNotifyMask) as libc::c_long,
-            &mut fullscreen_event,
-        );
-        match res as libc::c_uint {
-            Xlib::BadValue => {println!("bad value :(\n\0")},
-            Xlib::BadWindow => {println!("bad window :(\n\0")},
-            _ => {println!("Ok sendevent\n\0")},
-        }*/
-
-        let res = Xlib::XFlush(display);
-        println!("res: %d\n\0", res);
 
         let gl_context = glx::glXCreateContext(
             glx_display,

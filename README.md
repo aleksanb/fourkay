@@ -10,3 +10,6 @@ https://jamesmunns.com/blog/tinyrocket/
 ➜  fourkay git:(master) ✗ xprop -id 60817410 -f _NET_WM_STATE 32a -set _NET_WM_STATE _NET_WM_STATE_FULLSCREEN
 ➜  fourkay git:(master) ✗ xprop _NET_WM_STATE                                                                
 
+
+use gtk window bindings
+nover objc sstrip
