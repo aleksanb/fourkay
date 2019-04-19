@@ -5,8 +5,8 @@ uniform vec2 resolution;
 #define R3 1.732051
 
 vec2 rotate(vec2 uv, float radians) {
-  return vec2(uv.x * cos(radians) - uv.y * sin(radians),
-              uv.x * sin(radians) + uv.y * cos(radians));
+    return vec2(uv.x * cos(radians) - uv.y * sin(radians),
+                uv.x * sin(radians) + uv.y * cos(radians));
 }
 
 vec2 kaleidoscope(vec2 uv, vec2 point, float add) {
@@ -28,19 +28,20 @@ vec3 color(float p, float offs) {
 }
 
 
-float dot_pattern(vec2 uv, float time) {
+float dot_pattern(vec2 uv, float time, float crazynator) {
+    uv = kaleidoscope(uv, vec2(0.3 + 0.2 * sin(time), 0.4), 2. + sin(time/3.));
     
     // Time varying pixel color
     float col = 0.;
     
     
-    for (float i = 0.; i < 16.; i++) {
-        for (float j = 0.; j < 16.; j++) {
+    for (float i = 0.; i < 10.; i++) {
+        for (float j = 0.; j < 10.; j++) {
             
 
             vec2 gv = vec2(i + mod(j, 2.) / 2. - 8., (j - 8.) * 0.707) / 16.;
             
-            float size = sin(pow(i-8.,2.)+pow(j-8.,2.)+time+25.*dist(uv-gv)) * 0.05;
+            float size = sin(pow(i-8.,2.)+pow(j-8.,2.)+time+25.*dist(uv-gv)) * 0.05 * crazynator;
             if (dist(uv - gv) < size) {
                 col += 1.;
             } else {
@@ -55,11 +56,6 @@ float dot_pattern(vec2 uv, float time) {
     return col;
 }
 
-float dot_pattern_k(vec2 uv, float time) {
-  uv = kaleidoscope(uv, vec2(0.3 + 0.2 * sin(time), 0.4), 2. + sin(time/3.));
-    return dot_pattern(uv, time);
-}
-    
 
 float N(float p) {
     return fract(sin(p*123.34)*345.456);
@@ -74,28 +70,34 @@ vec4 mainImage(vec2 fragCoord, vec2 iResolution)
 
     float duv= dot(uv, uv);
     
-    float t = iTime / 5.;
+    float t = iTime / 3.;
     
     float intensity2 = 0.;
 
+    float crazynator = max(1., min(8., (iTime - 12.)/2.));
+    
     for(float i=0.; i<1.; i+=1./3.) {
         float t = fract(i+t);
-        float z = mix(5., .1, t);
+        float z = mix(7., .1, t);
         float fade = smoothstep(0., .3, t)*smoothstep(1., .7, t);
 
-        intensity2 += fade*t*dot_pattern(uv*z/1.3, iTime);
+        intensity2 += fade*t*dot_pattern(uv*z/1.8, iTime + i, crazynator);
     }
     
     
     vec3 colorized = color(iTime, dist(uv));
-    float intensity1 = dot_pattern(uv, iTime);
+    float intensity1 = dot_pattern(uv, iTime, 1.);
     
-    float time_stepper = sin(iTime) * 5. - 2.;
-    float output_intensity = smoothstep(0., 1., time_stepper/2.) * intensity1 +
-                   smoothstep(1., 0., time_stepper/2.) * intensity2;
+    float time_stepper = iTime - 6.;
+    float output_intensity = smoothstep(1., 0., time_stepper) * intensity1 +
+                             smoothstep(0., 1., time_stepper) * intensity2;
     
+    float colonator = max(0., min(1., (iTime - 18.)/2.));
+    vec3 fadeout_colorized = colorized * (1. - colonator) + vec3(133./255., 243./255., 159./255.) * colonator;
+    vec3 output_ready_for_fade = output_intensity*colorized;
+    vec3 faded_output = output_ready_for_fade * (1. - colonator) + vec3(133./255., 243./255., 159./255.) * colonator;
     // Output to screen
-    fragColor = vec4(output_intensity*colorized ,1.0);
+    fragColor = vec4(faded_output ,1.0);
 
     return fragColor;
 }
