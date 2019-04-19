@@ -12,6 +12,8 @@ static FRAGMENT_SHADER: &'static str =
 
 pub struct Raymarcher {
     program: gl::GLuint,
+    width: i32,
+    height: i32,
 }
 
 impl Program for Raymarcher {
@@ -56,7 +58,16 @@ impl Program for Raymarcher {
             core::ptr::null(),
         );
 
-        Ok(Self { program })
+        Ok(Self {
+            program,
+            width: 0,
+            height: 0,
+        })
+    }
+
+    fn resize(&mut self, width: i32, height: i32) {
+        self.width = width;
+        self.height = height;
     }
 
     fn update(&mut self, _frame: u64) {}
@@ -75,6 +86,14 @@ impl Program for Raymarcher {
         let uniform_forward =
             gl_wrapper::glGetUniformLocation(self.program, "forward\0".as_ptr() as *const _);
         gl_wrapper::glUniform3f(uniform_forward, 0.0, 0.0, -1.0);
+
+        let uniform_resolution =
+            gl_wrapper::glGetUniformLocation(self.program, "resolution\0".as_ptr() as *const _);
+        gl_wrapper::glUniform2f(
+            uniform_resolution,
+            self.width as gl::GLfloat,
+            self.height as gl::GLfloat,
+        );
 
         unsafe {
             gl::glClearColor(0.0, 0.0, 0.0, 1.0);

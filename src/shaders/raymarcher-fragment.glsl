@@ -1,6 +1,7 @@
 uniform float frame;
 uniform vec3 eye;
 uniform vec3 forward;
+uniform vec2 resolution;
 
 float sphere(vec3 position, vec3 sphere, float radius)
 {
@@ -60,7 +61,7 @@ vec3 calculateNormal(vec3 pos) {
 
 void main()
 {
-  vec2 position = gl_FragCoord.xy / vec2(1024.0, 768.0);
+  vec2 position = gl_FragCoord.xy / resolution;
   float x = (position.x * 16.0) - 8.0 + sin(frame / 30.0);
   float y = (position.y * 9.0) - 4.5 - cos(frame / 40.0);
   float fov = 9.0;

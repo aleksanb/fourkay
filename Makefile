@@ -1,8 +1,7 @@
 .PHONY: optimize
-optimize:
-	xargo build --target x86_64-unknown-linux-gnu --release --no-default-features
+optimize: build
 	wc --bytes target/x86_64-unknown-linux-gnu/release/fourkay
-	# strip --strip-all -R .note* -R .comment target/x86_64-unknown-linux-gnu/release/fourkay
+	strip --strip-all -R .note* -R .comment target/x86_64-unknown-linux-gnu/release/fourkay
 	wc --bytes target/x86_64-unknown-linux-gnu/release/fourkay
 	~/upx-3.95-amd64_linux/upx -9 target/x86_64-unknown-linux-gnu/release/fourkay
 	wc --bytes target/x86_64-unknown-linux-gnu/release/fourkay
@@ -13,8 +12,8 @@ run-optimize: optimize
 
 .PHONY: build
 build:
-	xargo build --target x86_64-unknown-linux-gnu --release
+	xargo build --target x86_64-unknown-linux-gnu --release  # --no-default-features
 
 .PHONY: run
 run:
-	xargo run --target x86_64-unknown-linux-gnu --release
+	xargo run --target x86_64-unknown-linux-gnu --release  # --no-default-features

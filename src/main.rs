@@ -14,9 +14,9 @@ mod bindings;
 mod programs;
 
 use self::bindings::{gl, glx, Xlib, Xlib_constants};
+use crate::bindings::Xlib::Atom;
 use crate::shitty::xlib_events_ready;
 use core::ptr::{null, null_mut};
-use crate::bindings::Xlib::Atom;
 
 #[cfg(not(test))]
 #[panic_handler]
@@ -162,11 +162,11 @@ fn main() -> Result<isize, ()> {
         );
         println!("Color map: %lu\n\0", color_map);
 
-        let mut get_window_attributes: Xlib::XWindowAttributes = mem::uninitialized();
-        Xlib::XGetWindowAttributes(display, root_window, &mut get_window_attributes);
+        let mut window_attributes: Xlib::XWindowAttributes = mem::uninitialized();
+        Xlib::XGetWindowAttributes(display, root_window, &mut window_attributes);
         println!(
             "Width %d, height %d\n\0",
-            get_window_attributes.width, get_window_attributes.height
+            window_attributes.width, window_attributes.height
         );
 
         let mut set_window_attributes: Xlib::XSetWindowAttributes = mem::uninitialized();
@@ -182,8 +182,8 @@ fn main() -> Result<isize, ()> {
             root_window,
             0,
             0,
-            get_window_attributes.width as libc::c_uint / 2,
-            get_window_attributes.height as libc::c_uint / 2,
+            window_attributes.width as libc::c_uint / 2,
+            window_attributes.height as libc::c_uint / 2,
             0,
             (*visual_info).depth,
             Xlib::InputOutput as libc::c_uint,
@@ -197,8 +197,8 @@ fn main() -> Result<isize, ()> {
             root_window,
             0,
             0,
-            get_window_attributes.width as libc::c_uint / 2,
-            get_window_attributes.height as libc::c_uint / 2,
+            window_attributes.width as libc::c_uint,
+            window_attributes.height as libc::c_uint,
             0,
             0,
             0,
@@ -330,8 +330,16 @@ fn main_loop(
     wm_protocols_atom: Xlib::Atom,
     wm_delete_window_atom: Xlib::Atom,
 ) -> Result<(), ()> {
-    //let mut quad_program = programs::Quad::new()?;
-    let mut raymarcher = programs::Quad::new()?;
+    let mut raymarcher = programs::Raymarcher::new()?;
+    unsafe {
+        let mut window_attributes: Xlib::XWindowAttributes = mem::uninitialized();
+        Xlib::XGetWindowAttributes(display, window, &mut window_attributes);
+        raymarcher.resize(window_attributes.width, window_attributes.height);
+        println!(
+            "Width inner window %d, height %d\n\0",
+            window_attributes.width, window_attributes.height
+        );
+    }
 
     const FRAMES_PER_SECOND: u64 = 60;
     const FRAME_LENGTH_MILLISECONDS: u64 = 1_000 / FRAMES_PER_SECOND;

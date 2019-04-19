@@ -11,6 +11,8 @@ static FRAGMENT_SHADER: &'static str = concat!(include_str!("../shaders/quad-fra
 
 pub struct Quad {
     program: gl::GLuint,
+    width: i32,
+    height: i32,
 }
 
 impl Program for Quad {
@@ -55,7 +57,16 @@ impl Program for Quad {
             core::ptr::null(),
         );
 
-        Ok(Self { program })
+        Ok(Self {
+            program,
+            width: 0,
+            height: 0,
+        })
+    }
+
+    fn resize(&mut self, width: i32, height: i32) {
+        self.width = width;
+        self.height = height;
     }
 
     fn update(&mut self, _frame: u64) {}
