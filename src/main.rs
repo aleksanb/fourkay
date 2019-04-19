@@ -16,6 +16,7 @@ mod programs;
 use self::bindings::{gl, glx, Xlib, Xlib_constants};
 use crate::shitty::xlib_events_ready;
 use core::ptr::{null, null_mut};
+use crate::bindings::Xlib::Atom;
 
 #[cfg(not(test))]
 #[panic_handler]
@@ -211,12 +212,13 @@ fn main() -> Result<isize, ()> {
         // // Hook close requests.
         let wm_protocols_atom = intern_atom!(display, WM_PROTOCOLS);
         let wm_delete_window_atom = intern_atom!(display, WM_DELETE_WINDOW);
+
         let _net_wm_state_atom = intern_atom!(display, _NET_WM_STATE);
-        // Clean up the naming scheme here
-        let _net_wm_action_fullscreen_atom = intern_atom!(display, _NET_WM_ACTION_FULLSCREEN);
+        let _net_wm_state_fullscreen_atom = intern_atom!(display, _NET_WM_STATE_FULLSCREEN);
+
         let _net_wm_allowed_atom = intern_atom!(display, _NET_WM_ALLOWED_ACTIONS);
-        let _net_wm_allowed_fullscreen_atom = intern_atom!(display, _NET_WM_ACTION_FULLSCREEN);
-        let wm_a_atom = intern_atom!(display, a);
+        let _net_wm_action_fullscreen_atom = intern_atom!(display, _NET_WM_ACTION_FULLSCREEN);
+        let wm_a_atom = intern_atom!(display, ATOM);
 
         let mut protocols = [wm_delete_window_atom];
         Xlib::XSetWMProtocols(
@@ -237,7 +239,7 @@ fn main() -> Result<isize, ()> {
             wm_a_atom,
             32,
             Xlib::PropModeReplace as libc::c_int,
-            &_net_wm_allowed_fullscreen_atom,
+            &_net_wm_action_fullscreen_atom as *const libc::c_ulong as *const libc::c_uchar,
             1,
         );
         Xlib::XChangeProperty(
@@ -247,7 +249,7 @@ fn main() -> Result<isize, ()> {
             wm_a_atom,
             32,
             Xlib::PropModeReplace as libc::c_int,
-            _net_wm_state_fullscreen_atom,
+            &_net_wm_state_fullscreen_atom as *const libc::c_ulong as *const libc::c_uchar,
             1,
         );
 
