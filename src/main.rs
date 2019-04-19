@@ -330,7 +330,7 @@ fn main_loop(
     wm_protocols_atom: Xlib::Atom,
     wm_delete_window_atom: Xlib::Atom,
 ) -> Result<(), ()> {
-    let mut raymarcher = programs::Raymarcher::new()?;
+    let mut raymarcher = programs::Quad::new()?;
     unsafe {
         let mut window_attributes: Xlib::XWindowAttributes = mem::uninitialized();
         Xlib::XGetWindowAttributes(display, window, &mut window_attributes);

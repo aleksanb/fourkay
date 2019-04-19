@@ -7,7 +7,10 @@ use core::panic::PanicInfo;
 use core::ptr;
 
 static VERTEX_SHADER: &'static str = concat!(include_str!("../shaders/quad-vertex.glsl"), "\0");
-static FRAGMENT_SHADER: &'static str = concat!(include_str!("../shaders/quad-fragment.glsl"), "\0");
+static FRAGMENT_SHADER: &'static str = concat!(include_str!("../shaders/quad-fragment.glsl"),
+"\0");
+static BALLS_FRAGMENT_SHADER: &'static str = concat!(include_str!("../shaders/balls.glsl"),
+"\0");
 
 pub struct Quad {
     program: gl::GLuint,
@@ -18,7 +21,7 @@ pub struct Quad {
 impl Program for Quad {
     fn new() -> Result<Self, ()> {
         let fragment_shader =
-            gl_utils::create_shader(&gl_utils::ShaderType::FragmentShader(FRAGMENT_SHADER))?;
+            gl_utils::create_shader(&gl_utils::ShaderType::FragmentShader(BALLS_FRAGMENT_SHADER))?;
         let vertex_shader =
             gl_utils::create_shader(&gl_utils::ShaderType::VertexShader(VERTEX_SHADER))?;
         let program = gl_utils::create_program(fragment_shader, vertex_shader)?;
@@ -74,9 +77,17 @@ impl Program for Quad {
     fn render(&self, frame: u64) {
         gl_wrapper::glUseProgram(self.program);
 
-        let location =
+        let uniform_frame =
             gl_wrapper::glGetUniformLocation(self.program, "frame\0".as_ptr() as *const _);
-        gl_wrapper::glUniform1f(location, frame as f32);
+        gl_wrapper::glUniform1f(uniform_frame, frame as f32);
+
+        let uniform_resolution =
+            gl_wrapper::glGetUniformLocation(self.program, "resolution\0".as_ptr() as *const _);
+        gl_wrapper::glUniform2f(
+            uniform_resolution,
+            self.width as gl::GLfloat,
+            self.height as gl::GLfloat,
+        );
 
         unsafe {
             gl::glClearColor(0.0, 0.0, 0.0, 1.0);

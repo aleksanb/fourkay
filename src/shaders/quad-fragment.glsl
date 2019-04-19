@@ -1,6 +1,8 @@
 #version 130
 uniform float frame;
+uniform vec2 resolution;
 
 void main() {
-    gl_FragColor = vec4(gl_FragCoord.x / 1024.0, cos(frame / 10.0) / 2.0 + 0.5, gl_FragCoord.y / 768.0, 1.0);
+    vec2 position = gl_FragCoord.xy / resolution;
+    gl_FragColor = vec4(position.x, cos(frame / 10.0) / 2.0 + 0.5, position.y, 1.0);
 }

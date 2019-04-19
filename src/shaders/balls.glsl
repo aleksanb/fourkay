@@ -1,13 +1,6 @@
 uniform float frame;
 uniform vec2 resolution;
 
-void main()
-{
-  vec2 position = gl_FragCoord.xy / resolution;
-
-  gl_FragColor = mainImage(gl_FragCoord.xy, resolution);
-}
-
 float dist(vec2 uv) {
     return pow(pow(uv.x, 2.) + pow(uv.y, 2.),0.5);
 }
@@ -43,7 +36,14 @@ vec4 mainImage(vec2 fragCoord, vec2 iResolution)
     col = mod(col, 2.) - .95;
     
     // Output to screen
-    fragColor = vec4(vec3(col) ,1.0);
+    vec4 fragColor = vec4(vec3(col) ,1.0);
 
     return fragColor;
+}
+
+void main()
+{
+  vec2 position = gl_FragCoord.xy / resolution;
+
+  gl_FragColor = mainImage(gl_FragCoord.xy, resolution);
 }

@@ -77,7 +77,7 @@ impl Program for Raymarcher {
 
         let uniform_frame =
             gl_wrapper::glGetUniformLocation(self.program, "frame\0".as_ptr() as *const _);
-        gl_wrapper::glUniform1f(uniform_frame, frame as f32 / 4.0);
+        gl_wrapper::glUniform1f(uniform_frame, frame as f32);
 
         let uniform_eye =
             gl_wrapper::glGetUniformLocation(self.program, "eye\0".as_ptr() as *const _);
