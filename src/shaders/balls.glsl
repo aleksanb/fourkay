@@ -36,10 +36,11 @@ float dot_pattern(vec2 uv, float time) {
     
     for (float i = 0.; i < 16.; i++) {
         for (float j = 0.; j < 16.; j++) {
+            
 
             vec2 gv = vec2(i + mod(j, 2.) / 2. - 8., (j - 8.) * 0.707) / 16.;
             
-            float size = sin(pow(i-8.,2.)+pow(j-8.,2.)+iTime+25.*dist(uv-gv)) * 0.05;
+            float size = sin(pow(i-8.,2.)+pow(j-8.,2.)+time+25.*dist(uv-gv)) * 0.05;
             if (dist(uv - gv) < size) {
                 col += 1.;
             } else {
@@ -55,9 +56,10 @@ float dot_pattern(vec2 uv, float time) {
 }
 
 float dot_pattern_k(vec2 uv, float time) {
-  uv = kaleidoscope(uv, vec2(0.3 + 0.2 * sin(iTime), 0.4), 2. + sin(iTime/3.));
+  uv = kaleidoscope(uv, vec2(0.3 + 0.2 * sin(time), 0.4), 2. + sin(time/3.));
     return dot_pattern(uv, time);
 }
+    
 
 float N(float p) {
     return fract(sin(p*123.34)*345.456);
@@ -81,12 +83,12 @@ vec4 mainImage(vec2 fragCoord, vec2 iResolution)
         float z = mix(5., .1, t);
         float fade = smoothstep(0., .3, t)*smoothstep(1., .7, t);
 
-        intensity2 += fade*t*dot_pattern(uv*z/1.3, 0.);
+        intensity2 += fade*t*dot_pattern(uv*z/1.3, iTime);
     }
     
     
     vec3 colorized = color(iTime, dist(uv));
-    float intensity1 = dot_pattern(uv, t);
+    float intensity1 = dot_pattern(uv, iTime);
     
     float time_stepper = sin(iTime) * 5. - 2.;
     float output_intensity = smoothstep(0., 1., time_stepper/2.) * intensity1 +
