@@ -137,26 +137,26 @@ fn main() -> Result<isize, ()> {
         let _NET_WM_STATE_ADD = 1; /* add/set property */
         let _NET_WM_STATE_TOGGLE = 2; /* toggle property  */
 
-        Xlib::XChangeProperty(
-            display,
-            window,
-            _net_wm_allowed_atom,
-            wm_a_atom,
-            32,
-            Xlib::PropModeReplace as libc::c_int,
-            &_net_wm_action_fullscreen_atom as *const libc::c_ulong as *const libc::c_uchar,
-            1,
-        );
-        Xlib::XChangeProperty(
-            display,
-            window,
-            _net_wm_state_atom,
-            wm_a_atom,
-            32,
-            Xlib::PropModeReplace as libc::c_int,
-            &_net_wm_state_fullscreen_atom as *const libc::c_ulong as *const libc::c_uchar,
-            1,
-        );
+        //Xlib::XChangeProperty(
+        //    display,
+        //    window,
+        //    _net_wm_allowed_atom,
+        //    wm_a_atom,
+        //    32,
+        //    Xlib::PropModeReplace as libc::c_int,
+        //    &_net_wm_action_fullscreen_atom as *const libc::c_ulong as *const libc::c_uchar,
+        //    1,
+        //);
+        //Xlib::XChangeProperty(
+        //    display,
+        //    window,
+        //    _net_wm_state_atom,
+        //    wm_a_atom,
+        //    32,
+        //    Xlib::PropModeReplace as libc::c_int,
+        //    &_net_wm_state_fullscreen_atom as *const libc::c_ulong as *const libc::c_uchar,
+        //    1,
+        //);
 
         let gl_context = glx::glXCreateContext(
             glx_display,

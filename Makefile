@@ -1,3 +1,8 @@
+.PHONY: shaders
+shaders:
+	ruby ../glsl-minifier/glsl_min.rb src/shaders/balls.glsl > src/shaders/balls.glsl.out
+	ruby ../glsl-minifier/glsl_min.rb src/shaders/quad-vertex.glsl > src/shaders/quad-vertex.glsl.out
+
 .PHONY: optimize-build
 optimize-build:
 	xargo build --target x86_64-unknown-linux-gnu --release --no-default-features
@@ -32,4 +37,4 @@ debug:
 
 .PHONY: debug-run
 debug-run:
-	xargo run --target x86_64-unknown-linux-gnu
+	xargo run --target x86_64-unknown-linux-gnu --release

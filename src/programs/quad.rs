@@ -6,11 +6,8 @@ use core::mem;
 use core::panic::PanicInfo;
 use core::ptr;
 
-static VERTEX_SHADER: &'static str = concat!(include_str!("../shaders/quad-vertex.glsl"), "\0");
-static FRAGMENT_SHADER: &'static str = concat!(include_str!("../shaders/quad-fragment.glsl"),
-"\0");
-static BALLS_FRAGMENT_SHADER: &'static str = concat!(include_str!("../shaders/balls.glsl"),
-"\0");
+static VERTEX_SHADER: &'static str = concat!(include_str!("../shaders/quad-vertex.glsl.out"), "\0");
+static BALLS_FRAGMENT_SHADER: &'static str = concat!(include_str!("../shaders/balls.glsl.out"), "\0");
 
 pub struct Quad {
     program: gl::GLuint,
@@ -78,11 +75,11 @@ impl Program for Quad {
         gl_wrapper::glUseProgram(self.program);
 
         let uniform_frame =
-            gl_wrapper::glGetUniformLocation(self.program, "frame\0".as_ptr() as *const _);
+            gl_wrapper::glGetUniformLocation(self.program, "f\0".as_ptr() as *const _);
         gl_wrapper::glUniform1f(uniform_frame, frame as f32);
 
         let uniform_resolution =
-            gl_wrapper::glGetUniformLocation(self.program, "resolution\0".as_ptr() as *const _);
+            gl_wrapper::glGetUniformLocation(self.program, "r\0".as_ptr() as *const _);
         gl_wrapper::glUniform2f(
             uniform_resolution,
             self.width as gl::GLfloat,

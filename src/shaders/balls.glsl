@@ -1,5 +1,5 @@
-uniform float frame;
-uniform vec2 resolution;
+uniform float f;
+uniform vec2 r;
 
 #define PI 3.14
 #define R3 1.732051
@@ -70,7 +70,7 @@ vec4 mainImage(vec2 fragCoord, vec2 iResolution)
   vec4 fragColor;
     vec2 uv = (fragCoord/iResolution.xy) / vec2(1., 16./9.);
     uv -= vec2(.5, 9./16./2.);
-    float iTime = frame / 60.;
+    float iTime = f / 60.;
 
     float duv= dot(uv, uv);
     
@@ -102,7 +102,7 @@ vec4 mainImage(vec2 fragCoord, vec2 iResolution)
 
 void main()
 {
-  vec2 position = gl_FragCoord.xy / resolution;
+  vec2 position = gl_FragCoord.xy / r;
 
-  gl_FragColor = mainImage(gl_FragCoord.xy, resolution);
+  gl_FragColor = mainImage(gl_FragCoord.xy, r);
 }
