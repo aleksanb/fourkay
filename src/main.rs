@@ -148,19 +148,38 @@ fn main() -> Result<isize, ()> {
         );
         println!("Color map: %lu\n\0", color_map);
 
-        let window = Xlib::XCreateSimpleWindow(
+        let mut set_window_attributes: Xlib::XSetWindowAttributes = mem::uninitialized();
+        set_window_attributes.colormap = color_map;
+        set_window_attributes.event_mask =
+            Xlib_constants::ExposureMask | Xlib_constants::KeyPressMask;
+        set_window_attributes.background_pixel = Xlib::XWhitePixel(display, (*visual_info).screen);
+
+        let window = Xlib::XCreateWindow(
             display,
             root_window,
             0,
             0,
-            //window_attributes.width as libc::c_uint,
-            //window_attributes.height as libc::c_uint,
+            1920,
+            1080,
+            0,
+            (*visual_info).depth,
+            Xlib::InputOutput as libc::c_uint,
+            (*visual_info).visual as *mut Xlib::Visual,
+            Xlib_constants::CWColormap | Xlib_constants::CWEventMask | Xlib_constants::CWBackPixel,
+            &mut set_window_attributes,
+        );
+
+        /*let window = Xlib::XCreateSimpleWindow(
+            display,
+            root_window,
+            0,
+            0,
             1920,
             1080,
             0,
             0,
             0,
-        );
+        );*/
         println!("Window: %lu\n\0", window);
 
         Xlib::XMapWindow(display, window);
@@ -246,7 +265,7 @@ fn main() -> Result<isize, ()> {
 static VERTEX_SHADER: &'static str = concat!(include_str!("shaders/quad-vertex.glsl"), "\0");
 static BALLS_FRAGMENT_SHADER: &'static str = concat!(include_str!("shaders/balls.glsl"), "\0");
 static FLOWERS_FRAGMENT_SHADER: &'static str = concat!(include_str!("shaders/flower.glsl"), "\0");
-static BLOBBY_FRAGMENT_SHADER: &'static str = concat!(include_str!("shaders/blobby.glsl.out"), "\0");
+static BLOBBY_FRAGMENT_SHADER: &'static str = concat!(include_str!("shaders/blobby.glsl"), "\0");
 static SNAKE_FRAGMENT_SHADER: &'static str = concat!(include_str!("shaders/snake.glsl"), "\0");
 
 fn main_loop(
@@ -335,6 +354,7 @@ fn main_loop(
                     }
                     Xlib_constants::KeyPress => {
                         println!("Keyboard was pressed\n\0");
+                        return Ok(());
                     }
                     _ => (),
                 }
