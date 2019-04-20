@@ -13,3 +13,5 @@ https://jamesmunns.com/blog/tinyrocket/
 
 use gtk window bindings
 nover objc sstrip
+
+libgl1-dev:i386

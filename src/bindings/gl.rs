@@ -2,7 +2,7 @@
 
 #![allow(warnings)]
 
-#[link(name = "GL")]
+#[link(name="GL")]
 extern "C" {}
 
 pub const GL_VERSION_1_1: u32 = 1;

@@ -34,6 +34,22 @@ fn start(_argc: isize, _argv: *const *const u8) -> isize {
     0
 }
 
+extern "C" {
+    pub fn __4klang_render(arg1: *const libc::c_char) -> *const libc::c_char;
+//pub fn __4klang_envelope(arg1: *const libc::c_char) -> *const libc::c_float;
+//pub fn __4klang_note_buffer(arg1: *const libc::c_char) -> *const libc::c_int;
+    //pub fn sound_initialize();
+    //pub fn sound_play();
+    //pub fn sound_stop();
+}
+
+
+//extern "C" {
+//    extern void* __4klang_render(void*);
+//    extern float __4klang_envelope_buffer;
+//    extern int   __4klang_note_buffer;
+//}
+
 macro_rules! intern_atom {
     ($display:ident, $atom_name:ident) => {{
         let atom_str = concat!(stringify!($atom_name), "\0");
@@ -51,6 +67,41 @@ macro_rules! intern_atom {
 }
 
 fn main() -> Result<isize, ()> {
+    const SAMPLE_RATE: u32 = 44100;
+    const BPM: u32 = 120;
+    const MAX_INSTRUMENTS: u32 = 4;
+    const MAX_PATTERNS: u32 = 84;
+
+    let sound_buffer: *mut i8 = unsafe { mem::transmute(libc::malloc(1024 * 1024 * 30 * mem::size_of::<u8>())) };
+    //let sound_buffer_position = sound_buffer as *const i8;
+    //let sound_thread_stack = [0u8; 1024*1024];
+
+    /*unsafe {
+        __4klang_render(sound_buffer);
+    }*/
+
+    /*unsafe {
+        let mut sound_spec = SDL::SDL_AudioSpec {
+            freq: SAMPLE_RATE,
+            format: SDL::AUDIO_S16SYS,
+            channels: 2,
+            silence: 0,
+            samples: 4096,
+            size : 0,
+            callback:
+        };
+        SDL::SDL_LoadWAV_RW(sound_buffer, 0, &mut sound_spec as *mut SDL::SDL_AudioSpec);;
+    }
+
+    unsafe {
+        //sound_initialize();
+        //sound_play();
+
+        SDL::SDL_OpenAudio(&mut sound_spec as *mut _, null());
+    }*/
+
+    //libc::clone()
+
     unsafe {
         let display = Xlib::XOpenDisplay(ptr::null());
         if display.is_null() {
@@ -195,7 +246,7 @@ fn main() -> Result<isize, ()> {
 static VERTEX_SHADER: &'static str = concat!(include_str!("shaders/quad-vertex.glsl"), "\0");
 static BALLS_FRAGMENT_SHADER: &'static str = concat!(include_str!("shaders/balls.glsl"), "\0");
 static FLOWERS_FRAGMENT_SHADER: &'static str = concat!(include_str!("shaders/flower.glsl"), "\0");
-static BLOBBY_FRAGMENT_SHADER: &'static str = concat!(include_str!("shaders/blobby.glsl"), "\0");
+static BLOBBY_FRAGMENT_SHADER: &'static str = concat!(include_str!("shaders/blobby.glsl.out"), "\0");
 static SNAKE_FRAGMENT_SHADER: &'static str = concat!(include_str!("shaders/snake.glsl"), "\0");
 
 fn main_loop(
@@ -232,7 +283,7 @@ fn main_loop(
                 kaleidoscope_shader.update(current_frame);
             } else if current_frame < FRAMES_PER_SECOND * 30 {
                 flower_shader.update(current_frame);
-            } else if current_frame < FRAMES_PER_SECOND * 48{
+            } else if current_frame < FRAMES_PER_SECOND * 48 {
                 blobby_shader.update(current_frame);
             } else {
                 snake_shader.update(current_frame);
