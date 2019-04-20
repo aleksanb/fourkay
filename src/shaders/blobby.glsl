@@ -1,7 +1,5 @@
-uniform float frame;
-uniform sampler2D tDiffuse;
-
-varying vec2 vUv;
+uniform float f;
+uniform vec2 r;
 
 const float MAX_STEPS = 32.;
 const float EPS = .001;
@@ -39,20 +37,20 @@ float cap(vec3 p, vec3 a, vec3 b, float r) {
 }
 float diss(vec3 p, float s) {
     float d1 = sphere(p, s); 
-    float d2 = (1.+sin(frame/100.))/2.*.05*(sin(15.*p.x)*cos(15.*p.y)*sin(15.*p.z));
+    float d2 = (1.+sin(f/100.))/2.*.05*(sin(15.*p.x)*cos(15.*p.y)*sin(15.*p.z));
     return d1+d2;
 }
 
 vec2 sdf(in vec3 p) {
-    vec3 pos = vec3(.0,sin(frame/30.)*.5,.0);
+    vec3 pos = vec3(.0,sin(f/30.)*.5,.0);
     vec2 r = vec2(diss(p-pos,1.),.0);
     r = uni(r, vec2(sphere(p-vec3(-.3,.3,1.5)-pos, .15), 1.));
     r = uni(r, vec2(sphere(p-vec3(.3,.3,1.5)-pos, .15), 1.));
     r = uni(r, vec2(sphere(p-vec3(-.3,.3,1.7)-pos, .05), 2.));
     r = uni(r, vec2(sphere(p-vec3(.3,.3,1.7)-pos, .05), 2.));
-    r = uni(r, vec2(torus(p-vec3(.0,-.3,1.3)-pos, vec2(max(.05, (1.+sin(frame/100.))*.2)/2., .03)), 3.));
-    r = suni(r, vec2(elli(p-vec3(.9*(1.+sin(frame/60.)/4.),-.9*(1.2-sin(frame/30.)/6.),0.5)-pos, vec3(.2,.3,.4)), 0.), .7);
-    r = suni(r, vec2(elli(p-vec3(-.9*(1.+sin(frame/60.)/4.),-.9*(1.2-sin(frame/30.)/6.),0.5)-pos, vec3(.2,.3,.4)), 0.), .7);
+    r = uni(r, vec2(torus(p-vec3(.0,-.3,1.3)-pos, vec2(max(.05, (1.+sin(f/100.))*.2)/2., .03)), 3.));
+    r = suni(r, vec2(elli(p-vec3(.9*(1.+sin(f/60.)/4.),-.9*(1.2-sin(f/30.)/6.),0.5)-pos, vec3(.2,.3,.4)), 0.), .7);
+    r = suni(r, vec2(elli(p-vec3(-.9*(1.+sin(f/60.)/4.),-.9*(1.2-sin(f/30.)/6.),0.5)-pos, vec3(.2,.3,.4)), 0.), .7);
     r = uni(r, vec2(cap(p-vec3(.1,.5,1.0)-pos, vec3(.1,.1,1.0), vec3(.35,.05,1.0), .03), 2.));
     r = uni(r, vec2(cap(p-vec3(-.1,.5,1.0)-pos, vec3(-.1,.1,1.0), vec3(-.35,.05,1.0), .03), 2.));
     return r;
@@ -100,7 +98,7 @@ vec3 phongContribForLight(vec3 k_d, vec3 k_s, float alpha, vec3 p, vec3 eye, vec
 vec3 phongIllumination(vec3 k_a, vec3 k_d, vec3 k_s, float alpha, vec3 p, vec3 eye) {
     const vec3 amb = .5 * vec3(1., 1., 1.);
     vec3 color = amb * k_a;
-    vec3 pos1 = vec3(.0, 1.*frame/100., 30.*frame/2000.);
+    vec3 pos1 = vec3(.0, 1.*f/100., 30.*f/2000.);
     vec3 ints1 = vec3(.4, .4, .4);
     vec3 phong = phongContribForLight(k_d, k_s, alpha, p, eye, pos1, ints1);
     color += phong;
@@ -108,6 +106,7 @@ vec3 phongIllumination(vec3 k_a, vec3 k_d, vec3 k_s, float alpha, vec3 p, vec3 e
 }
 
 void main() {
+  vec2 vUv = gl_FragCoord.xy / r;
   vec3 eye = vec3(.0,.0,10.);
   vec3 dir = rayDir(60.0, vUv);
   vec2 res = march(eye, dir, START, END);
@@ -118,7 +117,7 @@ void main() {
     return;
   }
   vec3 p = eye + dir * res.x;
-  color = vec3(vUv, .5+.5*sin(frame/60.)); 
+  color = vec3(vUv, .5+.5*sin(f/60.));
   if(res.y == 1.) color = vec3(.9);
   if(res.y == 2.) color = vec3(.0);
   if(res.y == 3.) color = vec3(.9,.0,.0);

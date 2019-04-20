@@ -1,5 +1,5 @@
-uniform float frame;
-uniform vec2 resolution;
+uniform float f;
+uniform vec2 r;
 // ray marching
 const float max_iterations = 55.;
 const float stop_threshold = 0.001;
@@ -213,7 +213,7 @@ vec4 mainImage(vec2 fragCoord, vec2 iResolution)
     if ( depth >= clip_far ) {
         float glow = min(max(0., (steps - 15.) * 0.08), 1.);
         fragColor = vec4( vec3(glow) + vec3(0.8, 0.8, 0.3) * intensity, 1.0 );
-        return;
+        return fragColor;
     }
     
     // shading
@@ -226,7 +226,7 @@ vec4 mainImage(vec2 fragCoord, vec2 iResolution)
 
 void main()
 {
-  vec2 position = gl_FragCoord.xy / resolution;
+  vec2 position = gl_FragCoord.xy / r;
 
-  gl_FragColor = mainImage(gl_FragCoord.xy, resolution);
+  gl_FragColor = mainImage(gl_FragCoord.xy, r);
 }

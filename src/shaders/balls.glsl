@@ -74,7 +74,7 @@ vec4 mainImage(vec2 fragCoord, vec2 iResolution)
     
     float intensity2 = 0.;
 
-    float crazynator = max(1., min(8., (iTime - 12.)/2.));
+    float crazynator = max(1., min(8., (iTime - 8.)/2.));
     
     for(float i=0.; i<1.; i+=1./3.) {
         float t = fract(i+t);
@@ -92,7 +92,7 @@ vec4 mainImage(vec2 fragCoord, vec2 iResolution)
     float output_intensity = smoothstep(1., 0., time_stepper) * intensity1 +
                              smoothstep(0., 1., time_stepper) * intensity2;
     
-    float colonator = max(0., min(1., (iTime - 18.)/2.));
+    float colonator = max(0., min(1., (iTime - 14.)/2.));
     vec3 fadeout_colorized = colorized * (1. - colonator) + vec3(133./255., 243./255., 159./255.) * colonator;
     vec3 output_ready_for_fade = output_intensity*colorized;
     vec3 faded_output = output_ready_for_fade * (1. - colonator) + vec3(133./255., 243./255., 159./255.) * colonator;

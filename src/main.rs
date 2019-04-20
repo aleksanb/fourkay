@@ -137,26 +137,26 @@ fn main() -> Result<isize, ()> {
         let _NET_WM_STATE_ADD = 1; /* add/set property */
         let _NET_WM_STATE_TOGGLE = 2; /* toggle property  */
 
-        //Xlib::XChangeProperty(
-        //    display,
-        //    window,
-        //    _net_wm_allowed_atom,
-        //    wm_a_atom,
-        //    32,
-        //    Xlib::PropModeReplace as libc::c_int,
-        //    &_net_wm_action_fullscreen_atom as *const libc::c_ulong as *const libc::c_uchar,
-        //    1,
-        //);
-        //Xlib::XChangeProperty(
-        //    display,
-        //    window,
-        //    _net_wm_state_atom,
-        //    wm_a_atom,
-        //    32,
-        //    Xlib::PropModeReplace as libc::c_int,
-        //    &_net_wm_state_fullscreen_atom as *const libc::c_ulong as *const libc::c_uchar,
-        //    1,
-        //);
+        Xlib::XChangeProperty(
+            display,
+            window,
+            _net_wm_allowed_atom,
+            wm_a_atom,
+            32,
+            Xlib::PropModeReplace as libc::c_int,
+            &_net_wm_action_fullscreen_atom as *const libc::c_ulong as *const libc::c_uchar,
+            1,
+        );
+        Xlib::XChangeProperty(
+            display,
+            window,
+            _net_wm_state_atom,
+            wm_a_atom,
+            32,
+            Xlib::PropModeReplace as libc::c_int,
+            &_net_wm_state_fullscreen_atom as *const libc::c_ulong as *const libc::c_uchar,
+            1,
+        );
 
         let gl_context = glx::glXCreateContext(
             glx_display,
@@ -192,22 +192,22 @@ fn main() -> Result<isize, ()> {
     Ok(0)
 }
 
+static VERTEX_SHADER: &'static str = concat!(include_str!("shaders/quad-vertex.glsl"), "\0");
+static BALLS_FRAGMENT_SHADER: &'static str = concat!(include_str!("shaders/balls.glsl"), "\0");
+static FLOWERS_FRAGMENT_SHADER: &'static str = concat!(include_str!("shaders/flower.glsl"), "\0");
+static BLOBBY_FRAGMENT_SHADER: &'static str = concat!(include_str!("shaders/blobby.glsl"), "\0");
+static SNAKE_FRAGMENT_SHADER: &'static str = concat!(include_str!("shaders/snake.glsl"), "\0");
+
 fn main_loop(
     display: *mut Xlib::_XDisplay,
     window: Xlib::Window,
     wm_protocols_atom: Xlib::Atom,
     wm_delete_window_atom: Xlib::Atom,
 ) -> Result<(), ()> {
-    let mut raymarcher = programs::Quad::new()?;
-    unsafe {
-        let mut window_attributes: Xlib::XWindowAttributes = mem::uninitialized();
-        Xlib::XGetWindowAttributes(display, window, &mut window_attributes);
-        raymarcher.resize(window_attributes.width, window_attributes.height);
-        println!(
-            "Width inner window %d, height %d\n\0",
-            window_attributes.width, window_attributes.height
-        );
-    }
+    let mut kaleidoscope_shader = programs::Quad::new(BALLS_FRAGMENT_SHADER, VERTEX_SHADER)?;
+    let mut flower_shader = programs::Quad::new(FLOWERS_FRAGMENT_SHADER, VERTEX_SHADER)?;
+    let mut blobby_shader = programs::Quad::new(BLOBBY_FRAGMENT_SHADER, VERTEX_SHADER)?;
+    let mut snake_shader = programs::Quad::new(SNAKE_FRAGMENT_SHADER, VERTEX_SHADER)?;
 
     const FRAMES_PER_SECOND: u64 = 60;
     const FRAME_LENGTH_MILLISECONDS: u64 = 1_000 / FRAMES_PER_SECOND;
@@ -228,13 +228,29 @@ fn main_loop(
         previous_time = current_time;
 
         while delta_time >= FRAME_LENGTH_DURATION {
-            //quad_program.update(current_frame);
-            raymarcher.update(current_frame);
+            if current_frame < FRAMES_PER_SECOND * 16 {
+                kaleidoscope_shader.update(current_frame);
+            } else if current_frame < FRAMES_PER_SECOND * 30 {
+                flower_shader.update(current_frame);
+            } else if current_frame < FRAMES_PER_SECOND * 48{
+                blobby_shader.update(current_frame);
+            } else {
+                snake_shader.update(current_frame);
+            }
 
             delta_time -= FRAME_LENGTH_DURATION;
             current_frame += 1;
         }
-        raymarcher.render(current_frame);
+
+        if current_frame < FRAMES_PER_SECOND * 16 {
+            kaleidoscope_shader.render(current_frame);
+        } else if current_frame < FRAMES_PER_SECOND * 30 {
+            flower_shader.render(current_frame);
+        } else if current_frame < FRAMES_PER_SECOND * 48 {
+            blobby_shader.render(current_frame);
+        } else {
+            snake_shader.render(current_frame);
+        }
 
         unsafe {
             glx::glXSwapBuffers(display as *mut bindings::glx::_XDisplay, window);

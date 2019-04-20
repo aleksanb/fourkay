@@ -16,7 +16,7 @@ pub struct Raymarcher {
     height: i32,
 }
 
-impl Program for Raymarcher {
+impl Raymarcher {
     fn new() -> Result<Self, ()> {
         let fragment_shader =
             gl_utils::create_shader(&gl_utils::ShaderType::FragmentShader(FRAGMENT_SHADER))?;
@@ -64,7 +64,9 @@ impl Program for Raymarcher {
             height: 0,
         })
     }
+}
 
+impl Program for Raymarcher {
     fn resize(&mut self, width: i32, height: i32) {
         self.width = width;
         self.height = height;

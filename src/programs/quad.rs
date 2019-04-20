@@ -6,21 +6,18 @@ use core::mem;
 use core::panic::PanicInfo;
 use core::ptr;
 
-static VERTEX_SHADER: &'static str = concat!(include_str!("../shaders/quad-vertex.glsl.out"), "\0");
-static BALLS_FRAGMENT_SHADER: &'static str = concat!(include_str!("../shaders/balls.glsl.out"), "\0");
-
 pub struct Quad {
     program: gl::GLuint,
     width: i32,
     height: i32,
 }
 
-impl Program for Quad {
-    fn new() -> Result<Self, ()> {
+impl Quad {
+    pub fn new(fragment_shader: &'static str, vertex_shader: &'static str) -> Result<Self, ()> {
         let fragment_shader =
-            gl_utils::create_shader(&gl_utils::ShaderType::FragmentShader(BALLS_FRAGMENT_SHADER))?;
+            gl_utils::create_shader(&gl_utils::ShaderType::FragmentShader(fragment_shader))?;
         let vertex_shader =
-            gl_utils::create_shader(&gl_utils::ShaderType::VertexShader(VERTEX_SHADER))?;
+            gl_utils::create_shader(&gl_utils::ShaderType::VertexShader(vertex_shader))?;
         let program = gl_utils::create_program(fragment_shader, vertex_shader)?;
         gl_wrapper::glUseProgram(program);
 
@@ -59,11 +56,13 @@ impl Program for Quad {
 
         Ok(Self {
             program,
-            width: 0,
-            height: 0,
+            width: 1920,
+            height: 1080,
         })
     }
+}
 
+impl Program for Quad {
     fn resize(&mut self, width: i32, height: i32) {
         self.width = width;
         self.height = height;
