@@ -304,8 +304,10 @@ fn main_loop(
                 flower_shader.update(current_frame);
             } else if current_frame < FRAMES_PER_SECOND * 48 {
                 blobby_shader.update(current_frame);
-            } else {
+            } else if current_frame < FRAMES_PER_SECOND * 60 {
                 snake_shader.update(current_frame);
+            } else {
+                return Ok(());
             }
 
             delta_time -= FRAME_LENGTH_DURATION;
@@ -318,8 +320,10 @@ fn main_loop(
             flower_shader.render(current_frame);
         } else if current_frame < FRAMES_PER_SECOND * 48 {
             blobby_shader.render(current_frame);
-        } else {
+        } else if current_frame < FRAMES_PER_SECOND * 60 {
             snake_shader.render(current_frame);
+        } else {
+            return Ok(());
         }
 
         unsafe {
@@ -353,8 +357,10 @@ fn main_loop(
                         println!("Received event type of %d\n\0", xclient.message_type);
                     }
                     Xlib_constants::KeyPress => {
-                        println!("Keyboard was pressed\n\0");
-                        return Ok(());
+                        println!("Keyboard was pressed %d\n\0", event.xkey.keycode);
+                        if event.xkey.keycode == 66 {
+                            return Ok(());
+                        }
                     }
                     _ => (),
                 }
