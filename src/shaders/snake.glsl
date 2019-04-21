@@ -1,6 +1,5 @@
 uniform float f;
 uniform vec2 r;
-// ray marching
 const float max_iterations = 55.;
 const float stop_threshold = 0.001;
 const float grad_step = .1;
@@ -8,7 +7,6 @@ const float clip_far = 250.0;
 const float p = 2.;
 const float q = 5.;
 
-// math
 const float PI = 3.14159265359;
 const float DEG_TO_RAD = PI / 180.0;
 float steps;

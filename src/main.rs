@@ -263,10 +263,10 @@ fn main() -> Result<isize, ()> {
 }
 
 static VERTEX_SHADER: &'static str = concat!(include_str!("shaders/quad-vertex.glsl"), "\0");
-static BALLS_FRAGMENT_SHADER: &'static str = concat!(include_str!("shaders/balls.glsl"), "\0");
+static BALLS_FRAGMENT_SHADER: &'static str = concat!(include_str!("shaders/balls.glsl.out"), "\0");
 static FLOWERS_FRAGMENT_SHADER: &'static str = concat!(include_str!("shaders/flower.glsl"), "\0");
-static BLOBBY_FRAGMENT_SHADER: &'static str = concat!(include_str!("shaders/blobby.glsl"), "\0");
-static SNAKE_FRAGMENT_SHADER: &'static str = concat!(include_str!("shaders/snake.glsl"), "\0");
+static BLOBBY_FRAGMENT_SHADER: &'static str = concat!(include_str!("shaders/blobby.glsl.out"), "\0");
+static SNAKE_FRAGMENT_SHADER: &'static str = concat!(include_str!("shaders/snake.glsl.out"), "\0");
 
 fn main_loop(
     display: *mut Xlib::_XDisplay,
