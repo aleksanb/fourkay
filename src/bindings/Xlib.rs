@@ -2,7 +2,7 @@
 
 #![allow(warnings)]
 
-#[link(name="X11")]
+#[link(name = "X11")]
 extern "C" {}
 
 pub const XlibSpecificationRelease: u32 = 6;

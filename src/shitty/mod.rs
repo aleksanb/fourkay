@@ -26,21 +26,20 @@ pub fn sleep(milliseconds: i64) {
 pub fn xlib_events_ready(display: *mut Xlib::Display) -> i32 {
     unsafe {
         let x11_fd = Xlib::XConnectionNumber(display);
-        let mut in_fds: libc::fd_set = mem::uninitialized();
-        libc::FD_ZERO(&mut in_fds);
-        libc::FD_SET(x11_fd, &mut in_fds);
+        let mut in_fds = mem::MaybeUninit::uninit();
+        libc::FD_ZERO(in_fds.as_mut_ptr());
+        libc::FD_SET(x11_fd, in_fds.as_mut_ptr());
         let mut select_timeout = libc::timeval {
             tv_sec: 0,
             tv_usec: 2_000,
         };
-        let num_ready_fds = libc::select(
+        libc::select(
             x11_fd + 1,
-            &mut in_fds,
+            in_fds.as_mut_ptr(),
             ptr::null_mut(),
             ptr::null_mut(),
             &mut select_timeout,
-        );
-        num_ready_fds
+        )
     }
 }
 

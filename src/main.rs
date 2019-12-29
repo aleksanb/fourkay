@@ -1,26 +1,22 @@
-#![feature(lang_items, start)]
+#![feature(lang_items, start, raw_ref_op)]
 #![no_std]
 
 #[macro_use]
 mod shitty;
-use self::shitty::{gl_utils, gl_wrapper, println::*};
+use self::shitty::{gl_wrapper, println::*};
 
 use self::programs::Program;
 use core::mem;
-use core::panic::PanicInfo;
 use core::ptr;
 
 mod bindings;
 mod programs;
 
 use self::bindings::{gl, glx, Xlib, Xlib_constants};
-use crate::bindings::Xlib::Atom;
-use crate::shitty::xlib_events_ready;
-use core::ptr::{null, null_mut};
 
 #[cfg(not(test))]
 #[panic_handler]
-fn panic(_panic: &PanicInfo<'_>) -> ! {
+fn panic(_panic: &core::panic::PanicInfo<'_>) -> ! {
     loop {}
 }
 
@@ -30,19 +26,18 @@ extern "C" fn eh_personality() {}
 
 #[start]
 fn start(_argc: isize, _argv: *const *const u8) -> isize {
-    main().unwrap();
-    0
+    main().unwrap()
 }
 
 extern "C" {
-    pub fn __4klang_render(arg1: *const libc::c_char) -> *const libc::c_char;
-//pub fn __4klang_envelope(arg1: *const libc::c_char) -> *const libc::c_float;
-//pub fn __4klang_note_buffer(arg1: *const libc::c_char) -> *const libc::c_int;
+    // pub fn __4klang_render(arg1: *const libc::c_char) -> *const libc::c_char;
+
+    //pub fn __4klang_envelope(arg1: *const libc::c_char) -> *const libc::c_float;
+    //pub fn __4klang_note_buffer(arg1: *const libc::c_char) -> *const libc::c_int;
     //pub fn sound_initialize();
     //pub fn sound_play();
     //pub fn sound_stop();
 }
-
 
 //extern "C" {
 //    extern void* __4klang_render(void*);
@@ -72,7 +67,7 @@ fn main() -> Result<isize, ()> {
     const MAX_INSTRUMENTS: u32 = 4;
     const MAX_PATTERNS: u32 = 84;
 
-    let sound_buffer: *mut i8 = unsafe { mem::transmute(libc::malloc(1024 * 1024 * 30 * mem::size_of::<u8>())) };
+    // let sound_buffer: *mut i8 = unsafe { mem::transmute(libc::malloc(1024 * 1024 * 30 * mem::size_of::<u8>())) };
     //let sound_buffer_position = sound_buffer as *const i8;
     //let sound_thread_stack = [0u8; 1024*1024];
 
@@ -122,7 +117,7 @@ fn main() -> Result<isize, ()> {
         let default_screen = Xlib::XDefaultScreen(display);
         println!("default_screen: %d\n\0", default_screen);
 
-        let mut attribute_list: &mut [libc::c_int] = &mut [
+        let mut attribute_list = &mut [
             glx::GLX_RGBA as libc::c_int,
             glx::GLX_RED_SIZE as libc::c_int,
             8,
@@ -148,11 +143,14 @@ fn main() -> Result<isize, ()> {
         );
         println!("Color map: %lu\n\0", color_map);
 
-        let mut set_window_attributes: Xlib::XSetWindowAttributes = mem::uninitialized();
+        let mut set_window_attributes: Xlib::XSetWindowAttributes =
+            mem::MaybeUninit::uninit().assume_init();
         set_window_attributes.colormap = color_map;
         set_window_attributes.event_mask =
             Xlib_constants::ExposureMask | Xlib_constants::KeyPressMask;
         set_window_attributes.background_pixel = Xlib::XWhitePixel(display, (*visual_info).screen);
+        let window_flags_enabled =
+            Xlib_constants::CWColormap | Xlib_constants::CWEventMask | Xlib_constants::CWBackPixel;
 
         let window = Xlib::XCreateWindow(
             display,
@@ -165,7 +163,7 @@ fn main() -> Result<isize, ()> {
             (*visual_info).depth,
             Xlib::InputOutput as libc::c_uint,
             (*visual_info).visual as *mut Xlib::Visual,
-            Xlib_constants::CWColormap | Xlib_constants::CWEventMask | Xlib_constants::CWBackPixel,
+            window_flags_enabled,
             &mut set_window_attributes,
         );
 
@@ -203,9 +201,9 @@ fn main() -> Result<isize, ()> {
             protocols.len() as libc::c_int,
         );
 
-        let _NET_WM_STATE_REMOVE = 0; /* remove/unset property */
-        let _NET_WM_STATE_ADD = 1; /* add/set property */
-        let _NET_WM_STATE_TOGGLE = 2; /* toggle property  */
+        let _net_wm_state_remove = 0; /* remove/unset property */
+        let _net_wm_state_add = 1; /* add/set property */
+        let _net_wm_state_toggle = 2; /* toggle property  */
 
         Xlib::XChangeProperty(
             display,
@@ -262,11 +260,11 @@ fn main() -> Result<isize, ()> {
     Ok(0)
 }
 
-static VERTEX_SHADER: &'static str = concat!(include_str!("shaders/quad-vertex.glsl"), "\0");
-static BALLS_FRAGMENT_SHADER: &'static str = concat!(include_str!("shaders/balls.glsl.out"), "\0");
-static FLOWERS_FRAGMENT_SHADER: &'static str = concat!(include_str!("shaders/flower.glsl"), "\0");
-static BLOBBY_FRAGMENT_SHADER: &'static str = concat!(include_str!("shaders/blobby.glsl.out"), "\0");
-static SNAKE_FRAGMENT_SHADER: &'static str = concat!(include_str!("shaders/snake.glsl.out"), "\0");
+static VERTEX_SHADER: &str = concat!(include_str!("shaders/quad-vertex.glsl"), "\0");
+static BALLS_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/balls.glsl.out"), "\0");
+static FLOWERS_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/flower.glsl"), "\0");
+static BLOBBY_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/blobby.glsl.out"), "\0");
+static SNAKE_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/snake.glsl.out"), "\0");
 
 fn main_loop(
     display: *mut Xlib::_XDisplay,
@@ -331,19 +329,19 @@ fn main_loop(
 
             let events_pending = Xlib::XPending(display);
             for _ in 0..events_pending {
-                let mut event: Xlib::XEvent = mem::uninitialized();
-                Xlib::XNextEvent(display, &mut event);
+                let mut event: mem::MaybeUninit<Xlib::XEvent> = mem::MaybeUninit::uninit();
+                Xlib::XNextEvent(display, event.as_mut_ptr());
+                let event = event.assume_init();
 
                 println!("event.type = %d\n\0", event.type_);
                 match event.type_ {
                     Xlib_constants::Expose => {
                         println!("Window attributes!\n\0");
-                        unsafe {
-                            let mut window_attributes: Xlib::XWindowAttributes =
-                                mem::uninitialized();
-                            Xlib::XGetWindowAttributes(display, window, &mut window_attributes);
-                            gl::glViewport(0, 0, window_attributes.width, window_attributes.height);
-                        }
+                        let mut window_attributes: mem::MaybeUninit<Xlib::XWindowAttributes> =
+                            mem::MaybeUninit::uninit();
+                        Xlib::XGetWindowAttributes(display, window, window_attributes.as_mut_ptr());
+                        let window_attributes = window_attributes.assume_init();
+                        gl::glViewport(0, 0, window_attributes.width, window_attributes.height);
                     }
                     Xlib_constants::ClientMessage => {
                         println!("ClientMessage\n\0");

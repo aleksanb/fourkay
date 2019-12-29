@@ -2,7 +2,7 @@
 
 #![allow(warnings)]
 
-#[link(name="GLX")]
+#[link(name = "GLX")]
 extern "C" {}
 
 pub const XlibSpecificationRelease: u32 = 6;
