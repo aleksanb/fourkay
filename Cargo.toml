@@ -14,9 +14,6 @@ println = []
 libc = {version = "0.2.*", default-features = false}
 # bindings = { path = "bindings" }
 
-[build-dependencies]
-# bindgen = "0.42.*"
-
 [profile.dev]
 panic = "abort"
 opt-level = "z"

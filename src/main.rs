@@ -324,44 +324,52 @@ fn main_loop(
             return Ok(());
         }
 
-        unsafe {
-            glx::glXSwapBuffers(display as *mut bindings::glx::_XDisplay, window);
+        unsafe { glx::glXSwapBuffers(display as *mut bindings::glx::_XDisplay, window) }
 
-            let events_pending = Xlib::XPending(display);
-            for _ in 0..events_pending {
+        let events_pending = unsafe { Xlib::XPending(display) };
+        for _ in 0..events_pending {
+            let event = unsafe {
                 let mut event: mem::MaybeUninit<Xlib::XEvent> = mem::MaybeUninit::uninit();
                 Xlib::XNextEvent(display, event.as_mut_ptr());
-                let event = event.assume_init();
+                event.assume_init()
+            };
 
-                println!("event.type = %d\n\0", event.type_);
-                match event.type_ {
-                    Xlib_constants::Expose => {
-                        println!("Window attributes!\n\0");
-                        let mut window_attributes: mem::MaybeUninit<Xlib::XWindowAttributes> =
-                            mem::MaybeUninit::uninit();
-                        Xlib::XGetWindowAttributes(display, window, window_attributes.as_mut_ptr());
-                        let window_attributes = window_attributes.assume_init();
-                        gl::glViewport(0, 0, window_attributes.width, window_attributes.height);
-                    }
-                    Xlib_constants::ClientMessage => {
-                        println!("ClientMessage\n\0");
-                        let xclient = event.xclient;
-                        if xclient.message_type == wm_protocols_atom && xclient.format == 32 {
-                            let protocol = xclient.data.l.as_ref()[0] as Xlib::Atom;
-                            if protocol == wm_delete_window_atom {
-                                return Ok(());
-                            }
-                        }
-                        println!("Received event type of %d\n\0", xclient.message_type);
-                    }
-                    Xlib_constants::KeyPress => {
-                        println!("Keyboard was pressed %d\n\0", event.xkey.keycode);
-                        if event.xkey.keycode == 66 {
+            println!("event.type = %d\n\0", event.type_);
+            match unsafe { event.type_ } {
+                Xlib_constants::Expose => {
+                    println!("Window attributes!\n\0");
+                    unsafe {
+                        let window_attributes = {
+                            let mut window_attributes: mem::MaybeUninit<Xlib::XWindowAttributes> =
+                                mem::MaybeUninit::uninit();
+                            Xlib::XGetWindowAttributes(
+                                display,
+                                window,
+                                window_attributes.as_mut_ptr(),
+                            );
+                            window_attributes.assume_init()
+                        };
+                        gl::glViewport(0, 0, window_attributes.width, window_attributes.height)
+                    };
+                }
+                Xlib_constants::ClientMessage => {
+                    println!("ClientMessage\n\0");
+                    let xclient = unsafe { event.xclient };
+                    if xclient.message_type == wm_protocols_atom && xclient.format == 32 {
+                        let protocol = unsafe { xclient.data.l }.as_ref()[0] as Xlib::Atom;
+                        if protocol == wm_delete_window_atom {
                             return Ok(());
                         }
                     }
-                    _ => (),
+                    println!("Received event type of %d\n\0", xclient.message_type);
                 }
+                Xlib_constants::KeyPress => {
+                    println!("Keyboard was pressed %d\n\0", event.xkey.keycode);
+                    if unsafe { event.xkey }.keycode == 66 {
+                        return Ok(());
+                    }
+                }
+                _ => (),
             }
         }
     }

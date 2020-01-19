@@ -24,7 +24,7 @@ run-optimize: optimize
 
 .PHONY: vondehi
 vondehi:
-	xargo build --target $(TARGET) --release --no-default-features
+	cargo build -Z build-std=core --target $(TARGET) --release --no-default-features
 
 	 wc --bytes target/$(TARGET)/release/fourkay
 	strip -R '.note*' -R .comment target/x86_64-unknown-linux-gnu/release/fourkay
@@ -39,8 +39,8 @@ vondehi:
 
 .PHONY: debug
 debug:
-	xargo build --target x86_64-unknown-linux-gnu
+	cargo build -Z build-std=core --target $(TARGET) --no-default-features
 
 .PHONY: debug-run
 debug-run:
-	xargo run --target x86_64-unknown-linux-gnu --release
+	cargo build -Z build-std=core --target $(TARGET) --release --no-default-features
