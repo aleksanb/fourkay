@@ -7,8 +7,9 @@ build = "build.rs"
 # crate-type = "staticlib"
 
 [features]
-default = ["println"]
+default = []
 println = []
+error-handling = []
 
 [dependencies]
 libc = {version = "0.2.*", default-features = false}
@@ -16,10 +17,12 @@ libc = {version = "0.2.*", default-features = false}
 
 [profile.dev]
 panic = "abort"
-opt-level = "z"
+opt-level = 2
 lto = true
+codegen-units = 1
 
 [profile.release]
 panic = "abort"
-opt-level = "z"
+opt-level = 2  # Currently gives the best size  https://rust-embedded.github.io/book/unsorted/speed-vs-size.html
 lto = true
+codegen-units = 1

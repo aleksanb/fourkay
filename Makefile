@@ -10,37 +10,36 @@ shaders:
 
 .PHONY: optimize-build
 optimize-build:
-	xargo build --target i686-unknown-linux-gnu --release --no-default-features
-
-.PHONY: optimize
-optimize: optimize-build
-	wc --bytes target/x86_64-unknown-linux-gnu/release/fourkay
-	# strip --strip-all -R .note* -R .comment target/x86_64-unknown-linux-gnu/release/fourkay
-	//wc --bytes target/x86_64-unknown-linux-gnu/release/fourkay
+	cargo build -Z build-std=core --target i686-unknown-linux-gnu --release --no-default-features
 
 .PHONY: run-optimize
 run-optimize: optimize
 	target/x86_64-unknown-linux-gnu/release/fourkay
 
-.PHONY: vondehi
-vondehi:
-	cargo build -Z build-std=core --target $(TARGET) --release --no-default-features
-
-	 wc --bytes target/$(TARGET)/release/fourkay
-	strip -R '.note*' -R .comment target/x86_64-unknown-linux-gnu/release/fourkay
+.PHONY: build-release
+build-release:
+	# cargo clean
+	cargo build -Z build-std=core --target $(TARGET) --release  # --features=error-handling --features=println
 	wc --bytes target/$(TARGET)/release/fourkay
-	cp ../vondehi/vondehi build/vondehi
+
+.PHONY: pack
+pack: build-release
+	rm -rf build && mkdir build
+
+	strip --strip-all -R '.note*' -R .comment target/x86_64-unknown-linux-gnu/release/fourkay
+	wc --bytes target/$(TARGET)/release/fourkay
+
 	nasm -fbin -obuild/vondehi ../vondehi/vondehi.asm
 	lzma -c target/$(TARGET)/release/fourkay > build/fourkay-lzma
 	cat build/vondehi build/fourkay-lzma > build/fourkay
+
 	chmod +x build/fourkay
 	wc --bytes build/fourkay
-	build/fourkay
 
-.PHONY: debug
-debug:
-	cargo build -Z build-std=core --target $(TARGET) --no-default-features
+	# build/fourkay
 
-.PHONY: debug-run
-debug-run:
-	cargo build -Z build-std=core --target $(TARGET) --release --no-default-features
+#.PHONY: optimize
+#optimize: debug-run
+#	wc --bytes target/x86_64-unknown-linux-gnu/release/fourkay
+#	strip --strip-all -R .note* -R .comment target/x86_64-unknown-linux-gnu/release/fourkay
+#	wc --bytes target/x86_64-unknown-linux-gnu/release/fourkay

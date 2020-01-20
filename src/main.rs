@@ -1,5 +1,6 @@
 #![feature(lang_items, start, raw_ref_op)]
 #![no_std]
+#![no_main]
 
 #[macro_use]
 mod shitty;
@@ -23,11 +24,6 @@ fn panic(_panic: &core::panic::PanicInfo<'_>) -> ! {
 #[cfg(not(test))]
 #[lang = "eh_personality"]
 extern "C" fn eh_personality() {}
-
-#[start]
-fn start(_argc: isize, _argv: *const *const u8) -> isize {
-    main().unwrap()
-}
 
 extern "C" {
     // pub fn __4klang_render(arg1: *const libc::c_char) -> *const libc::c_char;
@@ -61,7 +57,10 @@ macro_rules! intern_atom {
     }};
 }
 
-fn main() -> Result<isize, ()> {
+// void main(){gl_FragColor = vec4(1.0,0.5,0.5,.5);}
+
+#[no_mangle]
+pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
     const SAMPLE_RATE: u32 = 44100;
     const BPM: u32 = 120;
     const MAX_INSTRUMENTS: u32 = 4;
@@ -101,23 +100,23 @@ fn main() -> Result<isize, ()> {
         let display = Xlib::XOpenDisplay(ptr::null());
         if display.is_null() {
             println!("Couldn't set up display\n\0");
-            return Err(());
+            return 1;
         }
 
         let glx_display = display as *mut glx::Display;
 
-        let mut glx_major = 0;
-        let mut glx_minor = 0;
-        let glx_result = glx::glXQueryVersion(glx_display, &mut glx_major, &mut glx_minor);
-        println!(
-            "glX version: Major: %d, minor: %d, result: %d\n\0",
-            glx_major, glx_minor, glx_result
-        );
+        // let mut glx_major = 0;
+        // let mut glx_minor = 0;
+        //let glx_result = glx::glXQueryVersion(glx_display, &mut glx_major, &mut glx_minor);
+        //println!(
+        //"glX version: Major: %d, minor: %d, result: %d\n\0",
+        //glx_major, glx_minor, glx_result
+        //);
 
         let default_screen = Xlib::XDefaultScreen(display);
         println!("default_screen: %d\n\0", default_screen);
 
-        let mut attribute_list = &mut [
+        let attribute_list = &mut [
             glx::GLX_RGBA as libc::c_int,
             glx::GLX_RED_SIZE as libc::c_int,
             8,
@@ -183,8 +182,8 @@ fn main() -> Result<isize, ()> {
         Xlib::XMapWindow(display, window);
 
         // // Hook close requests.
-        let wm_protocols_atom = intern_atom!(display, WM_PROTOCOLS);
-        let wm_delete_window_atom = intern_atom!(display, WM_DELETE_WINDOW);
+        //let wm_protocols_atom = intern_atom!(display, WM_PROTOCOLS);
+        //let wm_delete_window_atom = intern_atom!(display, WM_DELETE_WINDOW);
 
         let _net_wm_state_atom = intern_atom!(display, _NET_WM_STATE);
         let _net_wm_state_fullscreen_atom = intern_atom!(display, _NET_WM_STATE_FULLSCREEN);
@@ -193,13 +192,13 @@ fn main() -> Result<isize, ()> {
         let _net_wm_action_fullscreen_atom = intern_atom!(display, _NET_WM_ACTION_FULLSCREEN);
         let wm_a_atom = intern_atom!(display, ATOM);
 
-        let mut protocols = [wm_delete_window_atom];
-        Xlib::XSetWMProtocols(
-            display,
-            window,
-            protocols.as_mut_ptr(),
-            protocols.len() as libc::c_int,
-        );
+        // let mut protocols = [wm_delete_window_atom];
+        // Xlib::XSetWMProtocols(
+            // display,
+            // window,
+            // protocols.as_mut_ptr(),
+            // protocols.len() as libc::c_int,
+        // );
 
         let _net_wm_state_remove = 0; /* remove/unset property */
         let _net_wm_state_add = 1; /* add/set property */
@@ -238,30 +237,38 @@ fn main() -> Result<isize, ()> {
         gl::glEnable(gl::GL_DEPTH_TEST);
         gl_wrapper::load_extensions();
 
-        let gl_version = gl_wrapper::glGetString(gl::GL_VERSION);
-        println!("Version: %s\n\0", gl_version as *const libc::c_char);
+        #[cfg(feature = "error-handling")]
+        {
+            let gl_version = gl_wrapper::glGetString(gl::GL_VERSION);
+            println!("Version: %s\n\0", gl_version as *const libc::c_char);
+        }
 
-        main_loop(display, window, wm_protocols_atom, wm_delete_window_atom)?;
+        main_loop(display, window);
 
-        if glx::glXMakeCurrent(glx_display, glx::GLX_NONE.into(), ptr::null_mut()) == 0 {
-            return Err(());
-        };
+        #[cfg(feature = "error-handling")]
+        {
+            if glx::glXMakeCurrent(glx_display, glx::GLX_NONE.into(), ptr::null_mut()) == 0 {
+                return 1;
+            };
 
-        glx::glXDestroyContext(glx_display, gl_context);
-        if Xlib::XDestroyWindow(display, window) == 0 {
-            return Err(());
-        };
+            glx::glXDestroyContext(glx_display, gl_context);
+            if Xlib::XDestroyWindow(display, window) == 0 {
+                return 1;
+            };
 
-        if Xlib::XCloseDisplay(display) == 0 {
-            return Err(());
-        };
+            if Xlib::XCloseDisplay(display) == 0 {
+                return 1;
+            };
+        }
     }
 
-    Ok(0)
+    0
 }
 
 static VERTEX_SHADER: &str = concat!(include_str!("shaders/quad-vertex.glsl"), "\0");
 static BALLS_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/balls.glsl.out"), "\0");
+static SOLID_FRAGMENT_SHADER: &str = "void main(){gl_FragColor = vec4(1.0,0.5,0.5,.5);}";
+
 static FLOWERS_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/flower.glsl"), "\0");
 static BLOBBY_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/blobby.glsl.out"), "\0");
 static SNAKE_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/snake.glsl.out"), "\0");
@@ -269,13 +276,11 @@ static SNAKE_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/snake.glsl.ou
 fn main_loop(
     display: *mut Xlib::_XDisplay,
     window: Xlib::Window,
-    wm_protocols_atom: Xlib::Atom,
-    wm_delete_window_atom: Xlib::Atom,
 ) -> Result<(), ()> {
-    let mut kaleidoscope_shader = programs::Quad::new(BALLS_FRAGMENT_SHADER, VERTEX_SHADER)?;
-    let mut flower_shader = programs::Quad::new(FLOWERS_FRAGMENT_SHADER, VERTEX_SHADER)?;
-    let mut blobby_shader = programs::Quad::new(BLOBBY_FRAGMENT_SHADER, VERTEX_SHADER)?;
-    let mut snake_shader = programs::Quad::new(SNAKE_FRAGMENT_SHADER, VERTEX_SHADER)?;
+    ///let mut kaleidoscope_shader = programs::Quad::new(BALLS_FRAGMENT_SHADER, VERTEX_SHADER)?;
+    //let mut flower_shader = programs::Quad::new(FLOWERS_FRAGMENT_SHADER, VERTEX_SHADER)?;
+    let mut blobby_shader = programs::Quad::new(SOLID_FRAGMENT_SHADER, VERTEX_SHADER)?;
+    //let mut snake_shader = programs::Quad::new(SNAKE_FRAGMENT_SHADER, VERTEX_SHADER)?;
 
     const FRAMES_PER_SECOND: u64 = 60;
     const FRAME_LENGTH_MILLISECONDS: u64 = 1_000 / FRAMES_PER_SECOND;
@@ -297,15 +302,15 @@ fn main_loop(
 
         while delta_time >= FRAME_LENGTH_DURATION {
             if current_frame < FRAMES_PER_SECOND * 16 {
-                kaleidoscope_shader.update(current_frame);
-            } else if current_frame < FRAMES_PER_SECOND * 30 {
-                flower_shader.update(current_frame);
-            } else if current_frame < FRAMES_PER_SECOND * 48 {
                 blobby_shader.update(current_frame);
-            } else if current_frame < FRAMES_PER_SECOND * 60 {
-                snake_shader.update(current_frame);
-            } else {
-                return Ok(());
+                //} else if current_frame < FRAMES_PER_SECOND * 30 {
+                //flower_shader.update(current_frame);
+                //} else if current_frame < FRAMES_PER_SECOND * 48 {
+                //blobby_shader.update(current_frame);
+                //} else if current_frame < FRAMES_PER_SECOND * 60 {
+                //snake_shader.update(current_frame);
+                //} else {
+                //return Ok(());
             }
 
             delta_time -= FRAME_LENGTH_DURATION;
@@ -313,15 +318,15 @@ fn main_loop(
         }
 
         if current_frame < FRAMES_PER_SECOND * 16 {
-            kaleidoscope_shader.render(current_frame);
-        } else if current_frame < FRAMES_PER_SECOND * 30 {
-            flower_shader.render(current_frame);
-        } else if current_frame < FRAMES_PER_SECOND * 48 {
             blobby_shader.render(current_frame);
-        } else if current_frame < FRAMES_PER_SECOND * 60 {
-            snake_shader.render(current_frame);
-        } else {
-            return Ok(());
+            //} else if current_frame < FRAMES_PER_SECOND * 30 {
+            //flower_shader.render(current_frame);
+            //} else if current_frame < FRAMES_PER_SECOND * 48 {
+            //blobby_shader.render(current_frame);
+            //} else if current_frame < FRAMES_PER_SECOND * 60 {
+            //snake_shader.render(current_frame);
+            //} else {
+            //return Ok(());
         }
 
         unsafe { glx::glXSwapBuffers(display as *mut bindings::glx::_XDisplay, window) }
@@ -352,17 +357,17 @@ fn main_loop(
                         gl::glViewport(0, 0, window_attributes.width, window_attributes.height)
                     };
                 }
-                Xlib_constants::ClientMessage => {
-                    println!("ClientMessage\n\0");
-                    let xclient = unsafe { event.xclient };
-                    if xclient.message_type == wm_protocols_atom && xclient.format == 32 {
-                        let protocol = unsafe { xclient.data.l }.as_ref()[0] as Xlib::Atom;
-                        if protocol == wm_delete_window_atom {
-                            return Ok(());
-                        }
-                    }
-                    println!("Received event type of %d\n\0", xclient.message_type);
-                }
+                // Xlib_constants::ClientMessage => {
+                //     println!("ClientMessage\n\0");
+                //     let xclient = unsafe { event.xclient };
+                //     if xclient.message_type == wm_protocols_atom && xclient.format == 32 {
+                //         let protocol = unsafe { xclient.data.l }.as_ref()[0] as Xlib::Atom;
+                //         if protocol == wm_delete_window_atom {
+                //             return Ok(());
+                //         }
+                //     }
+                //     println!("Received event type of %d\n\0", xclient.message_type);
+                // }
                 Xlib_constants::KeyPress => {
                     println!("Keyboard was pressed %d\n\0", event.xkey.keycode);
                     if unsafe { event.xkey }.keycode == 66 {
