@@ -195,10 +195,10 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
 
         // let mut protocols = [wm_delete_window_atom];
         // Xlib::XSetWMProtocols(
-            // display,
-            // window,
-            // protocols.as_mut_ptr(),
-            // protocols.len() as libc::c_int,
+        // display,
+        // window,
+        // protocols.as_mut_ptr(),
+        // protocols.len() as libc::c_int,
         // );
 
         let _net_wm_state_remove = 0; /* remove/unset property */
@@ -268,16 +268,13 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
 
 static VERTEX_SHADER: &str = concat!(include_str!("shaders/quad-vertex.glsl"), "\0");
 static BALLS_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/balls.glsl.out"), "\0");
-static SOLID_FRAGMENT_SHADER: &str = "void main(){gl_FragColor = vec4(1.0,0.5,0.5,.5);}";
+static SOLID_FRAGMENT_SHADER: &str = "void main(){gl_FragColor = vec4(1.0, 0.5, 0.5, 0.5);}\0";
 
 static FLOWERS_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/flower.glsl"), "\0");
 static BLOBBY_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/blobby.glsl.out"), "\0");
 static SNAKE_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/snake.glsl.out"), "\0");
 
-fn main_loop(
-    display: *mut Xlib::_XDisplay,
-    window: Xlib::Window,
-) -> Result<(), ()> {
+fn main_loop(display: *mut Xlib::_XDisplay, window: Xlib::Window) -> Result<(), ()> {
     ///let mut kaleidoscope_shader = programs::Quad::new(BALLS_FRAGMENT_SHADER, VERTEX_SHADER)?;
     //let mut flower_shader = programs::Quad::new(FLOWERS_FRAGMENT_SHADER, VERTEX_SHADER)?;
     let mut blobby_shader = programs::Quad::new(SOLID_FRAGMENT_SHADER, VERTEX_SHADER)?;

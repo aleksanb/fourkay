@@ -7,7 +7,7 @@ build = "build.rs"
 # crate-type = "staticlib"
 
 [features]
-default = []
+default = ["println", "error-handling"]
 println = []
 error-handling = []
 

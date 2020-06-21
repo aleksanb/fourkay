@@ -16,3 +16,8 @@ nover objc sstrip
 
 libgl1-dev:i386
 https://github.com/johnthagen/min-sized-rust
+
+
+needs:
+llvm-dev
+llvm
