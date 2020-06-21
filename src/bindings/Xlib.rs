@@ -2,13 +2,14 @@
 
 #![allow(warnings)]
 
-#[link(name = "X11")]
+#[link(name="X11")]
 extern "C" {}
 
 pub const XlibSpecificationRelease: u32 = 6;
 pub const _SYS_TYPES_H: u32 = 1;
 pub const _FEATURES_H: u32 = 1;
 pub const _DEFAULT_SOURCE: u32 = 1;
+pub const __GLIBC_USE_ISOC2X: u32 = 0;
 pub const __USE_ISOC11: u32 = 1;
 pub const __USE_ISOC99: u32 = 1;
 pub const __USE_ISOC95: u32 = 1;
@@ -26,25 +27,30 @@ pub const __USE_MISC: u32 = 1;
 pub const __USE_ATFILE: u32 = 1;
 pub const __USE_FORTIFY_LEVEL: u32 = 0;
 pub const __GLIBC_USE_DEPRECATED_GETS: u32 = 0;
+pub const __GLIBC_USE_DEPRECATED_SCANF: u32 = 0;
 pub const _STDC_PREDEF_H: u32 = 1;
 pub const __STDC_IEC_559__: u32 = 1;
 pub const __STDC_IEC_559_COMPLEX__: u32 = 1;
 pub const __STDC_ISO_10646__: u32 = 201706;
 pub const __GNU_LIBRARY__: u32 = 6;
 pub const __GLIBC__: u32 = 2;
-pub const __GLIBC_MINOR__: u32 = 28;
+pub const __GLIBC_MINOR__: u32 = 31;
 pub const _SYS_CDEFS_H: u32 = 1;
 pub const __glibc_c99_flexarr_available: u32 = 1;
 pub const __WORDSIZE: u32 = 64;
 pub const __WORDSIZE_TIME64_COMPAT32: u32 = 1;
 pub const __SYSCALL_WORDSIZE: u32 = 64;
+pub const __LONG_DOUBLE_USES_FLOAT128: u32 = 0;
 pub const __HAVE_GENERIC_SELECTION: u32 = 1;
 pub const _BITS_TYPES_H: u32 = 1;
+pub const __TIMESIZE: u32 = 64;
 pub const _BITS_TYPESIZES_H: u32 = 1;
 pub const __OFF_T_MATCHES_OFF64_T: u32 = 1;
 pub const __INO_T_MATCHES_INO64_T: u32 = 1;
 pub const __RLIM_T_MATCHES_RLIM64_T: u32 = 1;
+pub const __STATFS_MATCHES_STATFS64: u32 = 1;
 pub const __FD_SETSIZE: u32 = 1024;
+pub const _BITS_TIME64_H: u32 = 1;
 pub const __clock_t_defined: u32 = 1;
 pub const __clockid_t_defined: u32 = 1;
 pub const __time_t_defined: u32 = 1;
@@ -52,9 +58,11 @@ pub const __timer_t_defined: u32 = 1;
 pub const _BITS_STDINT_INTN_H: u32 = 1;
 pub const __BIT_TYPES_DEFINED__: u32 = 1;
 pub const _ENDIAN_H: u32 = 1;
+pub const _BITS_ENDIAN_H: u32 = 1;
 pub const __LITTLE_ENDIAN: u32 = 1234;
 pub const __BIG_ENDIAN: u32 = 4321;
 pub const __PDP_ENDIAN: u32 = 3412;
+pub const _BITS_ENDIANNESS_H: u32 = 1;
 pub const __BYTE_ORDER: u32 = 1234;
 pub const __FLOAT_WORD_ORDER: u32 = 1234;
 pub const LITTLE_ENDIAN: u32 = 1234;
@@ -81,10 +89,7 @@ pub const __SIZEOF_PTHREAD_COND_T: u32 = 48;
 pub const __SIZEOF_PTHREAD_CONDATTR_T: u32 = 4;
 pub const __SIZEOF_PTHREAD_RWLOCKATTR_T: u32 = 8;
 pub const __SIZEOF_PTHREAD_BARRIERATTR_T: u32 = 4;
-pub const __PTHREAD_MUTEX_LOCK_ELISION: u32 = 1;
-pub const __PTHREAD_MUTEX_NUSERS_AFTER_KIND: u32 = 0;
-pub const __PTHREAD_MUTEX_USE_UNION: u32 = 0;
-pub const __PTHREAD_RWLOCK_INT_FLAGS_SHARED: u32 = 1;
+pub const _THREAD_MUTEX_INTERNAL_H: u32 = 1;
 pub const __PTHREAD_MUTEX_HAVE_PREV: u32 = 1;
 pub const __have_pthread_attr_t: u32 = 1;
 pub const X_PROTOCOL: u32 = 11;
@@ -644,6 +649,7 @@ pub type uid_t = __uid_t;
 pub type off_t = __off_t;
 pub type pid_t = __pid_t;
 pub type id_t = __id_t;
+pub type ssize_t = __ssize_t;
 pub type daddr_t = __daddr_t;
 pub type caddr_t = __caddr_t;
 pub type key_t = __key_t;
@@ -651,13 +657,14 @@ pub type clock_t = __clock_t;
 pub type clockid_t = __clockid_t;
 pub type time_t = __time_t;
 pub type timer_t = __timer_t;
+pub type size_t = libc::c_ulong;
 pub type ulong = libc::c_ulong;
 pub type ushort = libc::c_ushort;
 pub type uint = libc::c_uint;
-pub type u_int8_t = libc::c_uchar;
-pub type u_int16_t = libc::c_ushort;
-pub type u_int32_t = libc::c_uint;
-pub type u_int64_t = libc::c_ulong;
+pub type u_int8_t = __uint8_t;
+pub type u_int16_t = __uint16_t;
+pub type u_int32_t = __uint32_t;
+pub type u_int64_t = __uint64_t;
 pub type register_t = libc::c_long;
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -822,6 +829,182 @@ pub type fsblkcnt_t = __fsblkcnt_t;
 pub type fsfilcnt_t = __fsfilcnt_t;
 #[repr(C)]
 #[derive(Copy, Clone)]
+pub struct __pthread_internal_list {
+    pub __prev: *mut __pthread_internal_list,
+    pub __next: *mut __pthread_internal_list,
+}
+#[test]
+fn bindgen_test_layout___pthread_internal_list() {
+    assert_eq!(
+        ::core::mem::size_of::<__pthread_internal_list>(),
+        16usize,
+        concat!("Size of: ", stringify!(__pthread_internal_list))
+    );
+    assert_eq!(
+        ::core::mem::align_of::<__pthread_internal_list>(),
+        8usize,
+        concat!("Alignment of ", stringify!(__pthread_internal_list))
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<__pthread_internal_list>())).__prev as *const _ as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(__pthread_internal_list),
+            "::",
+            stringify!(__prev)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<__pthread_internal_list>())).__next as *const _ as usize },
+        8usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(__pthread_internal_list),
+            "::",
+            stringify!(__next)
+        )
+    );
+}
+pub type __pthread_list_t = __pthread_internal_list;
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct __pthread_internal_slist {
+    pub __next: *mut __pthread_internal_slist,
+}
+#[test]
+fn bindgen_test_layout___pthread_internal_slist() {
+    assert_eq!(
+        ::core::mem::size_of::<__pthread_internal_slist>(),
+        8usize,
+        concat!("Size of: ", stringify!(__pthread_internal_slist))
+    );
+    assert_eq!(
+        ::core::mem::align_of::<__pthread_internal_slist>(),
+        8usize,
+        concat!("Alignment of ", stringify!(__pthread_internal_slist))
+    );
+    assert_eq!(
+        unsafe {
+            &(*(::core::ptr::null::<__pthread_internal_slist>())).__next as *const _ as usize
+        },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(__pthread_internal_slist),
+            "::",
+            stringify!(__next)
+        )
+    );
+}
+pub type __pthread_slist_t = __pthread_internal_slist;
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct __pthread_mutex_s {
+    pub __lock: libc::c_int,
+    pub __count: libc::c_uint,
+    pub __owner: libc::c_int,
+    pub __nusers: libc::c_uint,
+    pub __kind: libc::c_int,
+    pub __spins: libc::c_short,
+    pub __elision: libc::c_short,
+    pub __list: __pthread_list_t,
+}
+#[test]
+fn bindgen_test_layout___pthread_mutex_s() {
+    assert_eq!(
+        ::core::mem::size_of::<__pthread_mutex_s>(),
+        40usize,
+        concat!("Size of: ", stringify!(__pthread_mutex_s))
+    );
+    assert_eq!(
+        ::core::mem::align_of::<__pthread_mutex_s>(),
+        8usize,
+        concat!("Alignment of ", stringify!(__pthread_mutex_s))
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<__pthread_mutex_s>())).__lock as *const _ as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(__pthread_mutex_s),
+            "::",
+            stringify!(__lock)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<__pthread_mutex_s>())).__count as *const _ as usize },
+        4usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(__pthread_mutex_s),
+            "::",
+            stringify!(__count)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<__pthread_mutex_s>())).__owner as *const _ as usize },
+        8usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(__pthread_mutex_s),
+            "::",
+            stringify!(__owner)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<__pthread_mutex_s>())).__nusers as *const _ as usize },
+        12usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(__pthread_mutex_s),
+            "::",
+            stringify!(__nusers)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<__pthread_mutex_s>())).__kind as *const _ as usize },
+        16usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(__pthread_mutex_s),
+            "::",
+            stringify!(__kind)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<__pthread_mutex_s>())).__spins as *const _ as usize },
+        20usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(__pthread_mutex_s),
+            "::",
+            stringify!(__spins)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<__pthread_mutex_s>())).__elision as *const _ as usize },
+        22usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(__pthread_mutex_s),
+            "::",
+            stringify!(__elision)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<__pthread_mutex_s>())).__list as *const _ as usize },
+        24usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(__pthread_mutex_s),
+            "::",
+            stringify!(__list)
+        )
+    );
+}
+#[repr(C)]
+#[derive(Copy, Clone)]
 pub struct __pthread_rwlock_arch_t {
     pub __readers: libc::c_uint,
     pub __writers: libc::c_uint,
@@ -984,151 +1167,6 @@ fn bindgen_test_layout___pthread_rwlock_arch_t() {
             stringify!(__pthread_rwlock_arch_t),
             "::",
             stringify!(__flags)
-        )
-    );
-}
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct __pthread_internal_list {
-    pub __prev: *mut __pthread_internal_list,
-    pub __next: *mut __pthread_internal_list,
-}
-#[test]
-fn bindgen_test_layout___pthread_internal_list() {
-    assert_eq!(
-        ::core::mem::size_of::<__pthread_internal_list>(),
-        16usize,
-        concat!("Size of: ", stringify!(__pthread_internal_list))
-    );
-    assert_eq!(
-        ::core::mem::align_of::<__pthread_internal_list>(),
-        8usize,
-        concat!("Alignment of ", stringify!(__pthread_internal_list))
-    );
-    assert_eq!(
-        unsafe { &(*(::core::ptr::null::<__pthread_internal_list>())).__prev as *const _ as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(__pthread_internal_list),
-            "::",
-            stringify!(__prev)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::core::ptr::null::<__pthread_internal_list>())).__next as *const _ as usize },
-        8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(__pthread_internal_list),
-            "::",
-            stringify!(__next)
-        )
-    );
-}
-pub type __pthread_list_t = __pthread_internal_list;
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct __pthread_mutex_s {
-    pub __lock: libc::c_int,
-    pub __count: libc::c_uint,
-    pub __owner: libc::c_int,
-    pub __nusers: libc::c_uint,
-    pub __kind: libc::c_int,
-    pub __spins: libc::c_short,
-    pub __elision: libc::c_short,
-    pub __list: __pthread_list_t,
-}
-#[test]
-fn bindgen_test_layout___pthread_mutex_s() {
-    assert_eq!(
-        ::core::mem::size_of::<__pthread_mutex_s>(),
-        40usize,
-        concat!("Size of: ", stringify!(__pthread_mutex_s))
-    );
-    assert_eq!(
-        ::core::mem::align_of::<__pthread_mutex_s>(),
-        8usize,
-        concat!("Alignment of ", stringify!(__pthread_mutex_s))
-    );
-    assert_eq!(
-        unsafe { &(*(::core::ptr::null::<__pthread_mutex_s>())).__lock as *const _ as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(__pthread_mutex_s),
-            "::",
-            stringify!(__lock)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::core::ptr::null::<__pthread_mutex_s>())).__count as *const _ as usize },
-        4usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(__pthread_mutex_s),
-            "::",
-            stringify!(__count)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::core::ptr::null::<__pthread_mutex_s>())).__owner as *const _ as usize },
-        8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(__pthread_mutex_s),
-            "::",
-            stringify!(__owner)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::core::ptr::null::<__pthread_mutex_s>())).__nusers as *const _ as usize },
-        12usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(__pthread_mutex_s),
-            "::",
-            stringify!(__nusers)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::core::ptr::null::<__pthread_mutex_s>())).__kind as *const _ as usize },
-        16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(__pthread_mutex_s),
-            "::",
-            stringify!(__kind)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::core::ptr::null::<__pthread_mutex_s>())).__spins as *const _ as usize },
-        20usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(__pthread_mutex_s),
-            "::",
-            stringify!(__spins)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::core::ptr::null::<__pthread_mutex_s>())).__elision as *const _ as usize },
-        22usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(__pthread_mutex_s),
-            "::",
-            stringify!(__elision)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::core::ptr::null::<__pthread_mutex_s>())).__list as *const _ as usize },
-        24usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(__pthread_mutex_s),
-            "::",
-            stringify!(__list)
         )
     );
 }
@@ -11158,13 +11196,20 @@ extern "C" {
     pub fn XSynchronize(
         arg1: *mut Display,
         arg2: libc::c_int,
-    ) -> ::core::option::Option<unsafe extern "C" fn(arg1: *mut Display) -> libc::c_int>;
+    ) -> ::core::option::Option<
+        unsafe extern "C" fn(arg1: *mut Display, arg2: libc::c_int) -> libc::c_int,
+    >;
 }
 extern "C" {
     pub fn XSetAfterFunction(
         arg1: *mut Display,
         arg2: ::core::option::Option<unsafe extern "C" fn(arg1: *mut Display) -> libc::c_int>,
-    ) -> ::core::option::Option<unsafe extern "C" fn(arg1: *mut Display) -> libc::c_int>;
+    ) -> ::core::option::Option<
+        unsafe extern "C" fn(
+            arg1: *mut Display,
+            arg2: ::core::option::Option<unsafe extern "C" fn(arg1: *mut Display) -> libc::c_int>,
+        ) -> libc::c_int,
+    >;
 }
 extern "C" {
     pub fn XInternAtom(arg1: *mut Display, arg2: *const libc::c_char, arg3: libc::c_int) -> Atom;

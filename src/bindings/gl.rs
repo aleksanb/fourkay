@@ -2,7 +2,7 @@
 
 #![allow(warnings)]
 
-#[link(name = "GL")]
+#[link(name="GL")]
 extern "C" {}
 
 pub const GL_VERSION_1_1: u32 = 1;
@@ -787,51 +787,11 @@ pub const GL_ACTIVE_TEXTURE_ARB: u32 = 34016;
 pub const GL_CLIENT_ACTIVE_TEXTURE_ARB: u32 = 34017;
 pub const GL_MAX_TEXTURE_UNITS_ARB: u32 = 34018;
 pub const __gl_glext_h_: u32 = 1;
-pub const GL_GLEXT_VERSION: u32 = 20180725;
-pub const GL_VERSION_1_4: u32 = 1;
-pub const GL_BLEND_DST_RGB: u32 = 32968;
-pub const GL_BLEND_SRC_RGB: u32 = 32969;
-pub const GL_BLEND_DST_ALPHA: u32 = 32970;
-pub const GL_BLEND_SRC_ALPHA: u32 = 32971;
-pub const GL_POINT_FADE_THRESHOLD_SIZE: u32 = 33064;
-pub const GL_DEPTH_COMPONENT16: u32 = 33189;
-pub const GL_DEPTH_COMPONENT24: u32 = 33190;
-pub const GL_DEPTH_COMPONENT32: u32 = 33191;
-pub const GL_MIRRORED_REPEAT: u32 = 33648;
-pub const GL_MAX_TEXTURE_LOD_BIAS: u32 = 34045;
-pub const GL_TEXTURE_LOD_BIAS: u32 = 34049;
-pub const GL_INCR_WRAP: u32 = 34055;
-pub const GL_DECR_WRAP: u32 = 34056;
-pub const GL_TEXTURE_DEPTH_SIZE: u32 = 34890;
-pub const GL_TEXTURE_COMPARE_MODE: u32 = 34892;
-pub const GL_TEXTURE_COMPARE_FUNC: u32 = 34893;
-pub const GL_POINT_SIZE_MIN: u32 = 33062;
-pub const GL_POINT_SIZE_MAX: u32 = 33063;
-pub const GL_POINT_DISTANCE_ATTENUATION: u32 = 33065;
-pub const GL_GENERATE_MIPMAP: u32 = 33169;
-pub const GL_GENERATE_MIPMAP_HINT: u32 = 33170;
-pub const GL_FOG_COORDINATE_SOURCE: u32 = 33872;
-pub const GL_FOG_COORDINATE: u32 = 33873;
-pub const GL_FRAGMENT_DEPTH: u32 = 33874;
-pub const GL_CURRENT_FOG_COORDINATE: u32 = 33875;
-pub const GL_FOG_COORDINATE_ARRAY_TYPE: u32 = 33876;
-pub const GL_FOG_COORDINATE_ARRAY_STRIDE: u32 = 33877;
-pub const GL_FOG_COORDINATE_ARRAY_POINTER: u32 = 33878;
-pub const GL_FOG_COORDINATE_ARRAY: u32 = 33879;
-pub const GL_COLOR_SUM: u32 = 33880;
-pub const GL_CURRENT_SECONDARY_COLOR: u32 = 33881;
-pub const GL_SECONDARY_COLOR_ARRAY_SIZE: u32 = 33882;
-pub const GL_SECONDARY_COLOR_ARRAY_TYPE: u32 = 33883;
-pub const GL_SECONDARY_COLOR_ARRAY_STRIDE: u32 = 33884;
-pub const GL_SECONDARY_COLOR_ARRAY_POINTER: u32 = 33885;
-pub const GL_SECONDARY_COLOR_ARRAY: u32 = 33886;
-pub const GL_TEXTURE_FILTER_CONTROL: u32 = 34048;
-pub const GL_DEPTH_TEXTURE_MODE: u32 = 34891;
-pub const GL_COMPARE_R_TO_TEXTURE: u32 = 34894;
-pub const GL_VERSION_1_5: u32 = 1;
+pub const GL_GLEXT_VERSION: u32 = 20190805;
 pub const _STDINT_H: u32 = 1;
 pub const _FEATURES_H: u32 = 1;
 pub const _DEFAULT_SOURCE: u32 = 1;
+pub const __GLIBC_USE_ISOC2X: u32 = 0;
 pub const __USE_ISOC11: u32 = 1;
 pub const __USE_ISOC99: u32 = 1;
 pub const __USE_ISOC95: u32 = 1;
@@ -849,29 +809,36 @@ pub const __USE_MISC: u32 = 1;
 pub const __USE_ATFILE: u32 = 1;
 pub const __USE_FORTIFY_LEVEL: u32 = 0;
 pub const __GLIBC_USE_DEPRECATED_GETS: u32 = 0;
+pub const __GLIBC_USE_DEPRECATED_SCANF: u32 = 0;
 pub const _STDC_PREDEF_H: u32 = 1;
 pub const __STDC_IEC_559__: u32 = 1;
 pub const __STDC_IEC_559_COMPLEX__: u32 = 1;
 pub const __STDC_ISO_10646__: u32 = 201706;
 pub const __GNU_LIBRARY__: u32 = 6;
 pub const __GLIBC__: u32 = 2;
-pub const __GLIBC_MINOR__: u32 = 28;
+pub const __GLIBC_MINOR__: u32 = 31;
 pub const _SYS_CDEFS_H: u32 = 1;
 pub const __glibc_c99_flexarr_available: u32 = 1;
 pub const __WORDSIZE: u32 = 64;
 pub const __WORDSIZE_TIME64_COMPAT32: u32 = 1;
 pub const __SYSCALL_WORDSIZE: u32 = 64;
+pub const __LONG_DOUBLE_USES_FLOAT128: u32 = 0;
 pub const __HAVE_GENERIC_SELECTION: u32 = 1;
 pub const __GLIBC_USE_LIB_EXT2: u32 = 0;
 pub const __GLIBC_USE_IEC_60559_BFP_EXT: u32 = 0;
+pub const __GLIBC_USE_IEC_60559_BFP_EXT_C2X: u32 = 0;
 pub const __GLIBC_USE_IEC_60559_FUNCS_EXT: u32 = 0;
+pub const __GLIBC_USE_IEC_60559_FUNCS_EXT_C2X: u32 = 0;
 pub const __GLIBC_USE_IEC_60559_TYPES_EXT: u32 = 0;
 pub const _BITS_TYPES_H: u32 = 1;
+pub const __TIMESIZE: u32 = 64;
 pub const _BITS_TYPESIZES_H: u32 = 1;
 pub const __OFF_T_MATCHES_OFF64_T: u32 = 1;
 pub const __INO_T_MATCHES_INO64_T: u32 = 1;
 pub const __RLIM_T_MATCHES_RLIM64_T: u32 = 1;
+pub const __STATFS_MATCHES_STATFS64: u32 = 1;
 pub const __FD_SETSIZE: u32 = 1024;
+pub const _BITS_TIME64_H: u32 = 1;
 pub const _BITS_WCHAR_H: u32 = 1;
 pub const _BITS_STDINT_INTN_H: u32 = 1;
 pub const _BITS_STDINT_UINTN_H: u32 = 1;
@@ -915,6 +882,47 @@ pub const WINT_MAX: u32 = 4294967295;
 pub const KHRONOS_SUPPORT_INT64: u32 = 1;
 pub const KHRONOS_SUPPORT_FLOAT: u32 = 1;
 pub const KHRONOS_MAX_ENUM: u32 = 2147483647;
+pub const GL_VERSION_1_4: u32 = 1;
+pub const GL_BLEND_DST_RGB: u32 = 32968;
+pub const GL_BLEND_SRC_RGB: u32 = 32969;
+pub const GL_BLEND_DST_ALPHA: u32 = 32970;
+pub const GL_BLEND_SRC_ALPHA: u32 = 32971;
+pub const GL_POINT_FADE_THRESHOLD_SIZE: u32 = 33064;
+pub const GL_DEPTH_COMPONENT16: u32 = 33189;
+pub const GL_DEPTH_COMPONENT24: u32 = 33190;
+pub const GL_DEPTH_COMPONENT32: u32 = 33191;
+pub const GL_MIRRORED_REPEAT: u32 = 33648;
+pub const GL_MAX_TEXTURE_LOD_BIAS: u32 = 34045;
+pub const GL_TEXTURE_LOD_BIAS: u32 = 34049;
+pub const GL_INCR_WRAP: u32 = 34055;
+pub const GL_DECR_WRAP: u32 = 34056;
+pub const GL_TEXTURE_DEPTH_SIZE: u32 = 34890;
+pub const GL_TEXTURE_COMPARE_MODE: u32 = 34892;
+pub const GL_TEXTURE_COMPARE_FUNC: u32 = 34893;
+pub const GL_POINT_SIZE_MIN: u32 = 33062;
+pub const GL_POINT_SIZE_MAX: u32 = 33063;
+pub const GL_POINT_DISTANCE_ATTENUATION: u32 = 33065;
+pub const GL_GENERATE_MIPMAP: u32 = 33169;
+pub const GL_GENERATE_MIPMAP_HINT: u32 = 33170;
+pub const GL_FOG_COORDINATE_SOURCE: u32 = 33872;
+pub const GL_FOG_COORDINATE: u32 = 33873;
+pub const GL_FRAGMENT_DEPTH: u32 = 33874;
+pub const GL_CURRENT_FOG_COORDINATE: u32 = 33875;
+pub const GL_FOG_COORDINATE_ARRAY_TYPE: u32 = 33876;
+pub const GL_FOG_COORDINATE_ARRAY_STRIDE: u32 = 33877;
+pub const GL_FOG_COORDINATE_ARRAY_POINTER: u32 = 33878;
+pub const GL_FOG_COORDINATE_ARRAY: u32 = 33879;
+pub const GL_COLOR_SUM: u32 = 33880;
+pub const GL_CURRENT_SECONDARY_COLOR: u32 = 33881;
+pub const GL_SECONDARY_COLOR_ARRAY_SIZE: u32 = 33882;
+pub const GL_SECONDARY_COLOR_ARRAY_TYPE: u32 = 33883;
+pub const GL_SECONDARY_COLOR_ARRAY_STRIDE: u32 = 33884;
+pub const GL_SECONDARY_COLOR_ARRAY_POINTER: u32 = 33885;
+pub const GL_SECONDARY_COLOR_ARRAY: u32 = 33886;
+pub const GL_TEXTURE_FILTER_CONTROL: u32 = 34048;
+pub const GL_DEPTH_TEXTURE_MODE: u32 = 34891;
+pub const GL_COMPARE_R_TO_TEXTURE: u32 = 34894;
+pub const GL_VERSION_1_5: u32 = 1;
 pub const GL_BUFFER_SIZE: u32 = 34660;
 pub const GL_BUFFER_USAGE: u32 = 34661;
 pub const GL_QUERY_COUNTER_BITS: u32 = 34916;
@@ -1375,164 +1383,6 @@ pub const GL_UNIFORM_BLOCK_REFERENCED_BY_GEOMETRY_SHADER: u32 = 35397;
 pub const GL_UNIFORM_BLOCK_REFERENCED_BY_FRAGMENT_SHADER: u32 = 35398;
 pub const GL_INVALID_INDEX: u32 = 4294967295;
 pub const GL_VERSION_3_2: u32 = 1;
-pub const _INTTYPES_H: u32 = 1;
-pub const ____gwchar_t_defined: u32 = 1;
-pub const __PRI64_PREFIX: &'static [u8; 2usize] = b"l\0";
-pub const __PRIPTR_PREFIX: &'static [u8; 2usize] = b"l\0";
-pub const PRId8: &'static [u8; 2usize] = b"d\0";
-pub const PRId16: &'static [u8; 2usize] = b"d\0";
-pub const PRId32: &'static [u8; 2usize] = b"d\0";
-pub const PRId64: &'static [u8; 3usize] = b"ld\0";
-pub const PRIdLEAST8: &'static [u8; 2usize] = b"d\0";
-pub const PRIdLEAST16: &'static [u8; 2usize] = b"d\0";
-pub const PRIdLEAST32: &'static [u8; 2usize] = b"d\0";
-pub const PRIdLEAST64: &'static [u8; 3usize] = b"ld\0";
-pub const PRIdFAST8: &'static [u8; 2usize] = b"d\0";
-pub const PRIdFAST16: &'static [u8; 3usize] = b"ld\0";
-pub const PRIdFAST32: &'static [u8; 3usize] = b"ld\0";
-pub const PRIdFAST64: &'static [u8; 3usize] = b"ld\0";
-pub const PRIi8: &'static [u8; 2usize] = b"i\0";
-pub const PRIi16: &'static [u8; 2usize] = b"i\0";
-pub const PRIi32: &'static [u8; 2usize] = b"i\0";
-pub const PRIi64: &'static [u8; 3usize] = b"li\0";
-pub const PRIiLEAST8: &'static [u8; 2usize] = b"i\0";
-pub const PRIiLEAST16: &'static [u8; 2usize] = b"i\0";
-pub const PRIiLEAST32: &'static [u8; 2usize] = b"i\0";
-pub const PRIiLEAST64: &'static [u8; 3usize] = b"li\0";
-pub const PRIiFAST8: &'static [u8; 2usize] = b"i\0";
-pub const PRIiFAST16: &'static [u8; 3usize] = b"li\0";
-pub const PRIiFAST32: &'static [u8; 3usize] = b"li\0";
-pub const PRIiFAST64: &'static [u8; 3usize] = b"li\0";
-pub const PRIo8: &'static [u8; 2usize] = b"o\0";
-pub const PRIo16: &'static [u8; 2usize] = b"o\0";
-pub const PRIo32: &'static [u8; 2usize] = b"o\0";
-pub const PRIo64: &'static [u8; 3usize] = b"lo\0";
-pub const PRIoLEAST8: &'static [u8; 2usize] = b"o\0";
-pub const PRIoLEAST16: &'static [u8; 2usize] = b"o\0";
-pub const PRIoLEAST32: &'static [u8; 2usize] = b"o\0";
-pub const PRIoLEAST64: &'static [u8; 3usize] = b"lo\0";
-pub const PRIoFAST8: &'static [u8; 2usize] = b"o\0";
-pub const PRIoFAST16: &'static [u8; 3usize] = b"lo\0";
-pub const PRIoFAST32: &'static [u8; 3usize] = b"lo\0";
-pub const PRIoFAST64: &'static [u8; 3usize] = b"lo\0";
-pub const PRIu8: &'static [u8; 2usize] = b"u\0";
-pub const PRIu16: &'static [u8; 2usize] = b"u\0";
-pub const PRIu32: &'static [u8; 2usize] = b"u\0";
-pub const PRIu64: &'static [u8; 3usize] = b"lu\0";
-pub const PRIuLEAST8: &'static [u8; 2usize] = b"u\0";
-pub const PRIuLEAST16: &'static [u8; 2usize] = b"u\0";
-pub const PRIuLEAST32: &'static [u8; 2usize] = b"u\0";
-pub const PRIuLEAST64: &'static [u8; 3usize] = b"lu\0";
-pub const PRIuFAST8: &'static [u8; 2usize] = b"u\0";
-pub const PRIuFAST16: &'static [u8; 3usize] = b"lu\0";
-pub const PRIuFAST32: &'static [u8; 3usize] = b"lu\0";
-pub const PRIuFAST64: &'static [u8; 3usize] = b"lu\0";
-pub const PRIx8: &'static [u8; 2usize] = b"x\0";
-pub const PRIx16: &'static [u8; 2usize] = b"x\0";
-pub const PRIx32: &'static [u8; 2usize] = b"x\0";
-pub const PRIx64: &'static [u8; 3usize] = b"lx\0";
-pub const PRIxLEAST8: &'static [u8; 2usize] = b"x\0";
-pub const PRIxLEAST16: &'static [u8; 2usize] = b"x\0";
-pub const PRIxLEAST32: &'static [u8; 2usize] = b"x\0";
-pub const PRIxLEAST64: &'static [u8; 3usize] = b"lx\0";
-pub const PRIxFAST8: &'static [u8; 2usize] = b"x\0";
-pub const PRIxFAST16: &'static [u8; 3usize] = b"lx\0";
-pub const PRIxFAST32: &'static [u8; 3usize] = b"lx\0";
-pub const PRIxFAST64: &'static [u8; 3usize] = b"lx\0";
-pub const PRIX8: &'static [u8; 2usize] = b"X\0";
-pub const PRIX16: &'static [u8; 2usize] = b"X\0";
-pub const PRIX32: &'static [u8; 2usize] = b"X\0";
-pub const PRIX64: &'static [u8; 3usize] = b"lX\0";
-pub const PRIXLEAST8: &'static [u8; 2usize] = b"X\0";
-pub const PRIXLEAST16: &'static [u8; 2usize] = b"X\0";
-pub const PRIXLEAST32: &'static [u8; 2usize] = b"X\0";
-pub const PRIXLEAST64: &'static [u8; 3usize] = b"lX\0";
-pub const PRIXFAST8: &'static [u8; 2usize] = b"X\0";
-pub const PRIXFAST16: &'static [u8; 3usize] = b"lX\0";
-pub const PRIXFAST32: &'static [u8; 3usize] = b"lX\0";
-pub const PRIXFAST64: &'static [u8; 3usize] = b"lX\0";
-pub const PRIdMAX: &'static [u8; 3usize] = b"ld\0";
-pub const PRIiMAX: &'static [u8; 3usize] = b"li\0";
-pub const PRIoMAX: &'static [u8; 3usize] = b"lo\0";
-pub const PRIuMAX: &'static [u8; 3usize] = b"lu\0";
-pub const PRIxMAX: &'static [u8; 3usize] = b"lx\0";
-pub const PRIXMAX: &'static [u8; 3usize] = b"lX\0";
-pub const PRIdPTR: &'static [u8; 3usize] = b"ld\0";
-pub const PRIiPTR: &'static [u8; 3usize] = b"li\0";
-pub const PRIoPTR: &'static [u8; 3usize] = b"lo\0";
-pub const PRIuPTR: &'static [u8; 3usize] = b"lu\0";
-pub const PRIxPTR: &'static [u8; 3usize] = b"lx\0";
-pub const PRIXPTR: &'static [u8; 3usize] = b"lX\0";
-pub const SCNd8: &'static [u8; 4usize] = b"hhd\0";
-pub const SCNd16: &'static [u8; 3usize] = b"hd\0";
-pub const SCNd32: &'static [u8; 2usize] = b"d\0";
-pub const SCNd64: &'static [u8; 3usize] = b"ld\0";
-pub const SCNdLEAST8: &'static [u8; 4usize] = b"hhd\0";
-pub const SCNdLEAST16: &'static [u8; 3usize] = b"hd\0";
-pub const SCNdLEAST32: &'static [u8; 2usize] = b"d\0";
-pub const SCNdLEAST64: &'static [u8; 3usize] = b"ld\0";
-pub const SCNdFAST8: &'static [u8; 4usize] = b"hhd\0";
-pub const SCNdFAST16: &'static [u8; 3usize] = b"ld\0";
-pub const SCNdFAST32: &'static [u8; 3usize] = b"ld\0";
-pub const SCNdFAST64: &'static [u8; 3usize] = b"ld\0";
-pub const SCNi8: &'static [u8; 4usize] = b"hhi\0";
-pub const SCNi16: &'static [u8; 3usize] = b"hi\0";
-pub const SCNi32: &'static [u8; 2usize] = b"i\0";
-pub const SCNi64: &'static [u8; 3usize] = b"li\0";
-pub const SCNiLEAST8: &'static [u8; 4usize] = b"hhi\0";
-pub const SCNiLEAST16: &'static [u8; 3usize] = b"hi\0";
-pub const SCNiLEAST32: &'static [u8; 2usize] = b"i\0";
-pub const SCNiLEAST64: &'static [u8; 3usize] = b"li\0";
-pub const SCNiFAST8: &'static [u8; 4usize] = b"hhi\0";
-pub const SCNiFAST16: &'static [u8; 3usize] = b"li\0";
-pub const SCNiFAST32: &'static [u8; 3usize] = b"li\0";
-pub const SCNiFAST64: &'static [u8; 3usize] = b"li\0";
-pub const SCNu8: &'static [u8; 4usize] = b"hhu\0";
-pub const SCNu16: &'static [u8; 3usize] = b"hu\0";
-pub const SCNu32: &'static [u8; 2usize] = b"u\0";
-pub const SCNu64: &'static [u8; 3usize] = b"lu\0";
-pub const SCNuLEAST8: &'static [u8; 4usize] = b"hhu\0";
-pub const SCNuLEAST16: &'static [u8; 3usize] = b"hu\0";
-pub const SCNuLEAST32: &'static [u8; 2usize] = b"u\0";
-pub const SCNuLEAST64: &'static [u8; 3usize] = b"lu\0";
-pub const SCNuFAST8: &'static [u8; 4usize] = b"hhu\0";
-pub const SCNuFAST16: &'static [u8; 3usize] = b"lu\0";
-pub const SCNuFAST32: &'static [u8; 3usize] = b"lu\0";
-pub const SCNuFAST64: &'static [u8; 3usize] = b"lu\0";
-pub const SCNo8: &'static [u8; 4usize] = b"hho\0";
-pub const SCNo16: &'static [u8; 3usize] = b"ho\0";
-pub const SCNo32: &'static [u8; 2usize] = b"o\0";
-pub const SCNo64: &'static [u8; 3usize] = b"lo\0";
-pub const SCNoLEAST8: &'static [u8; 4usize] = b"hho\0";
-pub const SCNoLEAST16: &'static [u8; 3usize] = b"ho\0";
-pub const SCNoLEAST32: &'static [u8; 2usize] = b"o\0";
-pub const SCNoLEAST64: &'static [u8; 3usize] = b"lo\0";
-pub const SCNoFAST8: &'static [u8; 4usize] = b"hho\0";
-pub const SCNoFAST16: &'static [u8; 3usize] = b"lo\0";
-pub const SCNoFAST32: &'static [u8; 3usize] = b"lo\0";
-pub const SCNoFAST64: &'static [u8; 3usize] = b"lo\0";
-pub const SCNx8: &'static [u8; 4usize] = b"hhx\0";
-pub const SCNx16: &'static [u8; 3usize] = b"hx\0";
-pub const SCNx32: &'static [u8; 2usize] = b"x\0";
-pub const SCNx64: &'static [u8; 3usize] = b"lx\0";
-pub const SCNxLEAST8: &'static [u8; 4usize] = b"hhx\0";
-pub const SCNxLEAST16: &'static [u8; 3usize] = b"hx\0";
-pub const SCNxLEAST32: &'static [u8; 2usize] = b"x\0";
-pub const SCNxLEAST64: &'static [u8; 3usize] = b"lx\0";
-pub const SCNxFAST8: &'static [u8; 4usize] = b"hhx\0";
-pub const SCNxFAST16: &'static [u8; 3usize] = b"lx\0";
-pub const SCNxFAST32: &'static [u8; 3usize] = b"lx\0";
-pub const SCNxFAST64: &'static [u8; 3usize] = b"lx\0";
-pub const SCNdMAX: &'static [u8; 3usize] = b"ld\0";
-pub const SCNiMAX: &'static [u8; 3usize] = b"li\0";
-pub const SCNoMAX: &'static [u8; 3usize] = b"lo\0";
-pub const SCNuMAX: &'static [u8; 3usize] = b"lu\0";
-pub const SCNxMAX: &'static [u8; 3usize] = b"lx\0";
-pub const SCNdPTR: &'static [u8; 3usize] = b"ld\0";
-pub const SCNiPTR: &'static [u8; 3usize] = b"li\0";
-pub const SCNoPTR: &'static [u8; 3usize] = b"lo\0";
-pub const SCNuPTR: &'static [u8; 3usize] = b"lu\0";
-pub const SCNxPTR: &'static [u8; 3usize] = b"lx\0";
 pub const GL_CONTEXT_CORE_PROFILE_BIT: u32 = 1;
 pub const GL_CONTEXT_COMPATIBILITY_PROFILE_BIT: u32 = 2;
 pub const GL_LINES_ADJACENCY: u32 = 10;
@@ -2398,6 +2248,25 @@ pub const GL_VERTEX_ATTRIB_ARRAY_DIVISOR_ARB: u32 = 35070;
 pub const GL_ARB_internalformat_query: u32 = 1;
 pub const GL_ARB_internalformat_query2: u32 = 1;
 pub const GL_SRGB_DECODE_ARB: u32 = 33433;
+pub const GL_VIEW_CLASS_EAC_R11: u32 = 37763;
+pub const GL_VIEW_CLASS_EAC_RG11: u32 = 37764;
+pub const GL_VIEW_CLASS_ETC2_RGB: u32 = 37765;
+pub const GL_VIEW_CLASS_ETC2_RGBA: u32 = 37766;
+pub const GL_VIEW_CLASS_ETC2_EAC_RGBA: u32 = 37767;
+pub const GL_VIEW_CLASS_ASTC_4x4_RGBA: u32 = 37768;
+pub const GL_VIEW_CLASS_ASTC_5x4_RGBA: u32 = 37769;
+pub const GL_VIEW_CLASS_ASTC_5x5_RGBA: u32 = 37770;
+pub const GL_VIEW_CLASS_ASTC_6x5_RGBA: u32 = 37771;
+pub const GL_VIEW_CLASS_ASTC_6x6_RGBA: u32 = 37772;
+pub const GL_VIEW_CLASS_ASTC_8x5_RGBA: u32 = 37773;
+pub const GL_VIEW_CLASS_ASTC_8x6_RGBA: u32 = 37774;
+pub const GL_VIEW_CLASS_ASTC_8x8_RGBA: u32 = 37775;
+pub const GL_VIEW_CLASS_ASTC_10x5_RGBA: u32 = 37776;
+pub const GL_VIEW_CLASS_ASTC_10x6_RGBA: u32 = 37777;
+pub const GL_VIEW_CLASS_ASTC_10x8_RGBA: u32 = 37778;
+pub const GL_VIEW_CLASS_ASTC_10x10_RGBA: u32 = 37779;
+pub const GL_VIEW_CLASS_ASTC_12x10_RGBA: u32 = 37780;
+pub const GL_VIEW_CLASS_ASTC_12x12_RGBA: u32 = 37781;
 pub const GL_ARB_invalidate_subdata: u32 = 1;
 pub const GL_ARB_map_buffer_alignment: u32 = 1;
 pub const GL_ARB_map_buffer_range: u32 = 1;
@@ -2850,6 +2719,19 @@ pub const GL_COMPLETION_STATUS_KHR: u32 = 37297;
 pub const GL_KHR_robust_buffer_access_behavior: u32 = 1;
 pub const GL_KHR_robustness: u32 = 1;
 pub const GL_CONTEXT_ROBUST_ACCESS: u32 = 37107;
+pub const GL_KHR_shader_subgroup: u32 = 1;
+pub const GL_SUBGROUP_SIZE_KHR: u32 = 38194;
+pub const GL_SUBGROUP_SUPPORTED_STAGES_KHR: u32 = 38195;
+pub const GL_SUBGROUP_SUPPORTED_FEATURES_KHR: u32 = 38196;
+pub const GL_SUBGROUP_QUAD_ALL_STAGES_KHR: u32 = 38197;
+pub const GL_SUBGROUP_FEATURE_BASIC_BIT_KHR: u32 = 1;
+pub const GL_SUBGROUP_FEATURE_VOTE_BIT_KHR: u32 = 2;
+pub const GL_SUBGROUP_FEATURE_ARITHMETIC_BIT_KHR: u32 = 4;
+pub const GL_SUBGROUP_FEATURE_BALLOT_BIT_KHR: u32 = 8;
+pub const GL_SUBGROUP_FEATURE_SHUFFLE_BIT_KHR: u32 = 16;
+pub const GL_SUBGROUP_FEATURE_SHUFFLE_RELATIVE_BIT_KHR: u32 = 32;
+pub const GL_SUBGROUP_FEATURE_CLUSTERED_BIT_KHR: u32 = 64;
+pub const GL_SUBGROUP_FEATURE_QUAD_BIT_KHR: u32 = 128;
 pub const GL_KHR_texture_compression_astc_hdr: u32 = 1;
 pub const GL_COMPRESSED_RGBA_ASTC_4x4_KHR: u32 = 37808;
 pub const GL_COMPRESSED_RGBA_ASTC_5x4_KHR: u32 = 37809;
@@ -3661,6 +3543,9 @@ pub const GL_SAMPLE_MASK_VALUE_EXT: u32 = 32938;
 pub const GL_SAMPLE_MASK_INVERT_EXT: u32 = 32939;
 pub const GL_SAMPLE_PATTERN_EXT: u32 = 32940;
 pub const GL_MULTISAMPLE_BIT_EXT: u32 = 536870912;
+pub const GL_EXT_multiview_tessellation_geometry_shader: u32 = 1;
+pub const GL_EXT_multiview_texture_multisample: u32 = 1;
+pub const GL_EXT_multiview_timer_query: u32 = 1;
 pub const GL_EXT_packed_depth_stencil: u32 = 1;
 pub const GL_DEPTH_STENCIL_EXT: u32 = 34041;
 pub const GL_UNSIGNED_INT_24_8_EXT: u32 = 34042;
@@ -4040,10 +3925,13 @@ pub const GL_COMPRESSED_SRGB_S3TC_DXT1_EXT: u32 = 35916;
 pub const GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT: u32 = 35917;
 pub const GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT: u32 = 35918;
 pub const GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT: u32 = 35919;
+pub const GL_EXT_texture_sRGB_R8: u32 = 1;
+pub const GL_SR8_EXT: u32 = 36797;
 pub const GL_EXT_texture_sRGB_decode: u32 = 1;
 pub const GL_TEXTURE_SRGB_DECODE_EXT: u32 = 35400;
 pub const GL_DECODE_EXT: u32 = 35401;
 pub const GL_SKIP_DECODE_EXT: u32 = 35402;
+pub const GL_EXT_texture_shadow_lod: u32 = 1;
 pub const GL_EXT_texture_shared_exponent: u32 = 1;
 pub const GL_RGB9_E5_EXT: u32 = 35901;
 pub const GL_UNSIGNED_INT_5_9_9_9_REV_EXT: u32 = 35902;
@@ -4385,6 +4273,8 @@ pub const GL_PROXY_TEXTURE_1D_STACK_MESAX: u32 = 34651;
 pub const GL_PROXY_TEXTURE_2D_STACK_MESAX: u32 = 34652;
 pub const GL_TEXTURE_1D_STACK_BINDING_MESAX: u32 = 34653;
 pub const GL_TEXTURE_2D_STACK_BINDING_MESAX: u32 = 34654;
+pub const GL_MESA_framebuffer_flip_y: u32 = 1;
+pub const GL_FRAMEBUFFER_FLIP_Y_MESA: u32 = 35771;
 pub const GL_MESA_pack_invert: u32 = 1;
 pub const GL_PACK_INVERT_MESA: u32 = 34648;
 pub const GL_MESA_program_binary_formats: u32 = 1;
@@ -4408,9 +4298,12 @@ pub const GL_GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX: u32 = 36936;
 pub const GL_GPU_MEMORY_INFO_CURRENT_AVAILABLE_VIDMEM_NVX: u32 = 36937;
 pub const GL_GPU_MEMORY_INFO_EVICTION_COUNT_NVX: u32 = 36938;
 pub const GL_GPU_MEMORY_INFO_EVICTED_MEMORY_NVX: u32 = 36939;
+pub const GL_NVX_gpu_multicast2: u32 = 1;
+pub const GL_UPLOAD_GPU_MASK_NVX: u32 = 38218;
 pub const GL_NVX_linked_gpu_multicast: u32 = 1;
 pub const GL_LGPU_SEPARATE_STORAGE_BIT_NVX: u32 = 2048;
 pub const GL_MAX_LGPU_GPUS_NVX: u32 = 37562;
+pub const GL_NVX_progress_fence: u32 = 1;
 pub const GL_NV_alpha_to_coverage_dither_control: u32 = 1;
 pub const GL_ALPHA_TO_COVERAGE_DITHER_DEFAULT_NV: u32 = 37709;
 pub const GL_ALPHA_TO_COVERAGE_DITHER_ENABLE_NV: u32 = 37710;
@@ -4500,6 +4393,7 @@ pub const GL_FRONT_FACE_COMMAND_NV: u32 = 18;
 pub const GL_NV_compute_program5: u32 = 1;
 pub const GL_COMPUTE_PROGRAM_NV: u32 = 37115;
 pub const GL_COMPUTE_PROGRAM_PARAMETER_BUFFER_NV: u32 = 37116;
+pub const GL_NV_compute_shader_derivatives: u32 = 1;
 pub const GL_NV_conditional_render: u32 = 1;
 pub const GL_QUERY_WAIT_NV: u32 = 36371;
 pub const GL_QUERY_NO_WAIT_NV: u32 = 36372;
@@ -4617,6 +4511,7 @@ pub const GL_MAX_PROGRAM_LOOP_DEPTH_NV: u32 = 35063;
 pub const GL_MAX_PROGRAM_LOOP_COUNT_NV: u32 = 35064;
 pub const GL_NV_fragment_program4: u32 = 1;
 pub const GL_NV_fragment_program_option: u32 = 1;
+pub const GL_NV_fragment_shader_barycentric: u32 = 1;
 pub const GL_NV_fragment_shader_interlock: u32 = 1;
 pub const GL_NV_framebuffer_mixed_samples: u32 = 1;
 pub const GL_COVERAGE_MODULATION_TABLE_NV: u32 = 37681;
@@ -4674,6 +4569,66 @@ pub const GL_CONFORMANT_NV: u32 = 37748;
 pub const GL_NV_light_max_exponent: u32 = 1;
 pub const GL_MAX_SHININESS_NV: u32 = 34052;
 pub const GL_MAX_SPOT_EXPONENT_NV: u32 = 34053;
+pub const GL_NV_memory_attachment: u32 = 1;
+pub const GL_ATTACHED_MEMORY_OBJECT_NV: u32 = 38308;
+pub const GL_ATTACHED_MEMORY_OFFSET_NV: u32 = 38309;
+pub const GL_MEMORY_ATTACHABLE_ALIGNMENT_NV: u32 = 38310;
+pub const GL_MEMORY_ATTACHABLE_SIZE_NV: u32 = 38311;
+pub const GL_MEMORY_ATTACHABLE_NV: u32 = 38312;
+pub const GL_DETACHED_MEMORY_INCARNATION_NV: u32 = 38313;
+pub const GL_DETACHED_TEXTURES_NV: u32 = 38314;
+pub const GL_DETACHED_BUFFERS_NV: u32 = 38315;
+pub const GL_MAX_DETACHED_TEXTURES_NV: u32 = 38316;
+pub const GL_MAX_DETACHED_BUFFERS_NV: u32 = 38317;
+pub const GL_NV_mesh_shader: u32 = 1;
+pub const GL_MESH_SHADER_NV: u32 = 38233;
+pub const GL_TASK_SHADER_NV: u32 = 38234;
+pub const GL_MAX_MESH_UNIFORM_BLOCKS_NV: u32 = 36448;
+pub const GL_MAX_MESH_TEXTURE_IMAGE_UNITS_NV: u32 = 36449;
+pub const GL_MAX_MESH_IMAGE_UNIFORMS_NV: u32 = 36450;
+pub const GL_MAX_MESH_UNIFORM_COMPONENTS_NV: u32 = 36451;
+pub const GL_MAX_MESH_ATOMIC_COUNTER_BUFFERS_NV: u32 = 36452;
+pub const GL_MAX_MESH_ATOMIC_COUNTERS_NV: u32 = 36453;
+pub const GL_MAX_MESH_SHADER_STORAGE_BLOCKS_NV: u32 = 36454;
+pub const GL_MAX_COMBINED_MESH_UNIFORM_COMPONENTS_NV: u32 = 36455;
+pub const GL_MAX_TASK_UNIFORM_BLOCKS_NV: u32 = 36456;
+pub const GL_MAX_TASK_TEXTURE_IMAGE_UNITS_NV: u32 = 36457;
+pub const GL_MAX_TASK_IMAGE_UNIFORMS_NV: u32 = 36458;
+pub const GL_MAX_TASK_UNIFORM_COMPONENTS_NV: u32 = 36459;
+pub const GL_MAX_TASK_ATOMIC_COUNTER_BUFFERS_NV: u32 = 36460;
+pub const GL_MAX_TASK_ATOMIC_COUNTERS_NV: u32 = 36461;
+pub const GL_MAX_TASK_SHADER_STORAGE_BLOCKS_NV: u32 = 36462;
+pub const GL_MAX_COMBINED_TASK_UNIFORM_COMPONENTS_NV: u32 = 36463;
+pub const GL_MAX_MESH_WORK_GROUP_INVOCATIONS_NV: u32 = 38306;
+pub const GL_MAX_TASK_WORK_GROUP_INVOCATIONS_NV: u32 = 38307;
+pub const GL_MAX_MESH_TOTAL_MEMORY_SIZE_NV: u32 = 38198;
+pub const GL_MAX_TASK_TOTAL_MEMORY_SIZE_NV: u32 = 38199;
+pub const GL_MAX_MESH_OUTPUT_VERTICES_NV: u32 = 38200;
+pub const GL_MAX_MESH_OUTPUT_PRIMITIVES_NV: u32 = 38201;
+pub const GL_MAX_TASK_OUTPUT_COUNT_NV: u32 = 38202;
+pub const GL_MAX_DRAW_MESH_TASKS_COUNT_NV: u32 = 38205;
+pub const GL_MAX_MESH_VIEWS_NV: u32 = 38231;
+pub const GL_MESH_OUTPUT_PER_VERTEX_GRANULARITY_NV: u32 = 37599;
+pub const GL_MESH_OUTPUT_PER_PRIMITIVE_GRANULARITY_NV: u32 = 38211;
+pub const GL_MAX_MESH_WORK_GROUP_SIZE_NV: u32 = 38203;
+pub const GL_MAX_TASK_WORK_GROUP_SIZE_NV: u32 = 38204;
+pub const GL_MESH_WORK_GROUP_SIZE_NV: u32 = 38206;
+pub const GL_TASK_WORK_GROUP_SIZE_NV: u32 = 38207;
+pub const GL_MESH_VERTICES_OUT_NV: u32 = 38265;
+pub const GL_MESH_PRIMITIVES_OUT_NV: u32 = 38266;
+pub const GL_MESH_OUTPUT_TYPE_NV: u32 = 38267;
+pub const GL_UNIFORM_BLOCK_REFERENCED_BY_MESH_SHADER_NV: u32 = 38300;
+pub const GL_UNIFORM_BLOCK_REFERENCED_BY_TASK_SHADER_NV: u32 = 38301;
+pub const GL_REFERENCED_BY_MESH_SHADER_NV: u32 = 38304;
+pub const GL_REFERENCED_BY_TASK_SHADER_NV: u32 = 38305;
+pub const GL_MESH_SHADER_BIT_NV: u32 = 64;
+pub const GL_TASK_SHADER_BIT_NV: u32 = 128;
+pub const GL_MESH_SUBROUTINE_NV: u32 = 38268;
+pub const GL_TASK_SUBROUTINE_NV: u32 = 38269;
+pub const GL_MESH_SUBROUTINE_UNIFORM_NV: u32 = 38270;
+pub const GL_TASK_SUBROUTINE_UNIFORM_NV: u32 = 38271;
+pub const GL_ATOMIC_COUNTER_BUFFER_REFERENCED_BY_MESH_SHADER_NV: u32 = 38302;
+pub const GL_ATOMIC_COUNTER_BUFFER_REFERENCED_BY_TASK_SHADER_NV: u32 = 38303;
 pub const GL_NV_multisample_coverage: u32 = 1;
 pub const GL_NV_multisample_filter_hint: u32 = 1;
 pub const GL_MULTISAMPLE_FILTER_HINT_NV: u32 = 34100;
@@ -4939,6 +4894,8 @@ pub const GL_COMBINER6_NV: u32 = 34134;
 pub const GL_COMBINER7_NV: u32 = 34135;
 pub const GL_NV_register_combiners2: u32 = 1;
 pub const GL_PER_STAGE_CONSTANTS_NV: u32 = 34101;
+pub const GL_NV_representative_fragment_test: u32 = 1;
+pub const GL_REPRESENTATIVE_FRAGMENT_TEST_NV: u32 = 37759;
 pub const GL_NV_robustness_video_memory_purge: u32 = 1;
 pub const GL_PURGED_CONTEXT_RESET_NV: u32 = 37563;
 pub const GL_NV_sample_locations: u32 = 1;
@@ -4951,6 +4908,9 @@ pub const GL_PROGRAMMABLE_SAMPLE_LOCATION_NV: u32 = 37697;
 pub const GL_FRAMEBUFFER_PROGRAMMABLE_SAMPLE_LOCATIONS_NV: u32 = 37698;
 pub const GL_FRAMEBUFFER_SAMPLE_LOCATION_PIXEL_GRID_NV: u32 = 37699;
 pub const GL_NV_sample_mask_override_coverage: u32 = 1;
+pub const GL_NV_scissor_exclusive: u32 = 1;
+pub const GL_SCISSOR_TEST_EXCLUSIVE_NV: u32 = 38229;
+pub const GL_SCISSOR_BOX_EXCLUSIVE_NV: u32 = 38230;
 pub const GL_NV_shader_atomic_counters: u32 = 1;
 pub const GL_NV_shader_atomic_float: u32 = 1;
 pub const GL_NV_shader_atomic_float64: u32 = 1;
@@ -4963,11 +4923,36 @@ pub const GL_MAX_SHADER_BUFFER_ADDRESS_NV: u32 = 36661;
 pub const GL_NV_shader_buffer_store: u32 = 1;
 pub const GL_SHADER_GLOBAL_ACCESS_BARRIER_BIT_NV: u32 = 16;
 pub const GL_NV_shader_storage_buffer_object: u32 = 1;
+pub const GL_NV_shader_subgroup_partitioned: u32 = 1;
+pub const GL_SUBGROUP_FEATURE_PARTITIONED_BIT_NV: u32 = 256;
+pub const GL_NV_shader_texture_footprint: u32 = 1;
 pub const GL_NV_shader_thread_group: u32 = 1;
 pub const GL_WARP_SIZE_NV: u32 = 37689;
 pub const GL_WARPS_PER_SM_NV: u32 = 37690;
 pub const GL_SM_COUNT_NV: u32 = 37691;
 pub const GL_NV_shader_thread_shuffle: u32 = 1;
+pub const GL_NV_shading_rate_image: u32 = 1;
+pub const GL_SHADING_RATE_IMAGE_NV: u32 = 38243;
+pub const GL_SHADING_RATE_NO_INVOCATIONS_NV: u32 = 38244;
+pub const GL_SHADING_RATE_1_INVOCATION_PER_PIXEL_NV: u32 = 38245;
+pub const GL_SHADING_RATE_1_INVOCATION_PER_1X2_PIXELS_NV: u32 = 38246;
+pub const GL_SHADING_RATE_1_INVOCATION_PER_2X1_PIXELS_NV: u32 = 38247;
+pub const GL_SHADING_RATE_1_INVOCATION_PER_2X2_PIXELS_NV: u32 = 38248;
+pub const GL_SHADING_RATE_1_INVOCATION_PER_2X4_PIXELS_NV: u32 = 38249;
+pub const GL_SHADING_RATE_1_INVOCATION_PER_4X2_PIXELS_NV: u32 = 38250;
+pub const GL_SHADING_RATE_1_INVOCATION_PER_4X4_PIXELS_NV: u32 = 38251;
+pub const GL_SHADING_RATE_2_INVOCATIONS_PER_PIXEL_NV: u32 = 38252;
+pub const GL_SHADING_RATE_4_INVOCATIONS_PER_PIXEL_NV: u32 = 38253;
+pub const GL_SHADING_RATE_8_INVOCATIONS_PER_PIXEL_NV: u32 = 38254;
+pub const GL_SHADING_RATE_16_INVOCATIONS_PER_PIXEL_NV: u32 = 38255;
+pub const GL_SHADING_RATE_IMAGE_BINDING_NV: u32 = 38235;
+pub const GL_SHADING_RATE_IMAGE_TEXEL_WIDTH_NV: u32 = 38236;
+pub const GL_SHADING_RATE_IMAGE_TEXEL_HEIGHT_NV: u32 = 38237;
+pub const GL_SHADING_RATE_IMAGE_PALETTE_SIZE_NV: u32 = 38238;
+pub const GL_MAX_COARSE_FRAGMENT_SAMPLES_NV: u32 = 38239;
+pub const GL_SHADING_RATE_SAMPLE_ORDER_DEFAULT_NV: u32 = 38318;
+pub const GL_SHADING_RATE_SAMPLE_ORDER_PIXEL_MAJOR_NV: u32 = 38319;
+pub const GL_SHADING_RATE_SAMPLE_ORDER_SAMPLE_MAJOR_NV: u32 = 38320;
 pub const GL_NV_stereo_view_rendering: u32 = 1;
 pub const GL_NV_tessellation_program5: u32 = 1;
 pub const GL_MAX_PROGRAM_PATCH_ATTRIBS_NV: u32 = 34520;
@@ -5141,6 +5126,7 @@ pub const GL_SURFACE_STATE_NV: u32 = 34539;
 pub const GL_SURFACE_REGISTERED_NV: u32 = 34557;
 pub const GL_SURFACE_MAPPED_NV: u32 = 34560;
 pub const GL_WRITE_DISCARD_NV: u32 = 35006;
+pub const GL_NV_vdpau_interop2: u32 = 1;
 pub const GL_NV_vertex_array_range: u32 = 1;
 pub const GL_VERTEX_ARRAY_RANGE_NV: u32 = 34077;
 pub const GL_VERTEX_ARRAY_RANGE_LENGTH_NV: u32 = 34078;
@@ -7651,107 +7637,6 @@ pub type PFNGLMULTITEXCOORD4SARBPROC = ::core::option::Option<
 >;
 pub type PFNGLMULTITEXCOORD4SVARBPROC =
     ::core::option::Option<unsafe extern "C" fn(target: GLenum, v: *const GLshort)>;
-pub type PFNGLBLENDFUNCSEPARATEPROC = ::core::option::Option<
-    unsafe extern "C" fn(
-        sfactorRGB: GLenum,
-        dfactorRGB: GLenum,
-        sfactorAlpha: GLenum,
-        dfactorAlpha: GLenum,
-    ),
->;
-pub type PFNGLMULTIDRAWARRAYSPROC = ::core::option::Option<
-    unsafe extern "C" fn(
-        mode: GLenum,
-        first: *const GLint,
-        count: *const GLsizei,
-        drawcount: GLsizei,
-    ),
->;
-pub type PFNGLMULTIDRAWELEMENTSPROC = ::core::option::Option<
-    unsafe extern "C" fn(
-        mode: GLenum,
-        count: *const GLsizei,
-        type_: GLenum,
-        indices: *const *const libc::c_void,
-        drawcount: GLsizei,
-    ),
->;
-pub type PFNGLPOINTPARAMETERFPROC =
-    ::core::option::Option<unsafe extern "C" fn(pname: GLenum, param: GLfloat)>;
-pub type PFNGLPOINTPARAMETERFVPROC =
-    ::core::option::Option<unsafe extern "C" fn(pname: GLenum, params: *const GLfloat)>;
-pub type PFNGLPOINTPARAMETERIPROC =
-    ::core::option::Option<unsafe extern "C" fn(pname: GLenum, param: GLint)>;
-pub type PFNGLPOINTPARAMETERIVPROC =
-    ::core::option::Option<unsafe extern "C" fn(pname: GLenum, params: *const GLint)>;
-pub type PFNGLFOGCOORDFPROC = ::core::option::Option<unsafe extern "C" fn(coord: GLfloat)>;
-pub type PFNGLFOGCOORDFVPROC = ::core::option::Option<unsafe extern "C" fn(coord: *const GLfloat)>;
-pub type PFNGLFOGCOORDDPROC = ::core::option::Option<unsafe extern "C" fn(coord: GLdouble)>;
-pub type PFNGLFOGCOORDDVPROC = ::core::option::Option<unsafe extern "C" fn(coord: *const GLdouble)>;
-pub type PFNGLFOGCOORDPOINTERPROC = ::core::option::Option<
-    unsafe extern "C" fn(type_: GLenum, stride: GLsizei, pointer: *const libc::c_void),
->;
-pub type PFNGLSECONDARYCOLOR3BPROC =
-    ::core::option::Option<unsafe extern "C" fn(red: GLbyte, green: GLbyte, blue: GLbyte)>;
-pub type PFNGLSECONDARYCOLOR3BVPROC =
-    ::core::option::Option<unsafe extern "C" fn(v: *const GLbyte)>;
-pub type PFNGLSECONDARYCOLOR3DPROC =
-    ::core::option::Option<unsafe extern "C" fn(red: GLdouble, green: GLdouble, blue: GLdouble)>;
-pub type PFNGLSECONDARYCOLOR3DVPROC =
-    ::core::option::Option<unsafe extern "C" fn(v: *const GLdouble)>;
-pub type PFNGLSECONDARYCOLOR3FPROC =
-    ::core::option::Option<unsafe extern "C" fn(red: GLfloat, green: GLfloat, blue: GLfloat)>;
-pub type PFNGLSECONDARYCOLOR3FVPROC =
-    ::core::option::Option<unsafe extern "C" fn(v: *const GLfloat)>;
-pub type PFNGLSECONDARYCOLOR3IPROC =
-    ::core::option::Option<unsafe extern "C" fn(red: GLint, green: GLint, blue: GLint)>;
-pub type PFNGLSECONDARYCOLOR3IVPROC = ::core::option::Option<unsafe extern "C" fn(v: *const GLint)>;
-pub type PFNGLSECONDARYCOLOR3SPROC =
-    ::core::option::Option<unsafe extern "C" fn(red: GLshort, green: GLshort, blue: GLshort)>;
-pub type PFNGLSECONDARYCOLOR3SVPROC =
-    ::core::option::Option<unsafe extern "C" fn(v: *const GLshort)>;
-pub type PFNGLSECONDARYCOLOR3UBPROC =
-    ::core::option::Option<unsafe extern "C" fn(red: GLubyte, green: GLubyte, blue: GLubyte)>;
-pub type PFNGLSECONDARYCOLOR3UBVPROC =
-    ::core::option::Option<unsafe extern "C" fn(v: *const GLubyte)>;
-pub type PFNGLSECONDARYCOLOR3UIPROC =
-    ::core::option::Option<unsafe extern "C" fn(red: GLuint, green: GLuint, blue: GLuint)>;
-pub type PFNGLSECONDARYCOLOR3UIVPROC =
-    ::core::option::Option<unsafe extern "C" fn(v: *const GLuint)>;
-pub type PFNGLSECONDARYCOLOR3USPROC =
-    ::core::option::Option<unsafe extern "C" fn(red: GLushort, green: GLushort, blue: GLushort)>;
-pub type PFNGLSECONDARYCOLOR3USVPROC =
-    ::core::option::Option<unsafe extern "C" fn(v: *const GLushort)>;
-pub type PFNGLSECONDARYCOLORPOINTERPROC = ::core::option::Option<
-    unsafe extern "C" fn(size: GLint, type_: GLenum, stride: GLsizei, pointer: *const libc::c_void),
->;
-pub type PFNGLWINDOWPOS2DPROC =
-    ::core::option::Option<unsafe extern "C" fn(x: GLdouble, y: GLdouble)>;
-pub type PFNGLWINDOWPOS2DVPROC = ::core::option::Option<unsafe extern "C" fn(v: *const GLdouble)>;
-pub type PFNGLWINDOWPOS2FPROC =
-    ::core::option::Option<unsafe extern "C" fn(x: GLfloat, y: GLfloat)>;
-pub type PFNGLWINDOWPOS2FVPROC = ::core::option::Option<unsafe extern "C" fn(v: *const GLfloat)>;
-pub type PFNGLWINDOWPOS2IPROC = ::core::option::Option<unsafe extern "C" fn(x: GLint, y: GLint)>;
-pub type PFNGLWINDOWPOS2IVPROC = ::core::option::Option<unsafe extern "C" fn(v: *const GLint)>;
-pub type PFNGLWINDOWPOS2SPROC =
-    ::core::option::Option<unsafe extern "C" fn(x: GLshort, y: GLshort)>;
-pub type PFNGLWINDOWPOS2SVPROC = ::core::option::Option<unsafe extern "C" fn(v: *const GLshort)>;
-pub type PFNGLWINDOWPOS3DPROC =
-    ::core::option::Option<unsafe extern "C" fn(x: GLdouble, y: GLdouble, z: GLdouble)>;
-pub type PFNGLWINDOWPOS3DVPROC = ::core::option::Option<unsafe extern "C" fn(v: *const GLdouble)>;
-pub type PFNGLWINDOWPOS3FPROC =
-    ::core::option::Option<unsafe extern "C" fn(x: GLfloat, y: GLfloat, z: GLfloat)>;
-pub type PFNGLWINDOWPOS3FVPROC = ::core::option::Option<unsafe extern "C" fn(v: *const GLfloat)>;
-pub type PFNGLWINDOWPOS3IPROC =
-    ::core::option::Option<unsafe extern "C" fn(x: GLint, y: GLint, z: GLint)>;
-pub type PFNGLWINDOWPOS3IVPROC = ::core::option::Option<unsafe extern "C" fn(v: *const GLint)>;
-pub type PFNGLWINDOWPOS3SPROC =
-    ::core::option::Option<unsafe extern "C" fn(x: GLshort, y: GLshort, z: GLshort)>;
-pub type PFNGLWINDOWPOS3SVPROC = ::core::option::Option<unsafe extern "C" fn(v: *const GLshort)>;
-pub type PFNGLBLENDCOLORPROC = ::core::option::Option<
-    unsafe extern "C" fn(red: GLfloat, green: GLfloat, blue: GLfloat, alpha: GLfloat),
->;
-pub type PFNGLBLENDEQUATIONPROC = ::core::option::Option<unsafe extern "C" fn(mode: GLenum)>;
 pub type __u_char = libc::c_uchar;
 pub type __u_short = libc::c_ushort;
 pub type __u_int = libc::c_uint;
@@ -7879,6 +7764,107 @@ pub const khronos_boolean_enum_t_KHRONOS_TRUE: khronos_boolean_enum_t = 1;
 pub const khronos_boolean_enum_t_KHRONOS_BOOLEAN_ENUM_FORCE_SIZE: khronos_boolean_enum_t =
     2147483647;
 pub type khronos_boolean_enum_t = u32;
+pub type PFNGLBLENDFUNCSEPARATEPROC = ::core::option::Option<
+    unsafe extern "C" fn(
+        sfactorRGB: GLenum,
+        dfactorRGB: GLenum,
+        sfactorAlpha: GLenum,
+        dfactorAlpha: GLenum,
+    ),
+>;
+pub type PFNGLMULTIDRAWARRAYSPROC = ::core::option::Option<
+    unsafe extern "C" fn(
+        mode: GLenum,
+        first: *const GLint,
+        count: *const GLsizei,
+        drawcount: GLsizei,
+    ),
+>;
+pub type PFNGLMULTIDRAWELEMENTSPROC = ::core::option::Option<
+    unsafe extern "C" fn(
+        mode: GLenum,
+        count: *const GLsizei,
+        type_: GLenum,
+        indices: *const *const libc::c_void,
+        drawcount: GLsizei,
+    ),
+>;
+pub type PFNGLPOINTPARAMETERFPROC =
+    ::core::option::Option<unsafe extern "C" fn(pname: GLenum, param: GLfloat)>;
+pub type PFNGLPOINTPARAMETERFVPROC =
+    ::core::option::Option<unsafe extern "C" fn(pname: GLenum, params: *const GLfloat)>;
+pub type PFNGLPOINTPARAMETERIPROC =
+    ::core::option::Option<unsafe extern "C" fn(pname: GLenum, param: GLint)>;
+pub type PFNGLPOINTPARAMETERIVPROC =
+    ::core::option::Option<unsafe extern "C" fn(pname: GLenum, params: *const GLint)>;
+pub type PFNGLFOGCOORDFPROC = ::core::option::Option<unsafe extern "C" fn(coord: GLfloat)>;
+pub type PFNGLFOGCOORDFVPROC = ::core::option::Option<unsafe extern "C" fn(coord: *const GLfloat)>;
+pub type PFNGLFOGCOORDDPROC = ::core::option::Option<unsafe extern "C" fn(coord: GLdouble)>;
+pub type PFNGLFOGCOORDDVPROC = ::core::option::Option<unsafe extern "C" fn(coord: *const GLdouble)>;
+pub type PFNGLFOGCOORDPOINTERPROC = ::core::option::Option<
+    unsafe extern "C" fn(type_: GLenum, stride: GLsizei, pointer: *const libc::c_void),
+>;
+pub type PFNGLSECONDARYCOLOR3BPROC =
+    ::core::option::Option<unsafe extern "C" fn(red: GLbyte, green: GLbyte, blue: GLbyte)>;
+pub type PFNGLSECONDARYCOLOR3BVPROC =
+    ::core::option::Option<unsafe extern "C" fn(v: *const GLbyte)>;
+pub type PFNGLSECONDARYCOLOR3DPROC =
+    ::core::option::Option<unsafe extern "C" fn(red: GLdouble, green: GLdouble, blue: GLdouble)>;
+pub type PFNGLSECONDARYCOLOR3DVPROC =
+    ::core::option::Option<unsafe extern "C" fn(v: *const GLdouble)>;
+pub type PFNGLSECONDARYCOLOR3FPROC =
+    ::core::option::Option<unsafe extern "C" fn(red: GLfloat, green: GLfloat, blue: GLfloat)>;
+pub type PFNGLSECONDARYCOLOR3FVPROC =
+    ::core::option::Option<unsafe extern "C" fn(v: *const GLfloat)>;
+pub type PFNGLSECONDARYCOLOR3IPROC =
+    ::core::option::Option<unsafe extern "C" fn(red: GLint, green: GLint, blue: GLint)>;
+pub type PFNGLSECONDARYCOLOR3IVPROC = ::core::option::Option<unsafe extern "C" fn(v: *const GLint)>;
+pub type PFNGLSECONDARYCOLOR3SPROC =
+    ::core::option::Option<unsafe extern "C" fn(red: GLshort, green: GLshort, blue: GLshort)>;
+pub type PFNGLSECONDARYCOLOR3SVPROC =
+    ::core::option::Option<unsafe extern "C" fn(v: *const GLshort)>;
+pub type PFNGLSECONDARYCOLOR3UBPROC =
+    ::core::option::Option<unsafe extern "C" fn(red: GLubyte, green: GLubyte, blue: GLubyte)>;
+pub type PFNGLSECONDARYCOLOR3UBVPROC =
+    ::core::option::Option<unsafe extern "C" fn(v: *const GLubyte)>;
+pub type PFNGLSECONDARYCOLOR3UIPROC =
+    ::core::option::Option<unsafe extern "C" fn(red: GLuint, green: GLuint, blue: GLuint)>;
+pub type PFNGLSECONDARYCOLOR3UIVPROC =
+    ::core::option::Option<unsafe extern "C" fn(v: *const GLuint)>;
+pub type PFNGLSECONDARYCOLOR3USPROC =
+    ::core::option::Option<unsafe extern "C" fn(red: GLushort, green: GLushort, blue: GLushort)>;
+pub type PFNGLSECONDARYCOLOR3USVPROC =
+    ::core::option::Option<unsafe extern "C" fn(v: *const GLushort)>;
+pub type PFNGLSECONDARYCOLORPOINTERPROC = ::core::option::Option<
+    unsafe extern "C" fn(size: GLint, type_: GLenum, stride: GLsizei, pointer: *const libc::c_void),
+>;
+pub type PFNGLWINDOWPOS2DPROC =
+    ::core::option::Option<unsafe extern "C" fn(x: GLdouble, y: GLdouble)>;
+pub type PFNGLWINDOWPOS2DVPROC = ::core::option::Option<unsafe extern "C" fn(v: *const GLdouble)>;
+pub type PFNGLWINDOWPOS2FPROC =
+    ::core::option::Option<unsafe extern "C" fn(x: GLfloat, y: GLfloat)>;
+pub type PFNGLWINDOWPOS2FVPROC = ::core::option::Option<unsafe extern "C" fn(v: *const GLfloat)>;
+pub type PFNGLWINDOWPOS2IPROC = ::core::option::Option<unsafe extern "C" fn(x: GLint, y: GLint)>;
+pub type PFNGLWINDOWPOS2IVPROC = ::core::option::Option<unsafe extern "C" fn(v: *const GLint)>;
+pub type PFNGLWINDOWPOS2SPROC =
+    ::core::option::Option<unsafe extern "C" fn(x: GLshort, y: GLshort)>;
+pub type PFNGLWINDOWPOS2SVPROC = ::core::option::Option<unsafe extern "C" fn(v: *const GLshort)>;
+pub type PFNGLWINDOWPOS3DPROC =
+    ::core::option::Option<unsafe extern "C" fn(x: GLdouble, y: GLdouble, z: GLdouble)>;
+pub type PFNGLWINDOWPOS3DVPROC = ::core::option::Option<unsafe extern "C" fn(v: *const GLdouble)>;
+pub type PFNGLWINDOWPOS3FPROC =
+    ::core::option::Option<unsafe extern "C" fn(x: GLfloat, y: GLfloat, z: GLfloat)>;
+pub type PFNGLWINDOWPOS3FVPROC = ::core::option::Option<unsafe extern "C" fn(v: *const GLfloat)>;
+pub type PFNGLWINDOWPOS3IPROC =
+    ::core::option::Option<unsafe extern "C" fn(x: GLint, y: GLint, z: GLint)>;
+pub type PFNGLWINDOWPOS3IVPROC = ::core::option::Option<unsafe extern "C" fn(v: *const GLint)>;
+pub type PFNGLWINDOWPOS3SPROC =
+    ::core::option::Option<unsafe extern "C" fn(x: GLshort, y: GLshort, z: GLshort)>;
+pub type PFNGLWINDOWPOS3SVPROC = ::core::option::Option<unsafe extern "C" fn(v: *const GLshort)>;
+pub type PFNGLBLENDCOLORPROC = ::core::option::Option<
+    unsafe extern "C" fn(red: GLfloat, green: GLfloat, blue: GLfloat, alpha: GLfloat),
+>;
+pub type PFNGLBLENDEQUATIONPROC = ::core::option::Option<unsafe extern "C" fn(mode: GLenum)>;
 pub type GLsizeiptr = khronos_ssize_t;
 pub type GLintptr = khronos_intptr_t;
 pub type PFNGLGENQUERIESPROC =
@@ -8264,7 +8250,7 @@ pub type PFNGLUNIFORMMATRIX4X3FVPROC = ::core::option::Option<
         value: *const GLfloat,
     ),
 >;
-pub type GLhalf = libc::c_ushort;
+pub type GLhalf = khronos_uint16_t;
 pub type PFNGLCOLORMASKIPROC = ::core::option::Option<
     unsafe extern "C" fn(index: GLuint, r: GLboolean, g: GLboolean, b: GLboolean, a: GLboolean),
 >;
@@ -8621,82 +8607,8 @@ pub struct __GLsync {
     _unused: [u8; 0],
 }
 pub type GLsync = *mut __GLsync;
-pub type __gwchar_t = libc::c_int;
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct imaxdiv_t {
-    pub quot: libc::c_long,
-    pub rem: libc::c_long,
-}
-#[test]
-fn bindgen_test_layout_imaxdiv_t() {
-    assert_eq!(
-        ::core::mem::size_of::<imaxdiv_t>(),
-        16usize,
-        concat!("Size of: ", stringify!(imaxdiv_t))
-    );
-    assert_eq!(
-        ::core::mem::align_of::<imaxdiv_t>(),
-        8usize,
-        concat!("Alignment of ", stringify!(imaxdiv_t))
-    );
-    assert_eq!(
-        unsafe { &(*(::core::ptr::null::<imaxdiv_t>())).quot as *const _ as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(imaxdiv_t),
-            "::",
-            stringify!(quot)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::core::ptr::null::<imaxdiv_t>())).rem as *const _ as usize },
-        8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(imaxdiv_t),
-            "::",
-            stringify!(rem)
-        )
-    );
-}
-extern "C" {
-    pub fn imaxabs(__n: intmax_t) -> intmax_t;
-}
-extern "C" {
-    pub fn imaxdiv(__numer: intmax_t, __denom: intmax_t) -> imaxdiv_t;
-}
-extern "C" {
-    pub fn strtoimax(
-        __nptr: *const libc::c_char,
-        __endptr: *mut *mut libc::c_char,
-        __base: libc::c_int,
-    ) -> intmax_t;
-}
-extern "C" {
-    pub fn strtoumax(
-        __nptr: *const libc::c_char,
-        __endptr: *mut *mut libc::c_char,
-        __base: libc::c_int,
-    ) -> uintmax_t;
-}
-extern "C" {
-    pub fn wcstoimax(
-        __nptr: *const __gwchar_t,
-        __endptr: *mut *mut __gwchar_t,
-        __base: libc::c_int,
-    ) -> intmax_t;
-}
-extern "C" {
-    pub fn wcstoumax(
-        __nptr: *const __gwchar_t,
-        __endptr: *mut *mut __gwchar_t,
-        __base: libc::c_int,
-    ) -> uintmax_t;
-}
-pub type GLuint64 = u64;
-pub type GLint64 = i64;
+pub type GLuint64 = khronos_uint64_t;
+pub type GLint64 = khronos_int64_t;
 pub type PFNGLDRAWELEMENTSBASEVERTEXPROC = ::core::option::Option<
     unsafe extern "C" fn(
         mode: GLenum,
@@ -10698,7 +10610,7 @@ pub type PFNGLPRIMITIVEBOUNDINGBOXARBPROC = ::core::option::Option<
         maxW: GLfloat,
     ),
 >;
-pub type GLuint64EXT = u64;
+pub type GLuint64EXT = khronos_uint64_t;
 pub type PFNGLGETTEXTUREHANDLEARBPROC =
     ::core::option::Option<unsafe extern "C" fn(texture: GLuint) -> GLuint64>;
 pub type PFNGLGETTEXTURESAMPLERHANDLEARBPROC =
@@ -11073,7 +10985,7 @@ pub type PFNGLPROGRAMUNIFORM3UI64VARBPROC = ::core::option::Option<
 pub type PFNGLPROGRAMUNIFORM4UI64VARBPROC = ::core::option::Option<
     unsafe extern "C" fn(program: GLuint, location: GLint, count: GLsizei, value: *const GLuint64),
 >;
-pub type GLhalfARB = libc::c_ushort;
+pub type GLhalfARB = khronos_uint16_t;
 pub type PFNGLMULTIDRAWARRAYSINDIRECTCOUNTARBPROC = ::core::option::Option<
     unsafe extern "C" fn(
         mode: GLenum,
@@ -11558,54 +11470,8 @@ pub type PFNGLWEIGHTPOINTERARBPROC = ::core::option::Option<
     unsafe extern "C" fn(size: GLint, type_: GLenum, stride: GLsizei, pointer: *const libc::c_void),
 >;
 pub type PFNGLVERTEXBLENDARBPROC = ::core::option::Option<unsafe extern "C" fn(count: GLint)>;
-pub type wchar_t = libc::c_int;
-#[repr(C)]
-#[repr(align(16))]
-#[derive(Copy, Clone)]
-pub struct max_align_t {
-    pub __clang_max_align_nonce1: libc::c_longlong,
-    pub __bindgen_padding_0: u64,
-    pub __clang_max_align_nonce2: u128,
-}
-#[test]
-fn bindgen_test_layout_max_align_t() {
-    assert_eq!(
-        ::core::mem::size_of::<max_align_t>(),
-        32usize,
-        concat!("Size of: ", stringify!(max_align_t))
-    );
-    assert_eq!(
-        ::core::mem::align_of::<max_align_t>(),
-        16usize,
-        concat!("Alignment of ", stringify!(max_align_t))
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::core::ptr::null::<max_align_t>())).__clang_max_align_nonce1 as *const _ as usize
-        },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(max_align_t),
-            "::",
-            stringify!(__clang_max_align_nonce1)
-        )
-    );
-    assert_eq!(
-        unsafe {
-            &(*(::core::ptr::null::<max_align_t>())).__clang_max_align_nonce2 as *const _ as usize
-        },
-        16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(max_align_t),
-            "::",
-            stringify!(__clang_max_align_nonce2)
-        )
-    );
-}
-pub type GLsizeiptrARB = isize;
-pub type GLintptrARB = isize;
+pub type GLsizeiptrARB = khronos_ssize_t;
+pub type GLintptrARB = khronos_intptr_t;
 pub type PFNGLBINDBUFFERARBPROC =
     ::core::option::Option<unsafe extern "C" fn(target: GLenum, buffer: GLuint)>;
 pub type PFNGLDELETEBUFFERSARBPROC =
@@ -11838,7 +11704,7 @@ pub type PFNGLVERTEX4BOESPROC =
     ::core::option::Option<unsafe extern "C" fn(x: GLbyte, y: GLbyte, z: GLbyte, w: GLbyte)>;
 pub type PFNGLVERTEX4BVOESPROC =
     ::core::option::Option<unsafe extern "C" fn(coords: *const GLbyte)>;
-pub type GLfixed = GLint;
+pub type GLfixed = khronos_int32_t;
 pub type PFNGLALPHAFUNCXOESPROC =
     ::core::option::Option<unsafe extern "C" fn(func: GLenum, ref_: GLfixed)>;
 pub type PFNGLCLEARCOLORXOESPROC = ::core::option::Option<
@@ -12219,7 +12085,7 @@ pub type PFNGLGETNAMEDFRAMEBUFFERPARAMETERFVAMDPROC = ::core::option::Option<
         values: *mut GLfloat,
     ),
 >;
-pub type GLint64EXT = i64;
+pub type GLint64EXT = khronos_int64_t;
 pub type PFNGLUNIFORM1I64NVPROC =
     ::core::option::Option<unsafe extern "C" fn(location: GLint, x: GLint64EXT)>;
 pub type PFNGLUNIFORM2I64NVPROC =
@@ -15840,6 +15706,10 @@ pub type PFNGLGETPERFQUERYINFOINTELPROC = ::core::option::Option<
         capsMask: *mut GLuint,
     ),
 >;
+pub type PFNGLFRAMEBUFFERPARAMETERIMESAPROC =
+    ::core::option::Option<unsafe extern "C" fn(target: GLenum, pname: GLenum, param: GLint)>;
+pub type PFNGLGETFRAMEBUFFERPARAMETERIVMESAPROC =
+    ::core::option::Option<unsafe extern "C" fn(target: GLenum, pname: GLenum, params: *mut GLint)>;
 pub type PFNGLRESIZEBUFFERSMESAPROC = ::core::option::Option<unsafe extern "C" fn()>;
 pub type PFNGLWINDOWPOS2DMESAPROC =
     ::core::option::Option<unsafe extern "C" fn(x: GLdouble, y: GLdouble)>;
@@ -15890,6 +15760,60 @@ pub type PFNGLWINDOWPOS4SVMESAPROC =
 pub type PFNGLBEGINCONDITIONALRENDERNVXPROC =
     ::core::option::Option<unsafe extern "C" fn(id: GLuint)>;
 pub type PFNGLENDCONDITIONALRENDERNVXPROC = ::core::option::Option<unsafe extern "C" fn()>;
+pub type PFNGLUPLOADGPUMASKNVXPROC = ::core::option::Option<unsafe extern "C" fn(mask: GLbitfield)>;
+pub type PFNGLMULTICASTVIEWPORTARRAYVNVXPROC = ::core::option::Option<
+    unsafe extern "C" fn(gpu: GLuint, first: GLuint, count: GLsizei, v: *const GLfloat),
+>;
+pub type PFNGLMULTICASTVIEWPORTPOSITIONWSCALENVXPROC = ::core::option::Option<
+    unsafe extern "C" fn(gpu: GLuint, index: GLuint, xcoeff: GLfloat, ycoeff: GLfloat),
+>;
+pub type PFNGLMULTICASTSCISSORARRAYVNVXPROC = ::core::option::Option<
+    unsafe extern "C" fn(gpu: GLuint, first: GLuint, count: GLsizei, v: *const GLint),
+>;
+pub type PFNGLASYNCCOPYBUFFERSUBDATANVXPROC = ::core::option::Option<
+    unsafe extern "C" fn(
+        waitSemaphoreCount: GLsizei,
+        waitSemaphoreArray: *const GLuint,
+        fenceValueArray: *const GLuint64,
+        readGpu: GLuint,
+        writeGpuMask: GLbitfield,
+        readBuffer: GLuint,
+        writeBuffer: GLuint,
+        readOffset: GLintptr,
+        writeOffset: GLintptr,
+        size: GLsizeiptr,
+        signalSemaphoreCount: GLsizei,
+        signalSemaphoreArray: *const GLuint,
+        signalValueArray: *const GLuint64,
+    ) -> GLuint,
+>;
+pub type PFNGLASYNCCOPYIMAGESUBDATANVXPROC = ::core::option::Option<
+    unsafe extern "C" fn(
+        waitSemaphoreCount: GLsizei,
+        waitSemaphoreArray: *const GLuint,
+        waitValueArray: *const GLuint64,
+        srcGpu: GLuint,
+        dstGpuMask: GLbitfield,
+        srcName: GLuint,
+        srcTarget: GLenum,
+        srcLevel: GLint,
+        srcX: GLint,
+        srcY: GLint,
+        srcZ: GLint,
+        dstName: GLuint,
+        dstTarget: GLenum,
+        dstLevel: GLint,
+        dstX: GLint,
+        dstY: GLint,
+        dstZ: GLint,
+        srcWidth: GLsizei,
+        srcHeight: GLsizei,
+        srcDepth: GLsizei,
+        signalSemaphoreCount: GLsizei,
+        signalSemaphoreArray: *const GLuint,
+        signalValueArray: *const GLuint64,
+    ) -> GLuint,
+>;
 pub type PFNGLLGPUNAMEDBUFFERSUBDATANVXPROC = ::core::option::Option<
     unsafe extern "C" fn(
         gpuMask: GLbitfield,
@@ -15921,6 +15845,30 @@ pub type PFNGLLGPUCOPYIMAGESUBDATANVXPROC = ::core::option::Option<
     ),
 >;
 pub type PFNGLLGPUINTERLOCKNVXPROC = ::core::option::Option<unsafe extern "C" fn()>;
+pub type PFNGLCREATEPROGRESSFENCENVXPROC = ::core::option::Option<unsafe extern "C" fn() -> GLuint>;
+pub type PFNGLSIGNALSEMAPHOREUI64NVXPROC = ::core::option::Option<
+    unsafe extern "C" fn(
+        signalGpu: GLuint,
+        fenceObjectCount: GLsizei,
+        semaphoreArray: *const GLuint,
+        fenceValueArray: *const GLuint64,
+    ),
+>;
+pub type PFNGLWAITSEMAPHOREUI64NVXPROC = ::core::option::Option<
+    unsafe extern "C" fn(
+        waitGpu: GLuint,
+        fenceObjectCount: GLsizei,
+        semaphoreArray: *const GLuint,
+        fenceValueArray: *const GLuint64,
+    ),
+>;
+pub type PFNGLCLIENTWAITSEMAPHOREUI64NVXPROC = ::core::option::Option<
+    unsafe extern "C" fn(
+        fenceObjectCount: GLsizei,
+        semaphoreArray: *const GLuint,
+        fenceValueArray: *const GLuint64,
+    ),
+>;
 pub type PFNGLALPHATOCOVERAGEDITHERCONTROLNVPROC =
     ::core::option::Option<unsafe extern "C" fn(mode: GLenum)>;
 pub type PFNGLMULTIDRAWARRAYSINDIRECTBINDLESSNVPROC = ::core::option::Option<
@@ -16500,6 +16448,40 @@ pub type PFNGLGETINTERNALFORMATSAMPLEIVNVPROC = ::core::option::Option<
         params: *mut GLint,
     ),
 >;
+pub type PFNGLGETMEMORYOBJECTDETACHEDRESOURCESUIVNVPROC = ::core::option::Option<
+    unsafe extern "C" fn(
+        memory: GLuint,
+        pname: GLenum,
+        first: GLint,
+        count: GLsizei,
+        params: *mut GLuint,
+    ),
+>;
+pub type PFNGLRESETMEMORYOBJECTPARAMETERNVPROC =
+    ::core::option::Option<unsafe extern "C" fn(memory: GLuint, pname: GLenum)>;
+pub type PFNGLTEXATTACHMEMORYNVPROC =
+    ::core::option::Option<unsafe extern "C" fn(target: GLenum, memory: GLuint, offset: GLuint64)>;
+pub type PFNGLBUFFERATTACHMEMORYNVPROC =
+    ::core::option::Option<unsafe extern "C" fn(target: GLenum, memory: GLuint, offset: GLuint64)>;
+pub type PFNGLTEXTUREATTACHMEMORYNVPROC =
+    ::core::option::Option<unsafe extern "C" fn(texture: GLuint, memory: GLuint, offset: GLuint64)>;
+pub type PFNGLNAMEDBUFFERATTACHMEMORYNVPROC =
+    ::core::option::Option<unsafe extern "C" fn(buffer: GLuint, memory: GLuint, offset: GLuint64)>;
+pub type PFNGLDRAWMESHTASKSNVPROC =
+    ::core::option::Option<unsafe extern "C" fn(first: GLuint, count: GLuint)>;
+pub type PFNGLDRAWMESHTASKSINDIRECTNVPROC =
+    ::core::option::Option<unsafe extern "C" fn(indirect: GLintptr)>;
+pub type PFNGLMULTIDRAWMESHTASKSINDIRECTNVPROC = ::core::option::Option<
+    unsafe extern "C" fn(indirect: GLintptr, drawcount: GLsizei, stride: GLsizei),
+>;
+pub type PFNGLMULTIDRAWMESHTASKSINDIRECTCOUNTNVPROC = ::core::option::Option<
+    unsafe extern "C" fn(
+        indirect: GLintptr,
+        drawcount: GLintptr,
+        maxdrawcount: GLsizei,
+        stride: GLsizei,
+    ),
+>;
 pub type PFNGLGENOCCLUSIONQUERIESNVPROC =
     ::core::option::Option<unsafe extern "C" fn(n: GLsizei, ids: *mut GLuint)>;
 pub type PFNGLDELETEOCCLUSIONQUERIESNVPROC =
@@ -17049,6 +17031,11 @@ pub type PFNGLNAMEDFRAMEBUFFERSAMPLELOCATIONSFVNVPROC = ::core::option::Option<
     unsafe extern "C" fn(framebuffer: GLuint, start: GLuint, count: GLsizei, v: *const GLfloat),
 >;
 pub type PFNGLRESOLVEDEPTHVALUESNVPROC = ::core::option::Option<unsafe extern "C" fn()>;
+pub type PFNGLSCISSOREXCLUSIVENVPROC = ::core::option::Option<
+    unsafe extern "C" fn(x: GLint, y: GLint, width: GLsizei, height: GLsizei),
+>;
+pub type PFNGLSCISSOREXCLUSIVEARRAYVNVPROC =
+    ::core::option::Option<unsafe extern "C" fn(first: GLuint, count: GLsizei, v: *const GLint)>;
 pub type PFNGLMAKEBUFFERRESIDENTNVPROC =
     ::core::option::Option<unsafe extern "C" fn(target: GLenum, access: GLenum)>;
 pub type PFNGLMAKEBUFFERNONRESIDENTNVPROC =
@@ -17084,6 +17071,24 @@ pub type PFNGLPROGRAMUNIFORMUI64VNVPROC = ::core::option::Option<
         count: GLsizei,
         value: *const GLuint64EXT,
     ),
+>;
+pub type PFNGLBINDSHADINGRATEIMAGENVPROC =
+    ::core::option::Option<unsafe extern "C" fn(texture: GLuint)>;
+pub type PFNGLGETSHADINGRATEIMAGEPALETTENVPROC = ::core::option::Option<
+    unsafe extern "C" fn(viewport: GLuint, entry: GLuint, rate: *mut GLenum),
+>;
+pub type PFNGLGETSHADINGRATESAMPLELOCATIONIVNVPROC = ::core::option::Option<
+    unsafe extern "C" fn(rate: GLenum, samples: GLuint, index: GLuint, location: *mut GLint),
+>;
+pub type PFNGLSHADINGRATEIMAGEBARRIERNVPROC =
+    ::core::option::Option<unsafe extern "C" fn(synchronize: GLboolean)>;
+pub type PFNGLSHADINGRATEIMAGEPALETTENVPROC = ::core::option::Option<
+    unsafe extern "C" fn(viewport: GLuint, first: GLuint, count: GLsizei, rates: *const GLenum),
+>;
+pub type PFNGLSHADINGRATESAMPLEORDERNVPROC =
+    ::core::option::Option<unsafe extern "C" fn(order: GLenum)>;
+pub type PFNGLSHADINGRATESAMPLEORDERCUSTOMNVPROC = ::core::option::Option<
+    unsafe extern "C" fn(rate: GLenum, samples: GLuint, locations: *const GLint),
 >;
 pub type PFNGLTEXTUREBARRIERNVPROC = ::core::option::Option<unsafe extern "C" fn()>;
 pub type PFNGLTEXIMAGE2DMULTISAMPLECOVERAGENVPROC = ::core::option::Option<
@@ -17265,6 +17270,15 @@ pub type PFNGLVDPAUMAPSURFACESNVPROC = ::core::option::Option<
 >;
 pub type PFNGLVDPAUUNMAPSURFACESNVPROC = ::core::option::Option<
     unsafe extern "C" fn(numSurface: GLsizei, surfaces: *const GLvdpauSurfaceNV),
+>;
+pub type PFNGLVDPAUREGISTERVIDEOSURFACEWITHPICTURESTRUCTURENVPROC = ::core::option::Option<
+    unsafe extern "C" fn(
+        vdpSurface: *const libc::c_void,
+        target: GLenum,
+        numTextureNames: GLsizei,
+        textureNames: *const GLuint,
+        isFrameStructure: GLboolean,
+    ) -> GLvdpauSurfaceNV,
 >;
 pub type PFNGLFLUSHVERTEXARRAYRANGENVPROC = ::core::option::Option<unsafe extern "C" fn()>;
 pub type PFNGLVERTEXARRAYRANGENVPROC =

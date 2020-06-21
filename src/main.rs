@@ -1,6 +1,7 @@
 #![feature(lang_items, start, raw_ref_op)]
 #![no_std]
 #![no_main]
+// https://doc.rust-lang.org/1.19.0/reference/attributes.html#crate-only-attributes
 
 #[macro_use]
 mod shitty;

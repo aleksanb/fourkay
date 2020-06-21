@@ -36,7 +36,7 @@ pack: build-release
 	chmod +x build/fourkay
 	wc --bytes build/fourkay
 
-	# build/fourkay
+	build/fourkay
 
 #.PHONY: optimize
 #optimize: debug-run
