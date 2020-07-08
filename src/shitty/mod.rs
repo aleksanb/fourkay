@@ -7,7 +7,7 @@ pub mod println;
 pub mod gl_utils;
 pub mod gl_wrapper;
 
-pub fn sleep(milliseconds: i64) {
+pub fn sleep(milliseconds: libc::c_long) {
     let mut sleep_timeout = libc::timeval {
         tv_sec: 0,
         tv_usec: milliseconds * 1000,

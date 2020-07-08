@@ -15,7 +15,7 @@ macro_rules! gl_function {
     $(
         mod $gl_symbol {
             #[allow(unused_imports)]
-            use crate::bindings::{gl::{self, GLchar, GLenum, GLsizei, GLubyte, GLuint, GLint, GLsizeiptr, GLboolean, GLfloat}};
+            use crate::bindings::{gl::{self, GLchar, GLshort, GLenum, GLsizei, GLubyte, GLuint, GLint, GLsizeiptr, GLboolean, GLfloat}};
 
             pub(crate) static mut RAW_POINTER: *const libc::c_char = core::ptr::null();
 
@@ -77,6 +77,7 @@ gl_function! {
         pointer: *const libc::c_void
     ) -> (),
     fn glCreateProgram() -> GLuint,
+    fn glCreateShaderProgramv(type_: GLenum, count: GLint, strings: *const *const GLchar) -> GLuint,
     fn glAttachShader(program: GLuint, shader: GLuint) -> (),
     fn glLinkProgram(program: GLuint) -> (),
     fn glUseProgram(program: GLuint) -> (),
@@ -91,5 +92,6 @@ gl_function! {
     fn glUniform1f(location: GLint, v0: GLfloat) -> (),
     fn glUniform2f(location: GLint, v0: GLfloat, v1: GLfloat) -> (),
     fn glUniform3f(location: GLint, v0: GLfloat, v1: GLfloat, v2: GLfloat) -> (),
-    fn glUniform4f(location: GLint, v0: GLfloat, v1: GLfloat, v2: GLfloat, v3: GLfloat) -> ()
+    fn glUniform4f(location: GLint, v0: GLfloat, v1: GLfloat, v2: GLfloat, v3: GLfloat) -> (),
+    fn glRects(x1: GLshort, y1: GLshort, x2: GLshort, y2: GLshort) -> ()
 }

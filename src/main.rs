@@ -268,7 +268,7 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
 
 static VERTEX_SHADER: &str = concat!(include_str!("shaders/quad-vertex.glsl"), "\0");
 static BALLS_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/balls.glsl.out"), "\0");
-static SOLID_FRAGMENT_SHADER: &str = "void main(){gl_FragColor = vec4(1.0, 0.5, 0.5, 0.5);}\0";
+static SOLID_FRAGMENT_SHADER: &str = "void main(){gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);}\0";
 
 static FLOWERS_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/flower.glsl"), "\0");
 static BLOBBY_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/blobby.glsl.out"), "\0");

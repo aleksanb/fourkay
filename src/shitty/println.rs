@@ -27,8 +27,8 @@ impl Prepare for &'static str {
 
 trivial_prepare!(libc::c_int);
 trivial_prepare!(libc::c_uint);
-trivial_prepare!(libc::c_long);
-trivial_prepare!(libc::c_ulong);
+//trivial_prepare!(libc::c_long);
+//trivial_prepare!(libc::c_ulong);
 trivial_prepare!(u128);
 trivial_prepare!(*const libc::c_char);
 trivial_prepare!(*mut libc::c_char);

@@ -7,6 +7,21 @@ pub enum ShaderType {
 }
 
 pub fn create_shader(shader_type: &ShaderType) -> Result<gl::GLuint, ()> {
+    let gl_shader_type = match shader_type {
+        ShaderType::VertexShader(_) => gl::GL_VERTEX_SHADER,
+        ShaderType::FragmentShader(_) => gl::GL_FRAGMENT_SHADER,
+    };
+
+    let shader_body = match shader_type {
+        ShaderType::VertexShader(shader_body) | ShaderType::FragmentShader(shader_body) => {
+            shader_body.as_bytes().as_ptr() as *const libc::c_char
+        }
+    };
+
+    let shader_strings = &[shader_body];
+    let shader_id = gl_wrapper::glCreateShaderProgramv(gl_shader_type, 1, shader_strings as *const *const gl::GLchar);
+    return Ok(shader_id);
+
     let shader_id = gl_wrapper::glCreateShader(match shader_type {
         ShaderType::VertexShader(_) => gl::GL_VERTEX_SHADER,
         ShaderType::FragmentShader(_) => gl::GL_FRAGMENT_SHADER,
