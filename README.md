@@ -23,3 +23,7 @@ llvm-dev
 llvm
 
 https://github.com/armak/Leviathan-2.0/blob/master/src/main.cpp
+
+# Requirements
+
+sudo apt install llvm-dev libclang-dev clang

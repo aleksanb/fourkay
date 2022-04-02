@@ -10,19 +10,15 @@ shaders:
 
 .PHONY: optimize-build
 optimize-build:
-		cargo build -Z build-std=core --target $(TARGET) --release #  --no-default-features
+	cargo build -Z build-std=core --target $(TARGET) --release --no-default-features
+	wc --bytes target/$(TARGET)/release/fourkay
 
 .PHONY: run-optimize
 run-optimize: optimize-build
 	target/x86_64-unknown-linux-gnu/release/fourkay
 
-.PHONY: build-release
-build-release:
-	cargo build -Z build-std=core --target $(TARGET) --release --no-default-features
-	wc --bytes target/$(TARGET)/release/fourkay
-
 .PHONY: pack
-pack: build-release
+pack: optimize-build
 	rm -rf build && mkdir build
 
 	strip --strip-all -R '.note*' -R .comment target/$(TARGET)/release/fourkay
@@ -35,7 +31,7 @@ pack: build-release
 	chmod +x build/fourkay
 	wc --bytes build/fourkay
 
-	# build/fourkay
+	build/fourkay
 
 #.PHONY: optimize
 #optimize: debug-run

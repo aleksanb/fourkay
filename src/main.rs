@@ -106,13 +106,13 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
 
         let glx_display = display as *mut glx::Display;
 
-        // let mut glx_major = 0;
-        // let mut glx_minor = 0;
-        //let glx_result = glx::glXQueryVersion(glx_display, &mut glx_major, &mut glx_minor);
-        //println!(
-        //"glX version: Major: %d, minor: %d, result: %d\n\0",
-        //glx_major, glx_minor, glx_result
-        //);
+        let mut glx_major = 0;
+        let mut glx_minor = 0;
+        let glx_result = glx::glXQueryVersion(glx_display, &mut glx_major, &mut glx_minor);
+        println!(
+            "glX version: Major: %d, minor: %d, result: %d\n\0",
+            glx_major, glx_minor, glx_result
+        );
 
         let default_screen = Xlib::XDefaultScreen(display);
         println!("default_screen: %d\n\0", default_screen);
@@ -244,7 +244,7 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
             println!("Version: %s\n\0", gl_version as *const libc::c_char);
         }
 
-        main_loop(display, window);
+        main_loop(display, window).unwrap();
 
         #[cfg(feature = "error-handling")]
         {
@@ -267,17 +267,18 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
 }
 
 static VERTEX_SHADER: &str = concat!(include_str!("shaders/quad-vertex.glsl"), "\0");
-static BALLS_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/balls.glsl.out"), "\0");
-static SOLID_FRAGMENT_SHADER: &str = "void main(){gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);}\0";
+//static BALLS_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/balls.glsl.out"), "\0");
+//static SOLID_FRAGMENT_SHADER: &str = "void main(){gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);}\0";
 
-static FLOWERS_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/flower.glsl"), "\0");
+//static FLOWERS_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/flower.glsl"), "\0");
 static BLOBBY_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/blobby.glsl.out"), "\0");
-static SNAKE_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/snake.glsl.out"), "\0");
+//static SNAKE_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/snake.glsl.out"), "\0");
+//static RAYMARCHER: &str = concat!(include_str!("shaders/raymarcher-fragment.glsl"), "\0");
 
 fn main_loop(display: *mut Xlib::_XDisplay, window: Xlib::Window) -> Result<(), ()> {
     ///let mut kaleidoscope_shader = programs::Quad::new(BALLS_FRAGMENT_SHADER, VERTEX_SHADER)?;
     //let mut flower_shader = programs::Quad::new(FLOWERS_FRAGMENT_SHADER, VERTEX_SHADER)?;
-    let mut blobby_shader = programs::Quad::new(SOLID_FRAGMENT_SHADER, VERTEX_SHADER)?;
+    let mut blobby_shader = programs::Quad::new(BLOBBY_FRAGMENT_SHADER, VERTEX_SHADER)?;
     //let mut snake_shader = programs::Quad::new(SNAKE_FRAGMENT_SHADER, VERTEX_SHADER)?;
 
     const FRAMES_PER_SECOND: u64 = 60;
@@ -286,7 +287,6 @@ fn main_loop(display: *mut Xlib::_XDisplay, window: Xlib::Window) -> Result<(), 
         core::time::Duration::from_millis(FRAME_LENGTH_MILLISECONDS);
 
     let mut current_frame = 0;
-
     let mut current_time = shitty::time::now();
     let mut previous_time = shitty::time::now();
 
@@ -317,6 +317,7 @@ fn main_loop(display: *mut Xlib::_XDisplay, window: Xlib::Window) -> Result<(), 
 
         if current_frame < FRAMES_PER_SECOND * 16 {
             blobby_shader.render(current_frame);
+            println!("rendeing frame %d\n\0", current_frame);
             //} else if current_frame < FRAMES_PER_SECOND * 30 {
             //flower_shader.render(current_frame);
             //} else if current_frame < FRAMES_PER_SECOND * 48 {

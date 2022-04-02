@@ -11,39 +11,23 @@ pub fn create_shader(shader_type: &ShaderType) -> Result<gl::GLuint, ()> {
         ShaderType::VertexShader(_) => gl::GL_VERTEX_SHADER,
         ShaderType::FragmentShader(_) => gl::GL_FRAGMENT_SHADER,
     };
-
     let shader_body = match shader_type {
         ShaderType::VertexShader(shader_body) | ShaderType::FragmentShader(shader_body) => {
             shader_body.as_bytes().as_ptr() as *const libc::c_char
         }
     };
-
     let shader_strings = &[shader_body];
-    let shader_id = gl_wrapper::glCreateShaderProgramv(gl_shader_type, 1, shader_strings as *const *const gl::GLchar);
-    return Ok(shader_id);
-
-    let shader_id = gl_wrapper::glCreateShader(match shader_type {
-        ShaderType::VertexShader(_) => gl::GL_VERTEX_SHADER,
-        ShaderType::FragmentShader(_) => gl::GL_FRAGMENT_SHADER,
-    });
-
-    let shader_body = match shader_type {
-        ShaderType::VertexShader(shader_body) | ShaderType::FragmentShader(shader_body) => {
-            shader_body.as_bytes().as_ptr() as *const libc::c_char
-        }
-    };
-
-    let shader_strings = &[shader_body];
-
-    gl_wrapper::glShaderSource(
-        shader_id,
-        1,
-        shader_strings as *const *const gl::GLchar,
-        core::ptr::null(),
-    );
-    gl_wrapper::glCompileShader(shader_id);
 
     if cfg!(feature = "error-handling") {
+        let shader_id = gl_wrapper::glCreateShader(gl_shader_type);
+        gl_wrapper::glShaderSource(
+            shader_id,
+            1,
+            shader_strings as *const *const gl::GLchar,
+            core::ptr::null(),
+        );
+        gl_wrapper::glCompileShader(shader_id);
+
         let mut is_compiled: gl::GLint = 0;
         gl_wrapper::glGetShaderiv(shader_id, gl::GL_COMPILE_STATUS, &mut is_compiled);
 
@@ -66,6 +50,12 @@ pub fn create_shader(shader_type: &ShaderType) -> Result<gl::GLuint, ()> {
 
         println!("Successfully compiled shader #%d\n\0", shader_id);
     }
+
+    let shader_id = gl_wrapper::glCreateShaderProgramv(
+        gl_shader_type,
+        1,
+        shader_strings as *const *const gl::GLchar,
+    );
     Ok(shader_id)
 }
 

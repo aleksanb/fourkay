@@ -18,10 +18,10 @@ float distance(vec3 p)
   //p.x = mod(p.x, 5.0) - 2.5;
   //p.z = mod(p.z, 5.0) - 2.5;
 
-  float s = sphere(p, vec3(.0, .0, .0), 2.0);
+  //float s = sphere(p, vec3(.0, .0, .0), 2.0);
   float b = box(p, vec3(3.0, 0.1, -10.0), vec3(2.0));
 
-  return min(s, b);
+  return b;
 }
 
 vec2 castRay(vec3 ro, vec3 rd)
@@ -62,8 +62,8 @@ vec3 calculateNormal(vec3 pos) {
 void main()
 {
   vec2 position = gl_FragCoord.xy / resolution;
-  float x = (position.x * 16.0) - 8.0 + sin(frame / 30.0);
-  float y = (position.y * 9.0) - 4.5 - cos(frame / 40.0);
+  float x = (position.x * 16.0) - 8.0;// + sin(frame / 30.0);
+  float y = (position.y * 9.0) - 4.5;// - cos(frame / 40.0);
   float fov = 9.0;
 
   vec3 up = vec3(0.0, 1.0, 0.0);

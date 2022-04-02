@@ -2,7 +2,7 @@
 name = "fourkay"
 version = "0.1.0"
 authors = ["Aleksander Vognild Burkow <aleksanderburkow@gmail.com>"]
-edition = "2018"
+edition = "2021"
 build = "build.rs"
 # crate-type = "staticlib"
 
@@ -14,6 +14,9 @@ error-handling = []
 [dependencies]
 libc = {version = "0.2.*", default-features = false}
 # bindings = { path = "bindings" }
+
+[build-dependencies]
+bindgen = "0.59.2"
 
 [profile.dev]
 panic = "abort"
