@@ -1,5 +1,13 @@
 TARGET=x86_64-unknown-linux-gnu
 
+.PHONY: shaders-normal
+shaders-normal:
+	cp src/shaders/balls.glsl src/shaders/balls.glsl.out
+	cp src/shaders/flower.glsl src/shaders/flower.glsl.out
+	cp src/shaders/snake.glsl src/shaders/snake.glsl.out
+	cp src/shaders/blobby.glsl src/shaders/blobby.glsl.out
+	cp src/shaders/quad-vertex.glsl src/shaders/quad-vertex.glsl.out
+
 .PHONY: shaders
 shaders:
 	ruby ../glsl-minifier/glsl_min.rb src/shaders/balls.glsl > src/shaders/balls.glsl.out
@@ -10,7 +18,7 @@ shaders:
 
 .PHONY: optimize-build
 optimize-build:
-	cargo build -Z build-std=core --target $(TARGET) --release --no-default-features
+	cargo build --target $(TARGET) --release --no-default-features
 	wc --bytes target/$(TARGET)/release/fourkay
 
 .PHONY: run-optimize

@@ -338,9 +338,9 @@ fn main_loop(display: *mut Xlib::_XDisplay, window: Xlib::Window) -> Result<(), 
                 event.assume_init()
             };
 
-            println!("event.type = %d\n\0", event.type_);
-            match unsafe { event.type_ } {
-                Xlib_constants::Expose => {
+            println!("event.type = %d\n\0", event.type_.as_ref());
+            match unsafe { event.type_.as_ref() } {
+                &Xlib_constants::Expose => {
                     println!("Window attributes!\n\0");
                     unsafe {
                         let window_attributes = {
@@ -367,9 +367,9 @@ fn main_loop(display: *mut Xlib::_XDisplay, window: Xlib::Window) -> Result<(), 
                 //     }
                 //     println!("Received event type of %d\n\0", xclient.message_type);
                 // }
-                Xlib_constants::KeyPress => {
-                    println!("Keyboard was pressed %d\n\0", event.xkey.keycode);
-                    if unsafe { event.xkey }.keycode == 66 {
+                &Xlib_constants::KeyPress => {
+                    println!("Keyboard was pressed %d\n\0", event.xkey.as_ref().keycode);
+                    if unsafe { event.xkey.as_ref() }.keycode == 66 {
                         return Ok(());
                     }
                 }

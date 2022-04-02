@@ -25,5 +25,11 @@ llvm
 https://github.com/armak/Leviathan-2.0/blob/master/src/main.cpp
 
 # Requirements
+https://stackoverflow.com/questions/68455964/how-can-i-execute-tests-in-a-crate-that-gets-developed-for-a-non-default-target
 
+Bindings for gl, glx, x will be generated at compile time for you.
+
+```
 sudo apt install llvm-dev libclang-dev clang
+make run-optimize
+```
