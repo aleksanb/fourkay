@@ -32,4 +32,5 @@ Bindings for gl, glx, x will be generated at compile time for you.
 ```
 sudo apt install llvm-dev libclang-dev clang
 make run-optimize
+apt install libasound2-dev
 ```

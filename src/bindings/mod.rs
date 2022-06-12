@@ -14,4 +14,12 @@ pub mod Xlib {
     include!(concat!(env!("OUT_DIR"), "/Xlib.rs"));
 }
 
+pub mod math {
+    include!(concat!(env!("OUT_DIR"), "/math.rs"));
+}
+
+pub mod alsa {
+    include!(concat!(env!("OUT_DIR"), "/alsa.rs"));
+}
+
 pub mod Xlib_constants;

@@ -7,16 +7,17 @@ build = "build.rs"
 # crate-type = "staticlib"
 
 [features]
-default = ["println", "error-handling"]
 println = []
 error-handling = []
 
 [dependencies]
 libc = {version = "0.2.*", default-features = false}
+# alsa-sys = "0.3.1"
 # bindings = { path = "bindings" }
 
 [build-dependencies]
 bindgen = "0.59.2"
+pkg-config = "0.3"
 
 [profile.dev]
 panic = "abort"
@@ -24,7 +25,9 @@ opt-level = 2
 lto = true
 codegen-units = 1
 
+
 [profile.release]
+strip = "symbols"
 panic = "abort"
 opt-level = 2  # Currently gives the best size  https://rust-embedded.github.io/book/unsorted/speed-vs-size.html
 lto = true

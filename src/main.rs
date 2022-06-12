@@ -1,14 +1,18 @@
-#![feature(lang_items, start, raw_ref_op)]
+#![feature(lang_items, start, raw_ref_op, generic_arg_infer)]
 #![no_std]
 #![no_main]
 // https://doc.rust-lang.org/1.19.0/reference/attributes.html#crate-only-attributes
+#![allow(warnings)]
 
 #[macro_use]
 mod shitty;
+use crate::bindings::alsa::{self, snd_pcm_hw_params_any};
+use crate::bindings::gl::GL_SAMPLE_BUFFERS;
+
 use self::shitty::{gl_wrapper, println::*};
 
 use self::programs::Program;
-use core::mem;
+use core::mem::{self, MaybeUninit};
 use core::ptr;
 
 mod bindings;
@@ -26,22 +30,6 @@ fn panic(_panic: &core::panic::PanicInfo<'_>) -> ! {
 #[lang = "eh_personality"]
 extern "C" fn eh_personality() {}
 
-extern "C" {
-    // pub fn __4klang_render(arg1: *const libc::c_char) -> *const libc::c_char;
-
-    //pub fn __4klang_envelope(arg1: *const libc::c_char) -> *const libc::c_float;
-    //pub fn __4klang_note_buffer(arg1: *const libc::c_char) -> *const libc::c_int;
-    //pub fn sound_initialize();
-    //pub fn sound_play();
-    //pub fn sound_stop();
-}
-
-//extern "C" {
-//    extern void* __4klang_render(void*);
-//    extern float __4klang_envelope_buffer;
-//    extern int   __4klang_note_buffer;
-//}
-
 macro_rules! intern_atom {
     ($display:ident, $atom_name:ident) => {{
         let atom_str = concat!(stringify!($atom_name), "\0");
@@ -58,61 +46,141 @@ macro_rules! intern_atom {
     }};
 }
 
-// void main(){gl_FragColor = vec4(1.0,0.5,0.5,.5);}
+static VERTEX_SHADER: &str = concat!(include_str!("shaders/quad-vertex.glsl"), "\0");
+static BALLS_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/balls.glsl.out"), "\0");
+static SOLID_FRAGMENT_SHADER: &str = "void main(){gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);}\0";
+static FLOWERS_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/flower.glsl"), "\0");
+static BLOBBY_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/blobby.glsl.out"), "\0");
+static SNAKE_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/snake.glsl.out"), "\0");
+static RAYMARCHER: &str = concat!(include_str!("shaders/raymarcher-fragment.glsl"), "\0");
 
 #[no_mangle]
 pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
-    const SAMPLE_RATE: u32 = 44100;
-    const BPM: u32 = 120;
-    const MAX_INSTRUMENTS: u32 = 4;
-    const MAX_PATTERNS: u32 = 84;
-
-    // let sound_buffer: *mut i8 = unsafe { mem::transmute(libc::malloc(1024 * 1024 * 30 * mem::size_of::<u8>())) };
-    //let sound_buffer_position = sound_buffer as *const i8;
-    //let sound_thread_stack = [0u8; 1024*1024];
-
-    /*unsafe {
-        __4klang_render(sound_buffer);
-    }*/
-
-    /*unsafe {
-        let mut sound_spec = SDL::SDL_AudioSpec {
-            freq: SAMPLE_RATE,
-            format: SDL::AUDIO_S16SYS,
-            channels: 2,
-            silence: 0,
-            samples: 4096,
-            size : 0,
-            callback:
-        };
-        SDL::SDL_LoadWAV_RW(sound_buffer, 0, &mut sound_spec as *mut SDL::SDL_AudioSpec);;
-    }
-
     unsafe {
-        //sound_initialize();
-        //sound_play();
+        let mut pcm_handle: *mut alsa::snd_pcm_t = MaybeUninit::uninit().assume_init();
+        let res = alsa::snd_pcm_open(
+            &mut pcm_handle,
+            "default\0".as_ptr() as *const _,
+            alsa::SND_PCM_STREAM_PLAYBACK,
+            0,
+        );
+        if res < 0 {
+            println!("1Res: %s\n\0", alsa::snd_strerror(res));
+        }
 
-        SDL::SDL_OpenAudio(&mut sound_spec as *mut _, null());
-    }*/
+        let mut params: *mut alsa::snd_pcm_hw_params_t = MaybeUninit::uninit().assume_init();
+        let res = alsa::snd_pcm_hw_params_malloc(&mut params);
+        #[cfg(feature = "error-handling")]
+        {
+            if res < 0 {
+                println!("2Res: %s\n\0", alsa::snd_strerror(res));
+            }
+        }
 
-    //libc::clone()
+        let res = alsa::snd_pcm_hw_params_any(pcm_handle, params);
+        if res < 0 {
+            println!("3Res: %s\n\0", alsa::snd_strerror(res));
+        }
 
-    unsafe {
+        let res = alsa::snd_pcm_hw_params_set_access(
+            pcm_handle,
+            params,
+            alsa::SND_PCM_ACCESS_RW_INTERLEAVED,
+        );
+        if res < 0 {
+            println!("4Res: %s\n\0", alsa::snd_strerror(res));
+        }
+
+        let res =
+            alsa::snd_pcm_hw_params_set_format(pcm_handle, params, alsa::SND_PCM_FORMAT_S16_LE);
+        if res < 0 {
+            println!("5Res: %s\n\0", alsa::snd_strerror(res));
+        }
+
+        const channels: u32 = 1;
+        let res = alsa::snd_pcm_hw_params_set_channels(pcm_handle, params, channels);
+        if res < 0 {
+            println!("6Res: %s\n\0", alsa::snd_strerror(res));
+        }
+
+        let mut rate: libc::c_uint = 44100;
+        let res = alsa::snd_pcm_hw_params_set_rate_near(
+            pcm_handle,
+            params,
+            &mut rate as *mut _,
+            &mut 0 as *mut _,
+        );
+        #[cfg(feature = "error-handling")]
+        {
+            if res < 0 {
+                println!("7Res: %s\n\0", alsa::snd_strerror(res));
+            }
+        }
+        println!("Rate chosen: %d\n\0", rate);
+
+        let res = alsa::snd_pcm_hw_params(pcm_handle, params);
+        #[cfg(feature = "error-handling")]
+        {
+            if res < 0 {
+                println!("8Res: %s\n\0", alsa::snd_strerror(res));
+            }
+        }
+
+        #[cfg(feature = "error-handling")]
+        {
+            println!("PCM name: %s\n\0", alsa::snd_pcm_name(pcm_handle));
+            println!(
+                "PCM state: %s\n\0",
+                alsa::snd_pcm_state_name(alsa::snd_pcm_state(pcm_handle))
+            );
+
+            let mut tmp: libc::c_uint = 0;
+            alsa::snd_pcm_hw_params_get_channels(params, &mut tmp as *mut _);
+            println!("Channels: %d\n\0", tmp);
+
+            alsa::snd_pcm_hw_params_get_rate(params, &mut tmp as *mut _, &mut 0 as *mut _);
+            println!("Rate: %d\n\0", tmp);
+        }
+        let mut frames: alsa::snd_pcm_uframes_t = MaybeUninit::uninit().assume_init();
+        alsa::snd_pcm_hw_params_get_period_size(params, &mut frames, &mut 0);
+        println!("Frames: %d\n\0", frames);
+
+        let buffer_size = ((2 * frames * mem::size_of::<i8>() as u64) as libc::size_t);
+        println!("Allocating buffer with : %d\n\0", buffer_size);
+        let mut buffer = libc::malloc(buffer_size) as *mut i8;
+
+        #[cfg(feature = "error-handling")]
+        {
+            let mut period_time = 0;
+            let res =
+                alsa::snd_pcm_hw_params_get_period_time(params, &mut period_time, ptr::null_mut());
+            if res < 0 {
+                println!("10Res: %s\n\0", alsa::snd_strerror(res));
+            }
+            println!("Period time: %d\n\0", period_time);
+        }
+
+        // Now we set up the graphics stuffs
         let display = Xlib::XOpenDisplay(ptr::null());
-        if display.is_null() {
-            println!("Couldn't set up display\n\0");
-            return 1;
+        #[cfg(feature = "error-handling")]
+        {
+            if display.is_null() {
+                println!("Couldn't set up display\n\0");
+                return 1;
+            }
         }
 
         let glx_display = display as *mut glx::Display;
-
-        let mut glx_major = 0;
-        let mut glx_minor = 0;
-        let glx_result = glx::glXQueryVersion(glx_display, &mut glx_major, &mut glx_minor);
-        println!(
-            "glX version: Major: %d, minor: %d, result: %d\n\0",
-            glx_major, glx_minor, glx_result
-        );
+        #[cfg(feature = "error-handling")]
+        {
+            let mut glx_major = 0;
+            let mut glx_minor = 0;
+            let glx_result = glx::glXQueryVersion(glx_display, &mut glx_major, &mut glx_minor);
+            println!(
+                "glX version: Major: %d, minor: %d, result: %d\n\0",
+                glx_major, glx_minor, glx_result
+            );
+        }
 
         let default_screen = Xlib::XDefaultScreen(display);
         println!("default_screen: %d\n\0", default_screen);
@@ -167,21 +235,10 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
             &mut set_window_attributes,
         );
 
-        /*let window = Xlib::XCreateSimpleWindow(
-            display,
-            root_window,
-            0,
-            0,
-            1920,
-            1080,
-            0,
-            0,
-            0,
-        );*/
-        println!("Window: %lu\n\0", window);
+        //let window = Xlib::XCreateSimpleWindow(display, root_window, 0, 0, 1920, 1080, 0, 0, 0);
+        //println!("Window: %lu\n\0", window);
 
         Xlib::XMapWindow(display, window);
-
         // // Hook close requests.
         //let wm_protocols_atom = intern_atom!(display, WM_PROTOCOLS);
         //let wm_delete_window_atom = intern_atom!(display, WM_DELETE_WINDOW);
@@ -242,9 +299,148 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
         {
             let gl_version = gl_wrapper::glGetString(gl::GL_VERSION);
             println!("Version: %s\n\0", gl_version as *const libc::c_char);
+
+            let gl_renderer = gl_wrapper::glGetString(gl::GL_RENDERER);
+            println!("Renderer: %s\n\0", gl_renderer as *const libc::c_char);
+
+            let gl_vendor = gl_wrapper::glGetString(gl::GL_VENDOR);
+            println!("Vendor: %s\n\0", gl_vendor as *const libc::c_char);
         }
 
-        main_loop(display, window).unwrap();
+        const C4: f32 = 261.63;
+        const Cs4: f32 = 277.18;
+        const D4: f32 = 293.66;
+        const Ds4: f32 = 311.13;
+        const E4: f32 = 329.63;
+        const F4: f32 = 349.23;
+        const Fs4: f32 = 369.99;
+        const G4: f32 = 392.00;
+        const Gs4: f32 = 415.30;
+        const A4: f32 = 440.00;
+        const As4: f32 = 466.16;
+        const B4: f32 = 493.88;
+
+        let sample_rate: u32 = 44_100;
+        const BPM: u32 = 170 * 4;
+        let note_length_in_samples: u32 = sample_rate * 60 / BPM;
+
+        // let piano_frequencies: [f32; 12] = [C4, Cs4, D4, Ds4, E4, F4, Fs4, G4, Gs4, A4, As4, B4];
+        let note_frequencies: [f32; 5] = [C4, Ds4, F4, G4, As4];
+        //const note_frequencies: [f32; 1] = [C4];
+        let notes_length: u32 = note_frequencies.len() as u32;
+
+        // We use [0, 1) as volume internally, and then we normalize when converting to i8.
+
+        let play_note = |frequency: f32, sample_idx: u32| -> f32 {
+            let wavelength_in_samples = sample_rate as f32 / frequency;
+            let how_far_into_note =
+                ((sample_idx as f32) % wavelength_in_samples) / wavelength_in_samples;
+
+            how_far_into_note
+        };
+
+        let get_amplitude_for_sample_index = |sample_idx: u32| -> f32 {
+            let note_idx = sample_idx / note_length_in_samples;
+            let frequency = note_frequencies[(note_idx % notes_length) as usize];
+            // println!("\nsample_idx %d\n\0", sample_idx as libc::c_uint);
+            // println!("nidx %d\n\0", note_idx as libc::c_uint);
+            // println!("frec %f\n\0", frequency as libc::c_double);
+
+            let mut sum = 0f32;
+            sum += play_note(frequency * 2f32, sample_idx);
+            sum += play_note(frequency, sample_idx);
+            sum += play_note(frequency / 2f32, sample_idx);
+            sum /= 3f32;
+            sum
+        };
+
+        const FRAMES_PER_SECOND: u64 = 60;
+        const FRAME_LENGTH_MILLISECONDS: u64 = 1_000 / FRAMES_PER_SECOND;
+        const FRAME_LENGTH_DURATION: core::time::Duration =
+            core::time::Duration::from_millis(FRAME_LENGTH_MILLISECONDS);
+        let mut current_frame = 0;
+        let mut current_time = shitty::time::now();
+        let mut previous_time = shitty::time::now();
+        let mut delta_time = core::time::Duration::new(0, 0);
+        let mut solid_shader = programs::Quad::new(SOLID_FRAGMENT_SHADER, VERTEX_SHADER).unwrap();
+
+        // let mut timestamp: alsa::snd_timestamp_t = MaybeUninit::uninit().assume_init();
+        // let mut status: alsa::snd_pcm_status_t = MaybeUninit::uninit().assume_init();
+        let mut current_sample_idx: u32 = 0;
+        loop {
+            // do gameloop
+
+            ///let mut kaleidoscope_shader = programs::Quad::new(BALLS_FRAGMENT_SHADER, VERTEX_SHADER)?;
+            //let mut flower_shader = programs::Quad::new(FLOWERS_FRAGMENT_SHADER, VERTEX_SHADER)?;
+            // let mut blobby_shader = programs::Quad::new(BLOBBY_FRAGMENT_SHADER, VERTEX_SHADER)?;
+            //let mut snake_shader = programs::Quad::new(SNAKE_FRAGMENT_SHADER, VERTEX_SHADER)?;
+            shitty::time::update(&mut current_time);
+            let delta_since_last_wake = shitty::time::subtract(&current_time, &previous_time);
+            delta_time += delta_since_last_wake;
+            previous_time = current_time;
+
+            while delta_time >= FRAME_LENGTH_DURATION {
+                solid_shader.update(current_frame);
+                delta_time -= FRAME_LENGTH_DURATION;
+                current_frame += 1;
+
+                // Sound can starve here?
+
+                // alsa::snd_pcm_status_get_state(&mut status);
+                // alsa::snd_pcm_status_get_tstamp(&status, &mut timestamp);
+                // println!("sec %d\n\0", timestamp.tv_sec);
+                //println!("usec %f\n\0", timestamp.tv_usec);
+
+                let frames_to_write = alsa::snd_pcm_avail(pcm_handle);
+                // println!("Frames to write, %d\n\0", frames_to_write);
+                if frames_to_write > 0 {
+                    //println!(
+                    //"%d Writin frames, %d, but max %d\n\0",
+                    //current_sample_idx, frames_to_write, fframes
+                    //);
+                    let frames_to_write = (frames_to_write as usize).min(frames as usize);
+
+                    for i in 0..frames_to_write {
+                        let sample = get_amplitude_for_sample_index(current_sample_idx);
+                        //println!("Sample %f\n\0", sample as libc::c_double);
+                        let rendered_sample =
+                            (sample * (u16::MAX - 1) as f32 - (u16::MAX / 2) as f32) as i16;
+
+                        let buffer_idx = 2 * i as isize;
+                        buffer
+                            .offset(buffer_idx + 1)
+                            .write((rendered_sample >> 8) as i8);
+                        buffer.offset(buffer_idx + 0).write(rendered_sample as i8);
+
+                        current_sample_idx += 1;
+                    }
+
+                    let res = alsa::snd_pcm_writei(
+                        pcm_handle,
+                        buffer as *const libc::c_void,
+                        frames_to_write as u64,
+                    );
+
+                    #[cfg(feature = "error-handling")]
+                    {
+                        if res == -(libc::EPIPE as i64) {
+                            alsa::snd_pcm_prepare(pcm_handle);
+                            println!("Wrote %d \n\0", res);
+                        } else if res < 0 {
+                            println!("Fakk write failed: %d \n\0", res);
+                        }
+                    }
+                }
+            }
+
+            println!("rendeing frame %d\n\0", current_frame);
+            solid_shader.render(current_frame);
+
+            unsafe { glx::glXSwapBuffers(display as *mut bindings::glx::_XDisplay, window) }
+            if should_exit_after_processing_pending_events(display, window) {
+                return 1;
+            }
+        }
 
         #[cfg(feature = "error-handling")]
         {
@@ -266,115 +462,55 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
     0
 }
 
-static VERTEX_SHADER: &str = concat!(include_str!("shaders/quad-vertex.glsl"), "\0");
-//static BALLS_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/balls.glsl.out"), "\0");
-//static SOLID_FRAGMENT_SHADER: &str = "void main(){gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);}\0";
+//fn main_loop(display: *mut Xlib::_XDisplay, window: Xlib::Window) -> Result<(), ()> {}
 
-//static FLOWERS_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/flower.glsl"), "\0");
-static BLOBBY_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/blobby.glsl.out"), "\0");
-//static SNAKE_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/snake.glsl.out"), "\0");
-//static RAYMARCHER: &str = concat!(include_str!("shaders/raymarcher-fragment.glsl"), "\0");
+fn should_exit_after_processing_pending_events(
+    display: *mut Xlib::_XDisplay,
+    window: Xlib::Window,
+) -> bool {
+    let events_pending = unsafe { Xlib::XPending(display) };
+    for _ in 0..events_pending {
+        let event = unsafe {
+            let mut event: mem::MaybeUninit<Xlib::XEvent> = mem::MaybeUninit::uninit();
+            Xlib::XNextEvent(display, event.as_mut_ptr());
+            event.assume_init()
+        };
 
-fn main_loop(display: *mut Xlib::_XDisplay, window: Xlib::Window) -> Result<(), ()> {
-    ///let mut kaleidoscope_shader = programs::Quad::new(BALLS_FRAGMENT_SHADER, VERTEX_SHADER)?;
-    //let mut flower_shader = programs::Quad::new(FLOWERS_FRAGMENT_SHADER, VERTEX_SHADER)?;
-    let mut blobby_shader = programs::Quad::new(BLOBBY_FRAGMENT_SHADER, VERTEX_SHADER)?;
-    //let mut snake_shader = programs::Quad::new(SNAKE_FRAGMENT_SHADER, VERTEX_SHADER)?;
-
-    const FRAMES_PER_SECOND: u64 = 60;
-    const FRAME_LENGTH_MILLISECONDS: u64 = 1_000 / FRAMES_PER_SECOND;
-    const FRAME_LENGTH_DURATION: core::time::Duration =
-        core::time::Duration::from_millis(FRAME_LENGTH_MILLISECONDS);
-
-    let mut current_frame = 0;
-    let mut current_time = shitty::time::now();
-    let mut previous_time = shitty::time::now();
-
-    let mut delta_time = core::time::Duration::new(0, 0);
-
-    loop {
-        shitty::time::update(&mut current_time);
-        let delta_since_last_wake = shitty::time::subtract(&current_time, &previous_time);
-        delta_time += delta_since_last_wake;
-        previous_time = current_time;
-
-        while delta_time >= FRAME_LENGTH_DURATION {
-            if current_frame < FRAMES_PER_SECOND * 16 {
-                blobby_shader.update(current_frame);
-                //} else if current_frame < FRAMES_PER_SECOND * 30 {
-                //flower_shader.update(current_frame);
-                //} else if current_frame < FRAMES_PER_SECOND * 48 {
-                //blobby_shader.update(current_frame);
-                //} else if current_frame < FRAMES_PER_SECOND * 60 {
-                //snake_shader.update(current_frame);
-                //} else {
-                //return Ok(());
-            }
-
-            delta_time -= FRAME_LENGTH_DURATION;
-            current_frame += 1;
-        }
-
-        if current_frame < FRAMES_PER_SECOND * 16 {
-            blobby_shader.render(current_frame);
-            println!("rendeing frame %d\n\0", current_frame);
-            //} else if current_frame < FRAMES_PER_SECOND * 30 {
-            //flower_shader.render(current_frame);
-            //} else if current_frame < FRAMES_PER_SECOND * 48 {
-            //blobby_shader.render(current_frame);
-            //} else if current_frame < FRAMES_PER_SECOND * 60 {
-            //snake_shader.render(current_frame);
-            //} else {
-            //return Ok(());
-        }
-
-        unsafe { glx::glXSwapBuffers(display as *mut bindings::glx::_XDisplay, window) }
-
-        let events_pending = unsafe { Xlib::XPending(display) };
-        for _ in 0..events_pending {
-            let event = unsafe {
-                let mut event: mem::MaybeUninit<Xlib::XEvent> = mem::MaybeUninit::uninit();
-                Xlib::XNextEvent(display, event.as_mut_ptr());
-                event.assume_init()
-            };
-
-            println!("event.type = %d\n\0", event.type_.as_ref());
-            match unsafe { event.type_.as_ref() } {
-                &Xlib_constants::Expose => {
-                    println!("Window attributes!\n\0");
-                    unsafe {
-                        let window_attributes = {
-                            let mut window_attributes: mem::MaybeUninit<Xlib::XWindowAttributes> =
-                                mem::MaybeUninit::uninit();
-                            Xlib::XGetWindowAttributes(
-                                display,
-                                window,
-                                window_attributes.as_mut_ptr(),
-                            );
-                            window_attributes.assume_init()
-                        };
-                        gl::glViewport(0, 0, window_attributes.width, window_attributes.height)
+        println!("event.type = %d\n\0", event.type_.as_ref());
+        match unsafe { event.type_.as_ref() } {
+            &Xlib_constants::Expose => {
+                println!("Window attributes!\n\0");
+                unsafe {
+                    let window_attributes = {
+                        let mut window_attributes: mem::MaybeUninit<Xlib::XWindowAttributes> =
+                            mem::MaybeUninit::uninit();
+                        Xlib::XGetWindowAttributes(display, window, window_attributes.as_mut_ptr());
+                        window_attributes.assume_init()
                     };
-                }
-                // Xlib_constants::ClientMessage => {
-                //     println!("ClientMessage\n\0");
-                //     let xclient = unsafe { event.xclient };
-                //     if xclient.message_type == wm_protocols_atom && xclient.format == 32 {
-                //         let protocol = unsafe { xclient.data.l }.as_ref()[0] as Xlib::Atom;
-                //         if protocol == wm_delete_window_atom {
-                //             return Ok(());
-                //         }
-                //     }
-                //     println!("Received event type of %d\n\0", xclient.message_type);
-                // }
-                &Xlib_constants::KeyPress => {
-                    println!("Keyboard was pressed %d\n\0", event.xkey.as_ref().keycode);
-                    if unsafe { event.xkey.as_ref() }.keycode == 66 {
-                        return Ok(());
-                    }
-                }
-                _ => (),
+                    gl::glViewport(0, 0, window_attributes.width, window_attributes.height)
+                };
             }
+            &Xlib_constants::KeyPress => {
+                println!("Keyboard was pressed %d\n\0", event.xkey.as_ref().keycode);
+                // 9 is esc
+                if unsafe { event.xkey.as_ref() }.keycode == 9 {
+                    return true;
+                }
+            }
+            _ => (),
         }
     }
+    return false;
 }
+
+// Xlib_constants::ClientMessage => {
+//     println!("ClientMessage\n\0");
+//     let xclient = unsafe { event.xclient };
+//     if xclient.message_type == wm_protocols_atom && xclient.format == 32 {
+//         let protocol = unsafe { xclient.data.l }.as_ref()[0] as Xlib::Atom;
+//         if protocol == wm_delete_window_atom {
+//             return Ok(());
+//         }
+//     }
+//     println!("Received event type of %d\n\0", xclient.message_type);
+// }

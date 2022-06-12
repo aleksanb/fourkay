@@ -25,6 +25,11 @@ impl Prepare for &'static str {
     }
 }
 
+trivial_prepare!(usize);
+trivial_prepare!(isize);
+trivial_prepare!(libc::c_float);
+trivial_prepare!(libc::c_double);
+trivial_prepare!(libc::c_short);
 trivial_prepare!(libc::c_int);
 trivial_prepare!(libc::c_uint);
 trivial_prepare!(libc::c_long);
