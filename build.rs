@@ -1,4 +1,3 @@
-use core::panic;
 use std::collections::HashSet;
 use std::env;
 
@@ -93,25 +92,12 @@ fn main() {
             .expect("Couldn't write bindings!");
     }
 
-    install_alsa_sys()
+    generate_bindings();
 }
 
 // MIT License: https://github.com/diwic/alsa-sys/blob/master/build.rs
-fn install_alsa_sys() {
-    match pkg_config::Config::new().probe("alsa") {
-        Err(pkg_config::Error::Failure { command, output }) => panic!(
-            "Pkg-config failed - usually this is because alsa development headers are not installed.\n\n\
-            For Fedora users:\n# dnf install alsa-lib-devel\n\n\
-            For Debian/Ubuntu users:\n# apt-get install libasound2-dev\n\n\
-            pkg_config details:\n{}\n", pkg_config::Error::Failure { command, output }),
-        Err(e) => panic!("{}", e),
-        Ok(_alsa_library) => {
-            generate_bindings(&_alsa_library);
-        } 
-    };
-}
 
-fn generate_bindings(alsa_library: &pkg_config::Library) {
+fn generate_bindings() {
     let mut codegen_config = bindgen::CodegenConfig::empty();
     codegen_config.insert(bindgen::CodegenConfig::FUNCTIONS);
     codegen_config.insert(bindgen::CodegenConfig::TYPES);
@@ -121,7 +107,7 @@ fn generate_bindings(alsa_library: &pkg_config::Library) {
         .derive_copy(false)
         .derive_debug(false)
         .use_core()
-        //.raw_line(r#"#[link(name="alsa")] extern {}"#)
+        .raw_line(r#"#[link(name="asound")] extern {}"#)
         .ctypes_prefix("libc")
         .header("/usr/include/alsa/asoundlib.h")
         //.header("alsa-wrapper.h")

@@ -12,8 +12,6 @@ error-handling = []
 
 [dependencies]
 libc = {version = "0.2.*", default-features = false}
-# alsa-sys = "0.3.1"
-# bindings = { path = "bindings" }
 
 [build-dependencies]
 bindgen = "0.59.2"

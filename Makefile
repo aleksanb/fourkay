@@ -1,3 +1,4 @@
+TARGET=i686-unknown-linux-gnu
 TARGET=x86_64-unknown-linux-gnu
 
 .PHONY: shaders-normal

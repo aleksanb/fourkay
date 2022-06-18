@@ -155,10 +155,6 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
         alsa::snd_pcm_hw_params_get_period_size(params, &mut frames, &mut 0);
         println!("Frames: %d\n\0", frames);
 
-        let buffer_size = ((2 * frames * mem::size_of::<i8>() as u64) as libc::size_t);
-        println!("Allocating buffer with : %d\n\0", buffer_size);
-        let mut buffer = libc::malloc(buffer_size) as *mut i8;
-
         #[cfg(feature = "error-handling")]
         {
             let mut period_time = 0;
@@ -330,18 +326,18 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
         const As4: f32 = 466.16;
         const B4: f32 = 493.88;
 
-        let sample_rate: u32 = 44_100;
-        const BPM: u32 = 170 * 4;
-        let note_length_in_samples: u32 = sample_rate * 60 / BPM;
+        let sample_rate = 44_100;
+        const BPM: usize = 170 * 4;
+        let note_length_in_samples = sample_rate * 60 / BPM;
 
         // let piano_frequencies: [f32; 12] = [C4, Cs4, D4, Ds4, E4, F4, Fs4, G4, Gs4, A4, As4, B4];
         let note_frequencies: [f32; 5] = [C4, Ds4, F4, G4, As4];
         //const note_frequencies: [f32; 1] = [C4];
-        let notes_length: u32 = note_frequencies.len() as u32;
+        let notes_length: usize = note_frequencies.len() as usize;
 
         // We use [0, 1) as volume internally, and then we normalize when converting to i8.
 
-        let play_note = |frequency: f32, sample_idx: u32| -> f32 {
+        let play_note = |frequency: f32, sample_idx: usize| -> f32 {
             let wavelength_in_samples = sample_rate as f32 / frequency;
             let how_far_into_note =
                 ((sample_idx as f32) % wavelength_in_samples) / wavelength_in_samples;
@@ -349,7 +345,7 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
             how_far_into_note
         };
 
-        let get_amplitude_for_sample_index = |sample_idx: u32| -> f32 {
+        let get_amplitude_for_sample_index = |sample_idx: usize| -> f32 {
             let note_idx = sample_idx / note_length_in_samples;
             let frequency = note_frequencies[(note_idx % notes_length) as usize];
             // println!("\nsample_idx %d\n\0", sample_idx as libc::c_uint);
@@ -357,17 +353,36 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
             // println!("frec %f\n\0", frequency as libc::c_double);
 
             let mut sum = 0f32;
-            sum += play_note(frequency * 2f32, sample_idx);
+            //sum += play_note(frequency * 2f32, sample_idx);
             sum += play_note(frequency, sample_idx);
-            sum += play_note(frequency / 2f32, sample_idx);
+            //sum += play_note(frequency / 2f32, sample_idx);
             sum /= 3f32;
             sum
         };
 
-        const FRAMES_PER_SECOND: u64 = 60;
-        const FRAME_LENGTH_MILLISECONDS: u64 = 1_000 / FRAMES_PER_SECOND;
+        let samples_to_prerender = 60 * sample_rate;
+        let bytes_per_sample = mem::size_of::<i8>() * 2; // Because 16bit audio
+        let buffer_size = bytes_per_sample * samples_to_prerender;
+        let mut buffer = libc::malloc(buffer_size as libc::size_t) as *mut i8;
+
+        println!("Allocating buffer with : %d\n\0", buffer_size);
+
+        for i in 0..samples_to_prerender {
+            let sample = get_amplitude_for_sample_index(i);
+            let rendered_sample = (sample * (u16::MAX - 1) as f32 - (u16::MAX / 2) as f32) as i16;
+
+            buffer
+                .offset((2 * i + 1) as isize)
+                .write((rendered_sample >> 8) as i8);
+            buffer
+                .offset((2 * i + 0) as isize)
+                .write(rendered_sample as i8);
+        }
+
+        const FRAMES_PER_SECOND: usize = 60;
+        const FRAME_LENGTH_MILLISECONDS: usize = 1_000 / FRAMES_PER_SECOND;
         const FRAME_LENGTH_DURATION: core::time::Duration =
-            core::time::Duration::from_millis(FRAME_LENGTH_MILLISECONDS);
+            core::time::Duration::from_millis(FRAME_LENGTH_MILLISECONDS as _);
         let mut current_frame = 0;
         let mut current_time = shitty::time::now();
         let mut previous_time = shitty::time::now();
@@ -376,7 +391,7 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
 
         // let mut timestamp: alsa::snd_timestamp_t = MaybeUninit::uninit().assume_init();
         // let mut status: alsa::snd_pcm_status_t = MaybeUninit::uninit().assume_init();
-        let mut current_sample_idx: u32 = 0;
+        let mut current_sample_idx: isize = 0;
         loop {
             // do gameloop
 
@@ -409,30 +424,16 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
                     //current_sample_idx, frames_to_write, fframes
                     //);
                     let frames_to_write = (frames_to_write as usize).min(frames as usize);
-
-                    for i in 0..frames_to_write {
-                        let sample = get_amplitude_for_sample_index(current_sample_idx);
-                        let rendered_sample =
-                            (sample * (u16::MAX - 1) as f32 - (u16::MAX / 2) as f32) as i16;
-
-                        let buffer_idx = 2 * i as isize;
-                        buffer
-                            .offset(buffer_idx + 1)
-                            .write((rendered_sample >> 8) as i8);
-                        buffer.offset(buffer_idx + 0).write(rendered_sample as i8);
-
-                        current_sample_idx += 1;
-                    }
-
                     let res = alsa::snd_pcm_writei(
                         pcm_handle,
-                        buffer as *const libc::c_void,
-                        frames_to_write as u64,
+                        buffer.offset(2 * current_sample_idx) as *const libc::c_void,
+                        frames_to_write as _,
                     );
+                    current_sample_idx += frames_to_write as isize;
 
                     #[cfg(feature = "error-handling")]
                     {
-                        if res == -(libc::EPIPE as i64) {
+                        if res == -(libc::EPIPE as _) {
                             alsa::snd_pcm_prepare(pcm_handle);
                             println!("Wrote %d \n\0", res);
                         } else if res < 0 {

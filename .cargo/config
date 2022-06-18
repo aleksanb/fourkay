@@ -1,5 +1,7 @@
 [build]
+#target = "i686-unknown-linux-gnu"
 target = "x86_64-unknown-linux-gnu"
+# rustflags = [ "-C", "overflow-checks=off" ]
 
 [unstable]
 build-std = [
