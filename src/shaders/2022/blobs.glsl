@@ -11,7 +11,7 @@ float sphere(vec2 p, float s) {
 }
 
 float sdf(in vec2 p) {
-    float size = .6;
+    float size = 0.5;
     float s1 = sphere((p - vec2(sin(f), 2. + sin(f) * .8)), size);
     float s2 = sphere((p - vec2(2. + sin(f), 1.4 + cos(-f) * 1.2)), size);
     float s3 = sphere((p - vec2(1.5 + cos(f), -.1)), size);
@@ -25,21 +25,50 @@ float sdf(in vec2 p) {
     r = opSU(r, s5, 2.);
     r = opSU(r, s6, 2.);
     r = opSU(r, s7, 2.);
+
+    float s8 = sphere((p - vec2(2.5)), 19. - f * 0.28);
+    r = opSU(r, s8, 2.);
+
     return r;
 }
 
 void main() {
-    vec2 uv = (5.0 * gl_FragCoord - r.xy) / r.y;
+
+    vec2 uv = (gl_FragCoord / r.xy) / vec2(1., 16. / 9.);
     vec3 color = vec3(1., 0.41, 0.70);
-    float m = mod(floor((uv.x + uv.y) / 2. * 3. + f), 3.);
-    if(m == 0.) {
-        color = vec3(1., 0.75, 0.79);
-    } else if(m == 1.) {
-        color = vec3(0.78, 0.08, 0.52);
+
+    if(f >= 46.57) {
+        float m = mod(floor((uv.x + uv.y) / 2. * 3. + f), 3.);
+        if(m == 0.) {
+            color = vec3(1., 0.75, 0.79);
+        } else if(m == 1.) {
+            color = vec3(0.78, 0.08, 0.52);
+        }
+
+        float t = sdf(uv);
+        if(t <= 0.) {
+            color = vec3(1., 1., .7);
+        }
+
     }
-    float t = sdf(uv);
-    if(t <= 0.) {
-        color = vec3(1., 1., .7);
+
+    if(f < 46.57) {
+        uv.y -= .35;
+        uv /= 5.;
+        uv *= min(abs(sin((f) / 15.)) * 3., 7.);
+        color = vec3(1., 0.41, 0.70);
+
+        float c = sin((9.25 * uv.y) + (8.0 * f)) * cos((9.25 * uv.x));
+        float shape = smoothstep(1.9 - clamp(distance(c + uv.y, 0.5) * 0.9, 0.0, 1.0), 1.0, 0.9);
+
+        if(shape > 0.5) {
+            color = vec3(1., 1., .7);
+        } else {
+            color = uv.y > 0.5 ? vec3(1., 0.41, 0.70) : vec3(0.52, 0.87, 0.83);
+            color *= 1. - shape;
+        }
+
     }
+
     gl_FragColor = vec4(color, 1.0);
 }
