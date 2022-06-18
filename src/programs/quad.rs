@@ -8,8 +8,8 @@ use core::ptr;
 
 pub struct Quad {
     program: gl::GLuint,
-    width: i32,
-    height: i32,
+    //width: i32,
+    //height: i32,
 }
 
 impl Quad {
@@ -19,16 +19,16 @@ impl Quad {
 
         Ok(Self {
             program,
-            width: 1920,
-            height: 1080,
+            //width: 1920,
+            //height: 1080,
         })
     }
 }
 
 impl Program for Quad {
     fn resize(&mut self, width: i32, height: i32) {
-        self.width = width;
-        self.height = height;
+        //self.width = width;
+        //self.height = height;
     }
 
     fn update(&mut self, _time: f32) {}
@@ -44,8 +44,9 @@ impl Program for Quad {
             gl_wrapper::glGetUniformLocation(self.program, "r\0".as_ptr() as *const _);
         gl_wrapper::glUniform2f(
             uniform_resolution,
-            self.width as gl::GLfloat,
-            self.height as gl::GLfloat,
+            1920.0,
+            1080.0, //self.width as gl::GLfloat,
+                    //self.height as gl::GLfloat,
         );
 
         unsafe {

@@ -32,5 +32,8 @@ Bindings for gl, glx, x will be generated at compile time for you.
 ```
 sudo apt install llvm-dev libclang-dev clang
 make run-optimize
-apt install libasound2-dev
+sudo apt install libasound2-dev
+sudo apt install mono-complete -y
 ```
+
+Download shader_minifier.exe from here: https://github.com/laurentlb/Shader_Minifier

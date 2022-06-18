@@ -58,17 +58,18 @@ macro_rules! intern_atom {
 }
 
 static VERTEX_SHADER: &str = concat!(include_str!("shaders/quad-vertex.glsl"), "\0");
-static BALLS_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/balls.glsl.out"), "\0");
-static SOLID_FRAGMENT_SHADER: &str = "void main(){gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);}\0";
-static FLOWERS_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/flower.glsl"), "\0");
-static BLOBBY_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/blobby.glsl.out"), "\0");
-static SNAKE_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/snake.glsl.out"), "\0");
-static RAYMARCHER: &str = concat!(include_str!("shaders/raymarcher-fragment.glsl"), "\0");
+// static BALLS_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/balls.glsl.out"), "\0");
+// static SOLID_FRAGMENT_SHADER: &str = "void main(){gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);}\0";
+// static FLOWERS_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/flower.glsl"), "\0");
+// static BLOBBY_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/blobby.glsl.out"), "\0");
+// static SNAKE_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/snake.glsl.out"), "\0");
+// static RAYMARCHER: &str = concat!(include_str!("shaders/raymarcher-fragment.glsl"), "\0");
 
 // 2022 shaders
-static VORONOI_SHADER: &str = concat!(include_str!("shaders/2022/voronoi.glsl"), "\0");
-static DISCOLINES_SHADER: &str = concat!(include_str!("shaders/2022/discolines.glsl"), "\0");
-static BLOBS_SHADER: &str = concat!(include_str!("shaders/2022/blobs.glsl"), "\0");
+// blobs
+// static VORONOI_SHADER: &str = concat!(include_str!("shaders/2022/voronoi.glsl"), "\0");
+// static DISCOLINES_SHADER: &str = concat!(include_str!("shaders/2022/discolines.glsl"), "\0");
+static BLOBS_SHADER: &str = concat!(include_str!("shaders/2022/blobs.glsl.out"), "\0");
 
 #[no_mangle]
 pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
@@ -409,7 +410,9 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
             previous_time = current_time;
 
             while delta_time >= FRAME_LENGTH_DURATION {
-                solid_shader.update(current_frame as f32 / FRAMES_PER_SECOND as f32);
+                // Removed for size
+                //solid_shader.update(current_frame as f32 / FRAMES_PER_SECOND as f32);
+
                 delta_time -= FRAME_LENGTH_DURATION;
                 current_frame += 1;
 
