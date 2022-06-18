@@ -112,18 +112,6 @@ fn install_alsa_sys() {
 }
 
 fn generate_bindings(alsa_library: &pkg_config::Library) {
-    //dbg!(alsa_library);
-    let clang_include_args = alsa_library.include_paths.iter().map(|include_path| {
-        //println!("Found path {:?}", include_path);
-        dbg!(format!(
-            "-I{}",
-            include_path.to_str().expect("include path was not UTF-8")
-        ))
-    });
-    //dbg!(&clang_include_args);
-
-    //panic!();
-
     let mut codegen_config = bindgen::CodegenConfig::empty();
     codegen_config.insert(bindgen::CodegenConfig::FUNCTIONS);
     codegen_config.insert(bindgen::CodegenConfig::TYPES);

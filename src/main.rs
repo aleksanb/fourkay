@@ -1,4 +1,4 @@
-#![feature(lang_items, start, raw_ref_op, generic_arg_infer)]
+#![feature(lang_items, start, raw_ref_op)]
 #![no_std]
 #![no_main]
 // https://doc.rust-lang.org/1.19.0/reference/attributes.html#crate-only-attributes
@@ -23,7 +23,17 @@ use self::bindings::{gl, glx, Xlib, Xlib_constants};
 #[cfg(not(test))]
 #[panic_handler]
 fn panic(_panic: &core::panic::PanicInfo<'_>) -> ! {
-    loop {}
+    #[cfg(not(feature = "error-handling"))]
+    {
+        use core::hint::unreachable_unchecked;
+        unsafe {
+            unreachable_unchecked();
+        }
+    }
+    #[cfg(feature = "error-handling")]
+    {
+        loop {}
+    }
 }
 
 #[cfg(not(test))]
@@ -402,7 +412,6 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
 
                     for i in 0..frames_to_write {
                         let sample = get_amplitude_for_sample_index(current_sample_idx);
-                        //println!("Sample %f\n\0", sample as libc::c_double);
                         let rendered_sample =
                             (sample * (u16::MAX - 1) as f32 - (u16::MAX / 2) as f32) as i16;
 

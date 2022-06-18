@@ -27,7 +27,7 @@ codegen-units = 1
 
 
 [profile.release]
-strip = "symbols"
+strip = true
 panic = "abort"
 opt-level = 2  # Currently gives the best size  https://rust-embedded.github.io/book/unsorted/speed-vs-size.html
 lto = true
