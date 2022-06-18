@@ -330,13 +330,11 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
         const BPM: usize = 170 * 4;
         let note_length_in_samples = sample_rate * 60 / BPM;
 
-        // let piano_frequencies: [f32; 12] = [C4, Cs4, D4, Ds4, E4, F4, Fs4, G4, Gs4, A4, As4, B4];
+        let note_frequencies: [f32; 12] = [C4, Cs4, D4, Ds4, E4, F4, Fs4, G4, Gs4, A4, As4, B4];
         let note_frequencies: [f32; 5] = [C4, Ds4, F4, G4, As4];
-        //const note_frequencies: [f32; 1] = [C4];
         let notes_length: usize = note_frequencies.len() as usize;
 
         // We use [0, 1) as volume internally, and then we normalize when converting to i8.
-
         let play_note = |frequency: f32, sample_idx: usize| -> f32 {
             let wavelength_in_samples = sample_rate as f32 / frequency;
             let how_far_into_note =
@@ -353,30 +351,24 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
             // println!("frec %f\n\0", frequency as libc::c_double);
 
             let mut sum = 0f32;
-            //sum += play_note(frequency * 2f32, sample_idx);
+            sum += play_note(frequency * 2f32, sample_idx);
             sum += play_note(frequency, sample_idx);
-            //sum += play_note(frequency / 2f32, sample_idx);
+            sum += play_note(frequency / 2f32, sample_idx);
             sum /= 3f32;
             sum
         };
 
         let samples_to_prerender = 60 * sample_rate;
-        let bytes_per_sample = mem::size_of::<i8>() * 2; // Because 16bit audio
+        let bytes_per_sample = mem::size_of::<i16>() * 1; // Because 16bit audio
         let buffer_size = bytes_per_sample * samples_to_prerender;
-        let mut buffer = libc::malloc(buffer_size as libc::size_t) as *mut i8;
-
+        let mut buffer = libc::malloc(buffer_size as libc::size_t) as *mut i16;
         println!("Allocating buffer with : %d\n\0", buffer_size);
 
-        for i in 0..samples_to_prerender {
-            let sample = get_amplitude_for_sample_index(i);
-            let rendered_sample = (sample * (u16::MAX - 1) as f32 - (u16::MAX / 2) as f32) as i16;
+        for sample_idx in 0..samples_to_prerender {
+            let sample = get_amplitude_for_sample_index(sample_idx);
 
-            buffer
-                .offset((2 * i + 1) as isize)
-                .write((rendered_sample >> 8) as i8);
-            buffer
-                .offset((2 * i + 0) as isize)
-                .write(rendered_sample as i8);
+            let rendered_sample = (sample * (u16::MAX - 1) as f32 - (u16::MAX / 2) as f32) as i16;
+            *buffer.offset(sample_idx as isize) = rendered_sample;
         }
 
         const FRAMES_PER_SECOND: usize = 60;
@@ -426,7 +418,7 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
                     let frames_to_write = (frames_to_write as usize).min(frames as usize);
                     let res = alsa::snd_pcm_writei(
                         pcm_handle,
-                        buffer.offset(2 * current_sample_idx) as *const libc::c_void,
+                        buffer.offset(current_sample_idx) as *const libc::c_void,
                         frames_to_write as _,
                     );
                     current_sample_idx += frames_to_write as isize;

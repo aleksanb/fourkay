@@ -87,8 +87,9 @@ pub fn create_program(
             println!("Error compiling programs: %s\n\0", buffer.as_ptr());
             return Err(());
         }
+
+        println!("Successfully compiled programs #%d\n\0", program);
     }
 
-    println!("Successfully compiled programs #%d\n\0", program);
     Ok(program)
 }
