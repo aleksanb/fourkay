@@ -1,4 +1,4 @@
-#![feature(lang_items, start, raw_ref_op)]
+#![feature(lang_items, start, raw_ref_op, stmt_expr_attributes)]
 #![no_std]
 #![no_main]
 // https://doc.rust-lang.org/1.19.0/reference/attributes.html#crate-only-attributes
@@ -391,10 +391,11 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
         const FRAME_LENGTH_MILLISECONDS: usize = 1_000 / FRAMES_PER_SECOND;
         const FRAME_LENGTH_DURATION: core::time::Duration =
             core::time::Duration::from_millis(FRAME_LENGTH_MILLISECONDS as _);
-        let mut current_frame = 0;
+        let mut current_frame = 0f32;
         let mut current_time = shitty::time::now();
         let mut previous_time = shitty::time::now();
         let mut delta_time = core::time::Duration::new(0, 0);
+
         let mut solid_shader = programs::Quad::new(BLOBS_SHADER, VERTEX_SHADER).unwrap();
         // VORONOI_SHADER
         // DISCOLINES_SHADER
@@ -414,7 +415,7 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
                 //solid_shader.update(current_frame as f32 / FRAMES_PER_SECOND as f32);
 
                 delta_time -= FRAME_LENGTH_DURATION;
-                current_frame += 1;
+                current_frame += 1.0;
 
                 // Sound can starve here?
 
@@ -440,7 +441,7 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
 
                     #[cfg(feature = "error-handling")]
                     {
-                        if res == -(libc::EPIPE as _) {
+                        if res == -(libc::EPIPE as i32) {
                             alsa::snd_pcm_prepare(pcm_handle);
                             println!("Wrote %d \n\0", res);
                         } else if res < 0 {
@@ -450,8 +451,8 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
                 }
             }
 
-            println!("rendeing frame %d\n\0", current_frame);
-            solid_shader.render(current_frame as f32 / FRAMES_PER_SECOND as f32);
+            // println!("rendeing frame %f\n\0", current_frame as libc::c_float);
+            solid_shader.render(current_frame / FRAMES_PER_SECOND as f32);
 
             unsafe { glx::glXSwapBuffers(display as *mut bindings::glx::_XDisplay, window) }
             if should_exit_after_processing_pending_events(display, window) {

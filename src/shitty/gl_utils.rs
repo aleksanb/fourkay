@@ -18,7 +18,8 @@ pub fn create_shader(shader_type: &ShaderType) -> Result<gl::GLuint, ()> {
     };
     let shader_strings = &[shader_body];
 
-    if cfg!(feature = "error-handling") {
+    #[cfg(feature = "error-handling")]
+    {
         let shader_id = gl_wrapper::glCreateShader(gl_shader_type);
         gl_wrapper::glShaderSource(
             shader_id,
@@ -59,7 +60,7 @@ pub fn create_shader(shader_type: &ShaderType) -> Result<gl::GLuint, ()> {
     Ok(shader_id)
 }
 
-pub fn create_program(
+/* pub fn create_program(
     fragment_shader: gl::GLuint,
     vertex_shader: gl::GLuint,
 ) -> Result<gl::GLuint, ()> {
@@ -68,7 +69,9 @@ pub fn create_program(
     gl_wrapper::glAttachShader(program, vertex_shader);
     gl_wrapper::glLinkProgram(program);
 
-    if cfg!(feature = "error-handling") {
+
+    #[cfg(feature = "error-handling")]
+    {
         let mut program_status = 0;
         gl_wrapper::glGetProgramiv(program, gl::GL_LINK_STATUS, &mut program_status);
 
@@ -93,3 +96,5 @@ pub fn create_program(
 
     Ok(program)
 }
+
+*/

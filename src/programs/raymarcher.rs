@@ -1,3 +1,4 @@
+/*
 use crate::bindings::{gl, glx, Xlib, Xlib_constants};
 use crate::shitty::{gl_utils, gl_wrapper, println::*};
 
@@ -65,3 +66,5 @@ impl Program for Raymarcher {
         }
     }
 }
+
+ */

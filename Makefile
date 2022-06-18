@@ -1,5 +1,5 @@
-TARGET=i686-unknown-linux-gnu
 TARGET=x86_64-unknown-linux-gnu
+TARGET=i686-unknown-linux-gnu
 
 .PHONY: default-shaders
 default-shaders:
@@ -11,11 +11,11 @@ compile-shaders:
 	ls src/shaders/2022/*.glsl.out | xargs wc --bytes
 
 .PHONY: debug
-debug:
+debug: default-shaders
 	cargo run --features println --features error-handling
 
 .PHONY: optimize-build
-optimize-build:
+optimize-build: compile-shaders
 	cargo build  --release
 	wc --bytes target/$(TARGET)/release/fourkay
 
@@ -26,8 +26,11 @@ pack: optimize-build
 	strip --strip-all -R '.note*' -R .comment target/$(TARGET)/release/fourkay
 	wc --bytes target/$(TARGET)/release/fourkay
 
-	nasm -fbin -obuild/vondehi ../vondehi/vondehi.asm
-	lzma -c target/$(TARGET)/release/fourkay > build/fourkay-lzma
+# Because of wayland we need NO_CHEATING with vondehi see https://gitlab.com/PoroCYon/vondehi/-/tree/master
+	nasm -fbin -obuild/vondehi ../vondehi/vondehi.asm -DNO_CHEATING
+	lzma --best -c target/$(TARGET)/release/fourkay > build/fourkay-lzma
+	wc --bytes build/vondehi
+	wc --bytes build/fourkay-lzma
 	cat build/vondehi build/fourkay-lzma > build/fourkay
 
 	chmod +x build/fourkay
@@ -37,11 +40,6 @@ pack: optimize-build
 run: pack
 	build/fourkay
 
-# target/${TARGET}/release/fourkay
 
 
-#.PHONY: optimize
-#optimize: debug-run
-#	wc --bytes target/x86_64-unknown-linux-gnu/release/fourkay
-#	strip --strip-all -R .note* -R .comment target/x86_64-unknown-linux-gnu/release/fourkay
-#	wc --bytes target/x86_64-unknown-linux-gnu/release/fourkay
+# lzma --best -c target/i686-unknown-linux-gnu/release/fourkay > build/tmp && wc --bytes build/tmp

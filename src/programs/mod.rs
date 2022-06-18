@@ -2,7 +2,7 @@ mod quad;
 mod raymarcher;
 
 pub use self::quad::Quad;
-pub use self::raymarcher::Raymarcher;
+// pub use self::raymarcher::Raymarcher;
 
 pub trait Program: Sized {
     fn update(&mut self, time: f32);
