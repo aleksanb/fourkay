@@ -34,7 +34,7 @@ float sdf(in vec2 p) {
 
 void main() {
 
-    vec2 uv = (gl_FragCoord / r.xy) / vec2(1., 16. / 9.);
+    vec2 uv = (5.0 * gl_FragCoord - r.xy) / r.y;
     vec3 color = vec3(1., 0.41, 0.70);
 
     if(f >= 46.57) {
