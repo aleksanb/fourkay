@@ -26,10 +26,6 @@ optimize-build:
 	cargo build  --release
 	wc --bytes target/$(TARGET)/release/fourkay
 
-.PHONY: run-optimize
-run-optimize: optimize-build
-	target/${TARGET}/release/fourkay
-
 .PHONY: pack
 pack: optimize-build
 	rm -rf build && mkdir build
@@ -44,7 +40,10 @@ pack: optimize-build
 	chmod +x build/fourkay
 	wc --bytes build/fourkay
 
-	# build/fourkay
+.PHONY: run-optimize
+run: pack
+	target/${TARGET}/release/fourkay
+
 
 #.PHONY: optimize
 #optimize: debug-run

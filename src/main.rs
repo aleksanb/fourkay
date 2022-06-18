@@ -8,6 +8,7 @@
 mod shitty;
 use crate::bindings::alsa::{self, snd_pcm_hw_params_any};
 use crate::bindings::gl::GL_SAMPLE_BUFFERS;
+use crate::bindings::math;
 
 use self::shitty::{gl_wrapper, println::*};
 
@@ -63,6 +64,11 @@ static FLOWERS_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/flower.glsl
 static BLOBBY_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/blobby.glsl.out"), "\0");
 static SNAKE_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/snake.glsl.out"), "\0");
 static RAYMARCHER: &str = concat!(include_str!("shaders/raymarcher-fragment.glsl"), "\0");
+
+// 2022 shaders
+static VORONOI_SHADER: &str = concat!(include_str!("shaders/2022/voronoi.glsl"), "\0");
+static DISCOLINES_SHADER: &str = concat!(include_str!("shaders/2022/discolines.glsl"), "\0");
+static BLOBS_SHADER: &str = concat!(include_str!("shaders/2022/blobs.glsl"), "\0");
 
 #[no_mangle]
 pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
@@ -326,12 +332,21 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
         const As4: f32 = 466.16;
         const B4: f32 = 493.88;
 
+        //let mut notes = [0; 40];
+        //for i in 0..28 {
+        //let pow = (20f32 - i as f32) / 12;
+        //notes[i] = math::pow(440f32, pow);
+        ////notes[0] = math:: 440f32 *
+        //}
+
         let sample_rate = 44_100;
         const BPM: usize = 170 * 4;
         let note_length_in_samples = sample_rate * 60 / BPM;
 
         let note_frequencies: [f32; 12] = [C4, Cs4, D4, Ds4, E4, F4, Fs4, G4, Gs4, A4, As4, B4];
         let note_frequencies: [f32; 5] = [C4, Ds4, F4, G4, As4];
+
+        //let note_frequencies = notes;
         let notes_length: usize = note_frequencies.len() as usize;
 
         // We use [0, 1) as volume internally, and then we normalize when converting to i8.
@@ -379,25 +394,22 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
         let mut current_time = shitty::time::now();
         let mut previous_time = shitty::time::now();
         let mut delta_time = core::time::Duration::new(0, 0);
-        let mut solid_shader = programs::Quad::new(SOLID_FRAGMENT_SHADER, VERTEX_SHADER).unwrap();
+        let mut solid_shader = programs::Quad::new(BLOBS_SHADER, VERTEX_SHADER).unwrap();
+        // VORONOI_SHADER
+        // DISCOLINES_SHADER
+        // BLOBS_SHADER
 
         // let mut timestamp: alsa::snd_timestamp_t = MaybeUninit::uninit().assume_init();
         // let mut status: alsa::snd_pcm_status_t = MaybeUninit::uninit().assume_init();
         let mut current_sample_idx: isize = 0;
         loop {
-            // do gameloop
-
-            ///let mut kaleidoscope_shader = programs::Quad::new(BALLS_FRAGMENT_SHADER, VERTEX_SHADER)?;
-            //let mut flower_shader = programs::Quad::new(FLOWERS_FRAGMENT_SHADER, VERTEX_SHADER)?;
-            // let mut blobby_shader = programs::Quad::new(BLOBBY_FRAGMENT_SHADER, VERTEX_SHADER)?;
-            //let mut snake_shader = programs::Quad::new(SNAKE_FRAGMENT_SHADER, VERTEX_SHADER)?;
             shitty::time::update(&mut current_time);
             let delta_since_last_wake = shitty::time::subtract(&current_time, &previous_time);
             delta_time += delta_since_last_wake;
             previous_time = current_time;
 
             while delta_time >= FRAME_LENGTH_DURATION {
-                solid_shader.update(current_frame);
+                solid_shader.update(current_frame as f32 / FRAMES_PER_SECOND as f32);
                 delta_time -= FRAME_LENGTH_DURATION;
                 current_frame += 1;
 
@@ -436,7 +448,7 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
             }
 
             println!("rendeing frame %d\n\0", current_frame);
-            solid_shader.render(current_frame);
+            solid_shader.render(current_frame as f32 / FRAMES_PER_SECOND as f32);
 
             unsafe { glx::glXSwapBuffers(display as *mut bindings::glx::_XDisplay, window) }
             if should_exit_after_processing_pending_events(display, window) {

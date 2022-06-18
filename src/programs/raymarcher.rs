@@ -35,14 +35,14 @@ impl Program for Raymarcher {
         self.height = height;
     }
 
-    fn update(&mut self, _frame: u64) {}
+    fn update(&mut self, _time: f32) {}
 
-    fn render(&self, frame: u64) {
+    fn render(&self, time: f32) {
         gl_wrapper::glUseProgram(self.program);
 
         let uniform_frame =
             gl_wrapper::glGetUniformLocation(self.program, "frame\0".as_ptr() as *const _);
-        gl_wrapper::glUniform1f(uniform_frame, frame as f32);
+        gl_wrapper::glUniform1f(uniform_frame, time);
 
         let uniform_eye =
             gl_wrapper::glGetUniformLocation(self.program, "eye\0".as_ptr() as *const _);

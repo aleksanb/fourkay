@@ -31,14 +31,14 @@ impl Program for Quad {
         self.height = height;
     }
 
-    fn update(&mut self, _frame: u64) {}
+    fn update(&mut self, _time: f32) {}
 
-    fn render(&self, frame: u64) {
+    fn render(&self, time: f32) {
         gl_wrapper::glUseProgram(self.program);
 
         let uniform_frame =
             gl_wrapper::glGetUniformLocation(self.program, "f\0".as_ptr() as *const _);
-        gl_wrapper::glUniform1f(uniform_frame, frame as f32);
+        gl_wrapper::glUniform1f(uniform_frame, time as f32);
 
         let uniform_resolution =
             gl_wrapper::glGetUniformLocation(self.program, "r\0".as_ptr() as *const _);
