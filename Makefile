@@ -1,5 +1,5 @@
-TARGET=x86_64-unknown-linux-gnu
 TARGET=i686-unknown-linux-gnu
+TARGET=x86_64-unknown-linux-gnu
 
 .PHONY: default-shaders
 default-shaders:
