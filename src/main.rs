@@ -374,7 +374,7 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
             sum
         };
 
-        let samples_to_prerender = 60 * sample_rate;
+        let samples_to_prerender = 8 * 60 * sample_rate;
         let bytes_per_sample = mem::size_of::<i16>() * 1; // Because 16bit audio
         let buffer_size = bytes_per_sample * samples_to_prerender;
         let mut buffer = libc::malloc(buffer_size as libc::size_t) as *mut i16;
@@ -441,7 +441,7 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
 
                     #[cfg(feature = "error-handling")]
                     {
-                        if res == -(libc::EPIPE as i32) {
+                        if res == -(libc::EPIPE as i64) {
                             alsa::snd_pcm_prepare(pcm_handle);
                             println!("Wrote %d \n\0", res);
                         } else if res < 0 {

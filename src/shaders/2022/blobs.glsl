@@ -33,8 +33,16 @@ float sdf(in vec2 p) {
 }
 
 void main() {
+    // 1) We get [0, 1) coordinates for x,y by dividing by r.xy.
+    // 2) Then we scale the y-coordinate so that 1 unit in x direction equals
+    // the same number of real life cm in y direction.
+    // 3) Then we translate the coordinate system so that 0 is in the middle of
+    // the scene.
+    // 4) Finally we increase the amount of scene shown to more than just 1 unit.
+    vec2 uv = (gl_FragCoord/r.xy) / vec2(1., 16./9.);
+    uv -= vec2(.5, 9./16./2.);
+    uv *= 10;
 
-    vec2 uv = (5.0 * gl_FragCoord - r.xy) / r.y;
     vec3 color = vec3(1., 1., .7);
     float m = mod(floor((uv.x + uv.y) / 2. * 3. + f), 3.);
     float l = mod(floor(uv.x * 10. - f), 3.);
