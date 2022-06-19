@@ -341,10 +341,10 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
         //}
 
         let sample_rate = 44_100;
-        const BPM: usize = 170 * 4;
+        const BPM: usize = 170 * 1;
         let note_length_in_samples = sample_rate * 60 / BPM;
 
-        let note_frequencies: [f32; 12] = [C4, Cs4, D4, Ds4, E4, F4, Fs4, G4, Gs4, A4, As4, B4];
+        // let note_frequencies: [f32; 12] = [C4, Cs4, D4, Ds4, E4, F4, Fs4, G4, Gs4, A4, As4, B4];
         let note_frequencies: [f32; 5] = [C4, Ds4, F4, G4, As4];
 
         //let note_frequencies = notes;
@@ -380,11 +380,42 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
         let mut buffer = libc::malloc(buffer_size as libc::size_t) as *mut i16;
         println!("Allocating buffer with : %d\n\0", buffer_size);
 
+        println!("bloblen %d\n\0", BLOBS_SHADER.len());
+        println!("bloblen %d\n\0", BLOBS_SHADER.as_bytes().len());
+        // Architecture scetch: bass, + lead synth with delay and pluck.
+        // Additionally, rotate the note library at certan points in the demo.
+        // NOTE: waveform is currently only negative
+
         for sample_idx in 0..samples_to_prerender {
-            let sample = get_amplitude_for_sample_index(sample_idx);
+            //let sample = get_amplitude_for_sample_index(sample_idx);
+
+            let beat = sample_idx / note_length_in_samples;
+            let current_note = BLOBS_SHADER.as_bytes()[beat % BLOBS_SHADER.as_bytes().len()];
+            let frequency_idx = (current_note % notes_length as u8);
+            let frequency = note_frequencies[frequency_idx as usize];
+
+            let mut sample = 0f32;
+            //sample += play_note(frequency / 2f32, sample_idx) * 0.5;
+            //sample += play_note(frequency / 2f32, sample_idx + 1000) * 0.5;
+            // This is the lead synth
+            sample += play_note(frequency, sample_idx);
+            sample += play_note(
+                frequency,
+                sample_idx - 1000, //(sample_rate as f32 * 0.07).max(0) as usize,
+            ) * 0.5;
+
+            let note_idx = sample_idx / (note_length_in_samples * 8);
+            let frequency = note_frequencies[(note_idx % notes_length) as usize];
+            sample += play_note(frequency / 3f32, sample_idx);
+
+            sample /= 4f32;
 
             let rendered_sample = (sample * (u16::MAX - 1) as f32 - (u16::MAX / 2) as f32) as i16;
             *buffer.offset(sample_idx as isize) = rendered_sample;
+
+            //let upper = BLOBS_SHADER.as_bytes()[beat % BLOBS_SHADER.as_bytes().len()];
+            //let lower = BLOBS_SHADER.as_bytes()[(beat + 1) % BLOBS_SHADER.as_bytes().len()];
+            //*buffer.offset(sample_idx as isize) = upper as i16 + ((lower as i16) << 8);
         }
 
         const FRAMES_PER_SECOND: usize = 60;

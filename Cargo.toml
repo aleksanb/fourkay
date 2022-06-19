@@ -20,7 +20,6 @@ pkg-config = "0.3"
 [profile.dev]
 panic = "abort"
 
-
 [profile.release]
 strip = true
 panic = "abort"

@@ -11,11 +11,11 @@ compile-shaders:
 	ls src/shaders/2022/*.glsl.out | xargs wc --bytes
 
 .PHONY: debug
-debug: default-shaders
+debug:
 	cargo run --features println --features error-handling
 
 .PHONY: optimize-build
-optimize-build: compile-shaders
+optimize-build:
 	cargo build  --release
 	wc --bytes target/$(TARGET)/release/fourkay
 
