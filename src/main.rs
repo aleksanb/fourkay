@@ -351,10 +351,14 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
         let notes_length: usize = note_frequencies.len() as usize;
 
         // We use [0, 1) as volume internally, and then we normalize when converting to i8.
-        let play_note = |frequency: f32, sample_idx: usize| -> f32 {
+        let play_note = |frequency: f32, sample_idx: usize, pluck: bool| -> f32 {
             let wavelength_in_samples = sample_rate as f32 / frequency;
-            let how_far_into_note =
+            let mut how_far_into_note =
                 ((sample_idx as f32) % wavelength_in_samples) / wavelength_in_samples;
+
+            if pluck {
+                how_far_into_note *= 0.2;
+            }
 
             how_far_into_note
         };
@@ -367,9 +371,9 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
             // println!("frec %f\n\0", frequency as libc::c_double);
 
             let mut sum = 0f32;
-            sum += play_note(frequency * 2f32, sample_idx);
-            sum += play_note(frequency, sample_idx);
-            sum += play_note(frequency / 2f32, sample_idx);
+            sum += play_note(frequency * 2f32, sample_idx, false);
+            sum += play_note(frequency, sample_idx, false);
+            sum += play_note(frequency / 2f32, sample_idx, false);
             sum /= 3f32;
             sum
         };
@@ -398,15 +402,22 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
             //sample += play_note(frequency / 2f32, sample_idx) * 0.5;
             //sample += play_note(frequency / 2f32, sample_idx + 1000) * 0.5;
             // This is the lead synth
-            sample += play_note(frequency, sample_idx);
+            sample += play_note(frequency, sample_idx, true);
+
+            let delay_in_samples = (sample_rate as f32 * 0.2) as usize;
             sample += play_note(
                 frequency,
-                sample_idx - 1000, //(sample_rate as f32 * 0.07).max(0) as usize,
-            ) * 0.5;
+                if sample_idx < delay_in_samples {
+                    sample_idx
+                } else {
+                    sample_idx - delay_in_samples
+                },
+                true,
+            );
 
             let note_idx = sample_idx / (note_length_in_samples * 8);
             let frequency = note_frequencies[(note_idx % notes_length) as usize];
-            sample += play_note(frequency / 3f32, sample_idx);
+            //sample += play_note(frequency / 3f32, sample_idx, false);
 
             sample /= 4f32;
 
