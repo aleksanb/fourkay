@@ -360,17 +360,18 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
             how_far_into_note
         };
 
-        let pluck_length_s = one_ms_in_samples * 8;
-        let get_pluck = |how_far_into_note_s: usize, to: f32| {
+        let pluck_length_s = one_ms_in_samples as f32 * 8f32;
+        let get_pluck = |how_far_into_note_s: f32, to: f32| {
             let from = 1.0;
             if how_far_into_note_s < pluck_length_s {
-                from - (from - to) * (how_far_into_note_s as f32 / pluck_length_s as f32)
+                from - (from - to) * (how_far_into_note_s / pluck_length_s)
             } else {
                 to
             }
         };
 
-        let samples_to_prerender = 8 * 60 * sample_rate;
+        const DEMO_LENGTH_S: usize = 2 * 60;
+        let samples_to_prerender = DEMO_LENGTH_S * sample_rate;
         let bytes_per_sample = mem::size_of::<i16>() * 1; // Because 16bit audio
         let buffer_size = bytes_per_sample * samples_to_prerender;
         let mut buffer = libc::malloc(buffer_size as libc::size_t) as *mut i16;
@@ -383,7 +384,7 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
 
         for sample_idx in 0..samples_to_prerender {
             let beat = sample_idx / note_length_in_samples;
-            let how_far_into_note_s = sample_idx % note_length_in_samples;
+            let how_far_into_note_s = (sample_idx % note_length_in_samples) as f32;
             let lead_note = BLOBS_SHADER.as_bytes()[beat % BLOBS_SHADER.as_bytes().len()] as usize;
 
             let mut sample = 0f32;
@@ -464,6 +465,11 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
                     //current_sample_idx, frames_to_write, fframes
                     //);
                     let frames_to_write = (frames_to_write as usize).min(frames as usize);
+                    //if (current_sample_idx + frames_to_write as isize) > samples_to_prerender as isize
+                    //{
+                    //return 1;
+                    //}
+
                     let res = alsa::snd_pcm_writei(
                         pcm_handle,
                         buffer.offset(current_sample_idx) as *const libc::c_void,
@@ -487,9 +493,12 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
             solid_shader.render((current_frame / FRAMES_PER_SECOND as f32) + 0.0);
 
             unsafe { glx::glXSwapBuffers(display as *mut bindings::glx::_XDisplay, window) }
-            if should_exit_after_processing_pending_events(display, window) {
+            if current_frame > 600f32 {
                 return 1;
             }
+            //if should_exit_after_processing_pending_events(display, window) {
+            //return 1;
+            //}
         }
 
         #[cfg(feature = "error-handling")]
