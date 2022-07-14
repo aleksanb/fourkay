@@ -484,7 +484,7 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
             }
 
             // println!("rendeing frame %f\n\0", current_frame as libc::c_float);
-            solid_shader.render(current_frame / FRAMES_PER_SECOND as f32);
+            solid_shader.render((current_frame / FRAMES_PER_SECOND as f32) + 0.0);
 
             unsafe { glx::glXSwapBuffers(display as *mut bindings::glx::_XDisplay, window) }
             if should_exit_after_processing_pending_events(display, window) {

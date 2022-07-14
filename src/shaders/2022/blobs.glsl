@@ -1,6 +1,8 @@
 uniform float f;
 uniform vec2 r;
 
+#define ANGLE_SPEED 15.
+
 float opSU(float d1, float d2, float k) {
     float h = clamp(0.5 + 0.5 * (d2 - d1) / k, 0.0, 1.0);
     return mix(d2, d1, h) - k * h * (1.0 - h);
@@ -42,6 +44,9 @@ void main() {
     vec2 uv = (gl_FragCoord/r.xy) / vec2(1., 16./9.);
     uv -= vec2(.5, 9./16./2.);
     uv *= 10;
+
+    float angle = f;
+    uv = vec2(uv.x * sin(f) - uv.y * cos(f), uv.x * cos(f) + uv.y * sin(f));
 
     vec3 color = vec3(1., 1., .7);
     float m = mod(floor((uv.x + uv.y) / 2. * 3. + f), 3.);
@@ -117,7 +122,6 @@ void main() {
         }
         if(l == 1. && f >= 46.) {
             color = vec3(0.1, 0.1, 0.44);
-
         }
     }
 
@@ -129,7 +133,9 @@ void main() {
     }
 
     if(f >= 56.) {
-        float t = sdf(uv);
+        float angle = -f * 2.;
+        vec2 uvr = vec2(uv.x * sin(angle) - uv.y * cos(angle), uv.x * cos(angle) + uv.y * sin(angle));
+        float t = sdf(uvr);
         if(t <= 0.) {
             color = vec3(1., 1., .7);
             float t = mod(floor(f - 56.), 12.);
@@ -164,7 +170,7 @@ void main() {
             if(m == 2.) {
                 if(t >= 2.) {
                     color = vec3(1., 0.41, 0.70);
-                }
+                } 
                 if(t >= 5.) {
                     color = vec3(0.0, 0.54, 0.54);
                 }
