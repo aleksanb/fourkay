@@ -30,6 +30,7 @@ https://stackoverflow.com/questions/68455964/how-can-i-execute-tests-in-a-crate-
 Bindings for gl, glx, x will be generated at compile time for you.
 
 ```
+sudo apt install nasm
 sudo apt install llvm-dev libclang-dev clang
 sudo apt install libasound2-dev
 sudo apt install mono-complete -y
