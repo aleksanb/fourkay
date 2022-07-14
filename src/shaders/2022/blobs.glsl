@@ -1,7 +1,4 @@
 uniform float f;
-uniform vec2 r;
-
-#define ANGLE_SPEED 15.
 
 float opSU(float d1, float d2, float k) {
     float h = clamp(0.5 + 0.5 * (d2 - d1) / k, 0.0, 1.0);
@@ -41,7 +38,7 @@ void main() {
     // 3) Then we translate the coordinate system so that 0 is in the middle of
     // the scene.
     // 4) Finally we increase the amount of scene shown to more than just 1 unit.
-    vec2 uv = (gl_FragCoord/r.xy) / vec2(1., 16./9.);
+    vec2 uv = gl_FragCoord / 1920.;
     uv -= vec2(.5, 9./16./2.);
     uv *= 10;
 

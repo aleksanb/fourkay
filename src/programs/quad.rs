@@ -40,15 +40,6 @@ impl Program for Quad {
             gl_wrapper::glGetUniformLocation(self.program, "f\0".as_ptr() as *const _);
         gl_wrapper::glUniform1f(uniform_frame, time as f32);
 
-        let uniform_resolution =
-            gl_wrapper::glGetUniformLocation(self.program, "r\0".as_ptr() as *const _);
-        gl_wrapper::glUniform2f(
-            uniform_resolution,
-            1920.0,
-            1080.0, //self.width as gl::GLfloat,
-                    //self.height as gl::GLfloat,
-        );
-
         unsafe {
             gl_wrapper::glRects(-1, -1, 1, 1);
         }

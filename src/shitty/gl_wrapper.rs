@@ -48,8 +48,9 @@ gl_function! {
     fn glUseProgram(program: GLuint) -> (),
     fn glGetUniformLocation(program: GLuint, name: *const GLchar) -> GLint,
     fn glUniform1f(location: GLint, v0: GLfloat) -> (),
-    fn glUniform2f(location: GLint, v0: GLfloat, v1: GLfloat) -> (),
+    // fn glUniform2f(location: GLint, v0: GLfloat, v1: GLfloat) -> (),
     fn glRects(x1: GLshort, y1: GLshort, x2: GLshort, y2: GLshort) -> (),
+
     #[cfg(feature = "error-handling")]
     fn glGetString(name: GLenum) -> *const GLubyte,
     #[cfg(feature = "error-handling")]
