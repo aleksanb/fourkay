@@ -40,6 +40,10 @@ pack: optimize-build
 run: pack
 	build/fourkay
 
+.PHONY: drun
+drun:
+	cargo run
+
 
 
 # lzma --best -c target/i686-unknown-linux-gnu/release/fourkay > build/tmp && wc --bytes build/tmp

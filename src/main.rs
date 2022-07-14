@@ -341,8 +341,9 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
         //}
 
         let sample_rate = 44_100;
+        let one_ms_in_samples = sample_rate / 60; // 735, 16ms;
         const BPM: usize = 170 * 1;
-        let note_length_in_samples = sample_rate * 60 / BPM;
+        let note_length_in_samples = sample_rate * 60 / BPM; // Around 15k, 300ms
 
         // let note_frequencies: [f32; 12] = [C4, Cs4, D4, Ds4, E4, F4, Fs4, G4, Gs4, A4, As4, B4];
         let note_frequencies: [f32; 5] = [C4, Ds4, F4, G4, As4];
@@ -351,31 +352,22 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
         let notes_length: usize = note_frequencies.len() as usize;
 
         // We use [0, 1) as volume internally, and then we normalize when converting to i8.
-        let play_note = |frequency: f32, sample_idx: usize, pluck: bool| -> f32 {
+        let play_note = |frequency: f32, sample_idx: usize| -> f32 {
             let wavelength_in_samples = sample_rate as f32 / frequency;
             let mut how_far_into_note =
                 ((sample_idx as f32) % wavelength_in_samples) / wavelength_in_samples;
 
-            if pluck {
-                how_far_into_note *= 0.2;
-            }
-
             how_far_into_note
         };
 
-        let get_amplitude_for_sample_index = |sample_idx: usize| -> f32 {
-            let note_idx = sample_idx / note_length_in_samples;
-            let frequency = note_frequencies[(note_idx % notes_length) as usize];
-            // println!("\nsample_idx %d\n\0", sample_idx as libc::c_uint);
-            // println!("nidx %d\n\0", note_idx as libc::c_uint);
-            // println!("frec %f\n\0", frequency as libc::c_double);
-
-            let mut sum = 0f32;
-            sum += play_note(frequency * 2f32, sample_idx, false);
-            sum += play_note(frequency, sample_idx, false);
-            sum += play_note(frequency / 2f32, sample_idx, false);
-            sum /= 3f32;
-            sum
+        let pluck_length_s = one_ms_in_samples * 8;
+        let get_pluck = |how_far_into_note_s: usize, to: f32| {
+            let from = 1.0;
+            if how_far_into_note_s < pluck_length_s {
+                from - (from - to) * (how_far_into_note_s as f32 / pluck_length_s as f32)
+            } else {
+                to
+            }
         };
 
         let samples_to_prerender = 8 * 60 * sample_rate;
@@ -388,45 +380,43 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
         println!("bloblen %d\n\0", BLOBS_SHADER.as_bytes().len());
         // Architecture scetch: bass, + lead synth with delay and pluck.
         // Additionally, rotate the note library at certan points in the demo.
-        // NOTE: waveform is currently only negative
 
         for sample_idx in 0..samples_to_prerender {
-            //let sample = get_amplitude_for_sample_index(sample_idx);
-
             let beat = sample_idx / note_length_in_samples;
-            let current_note = BLOBS_SHADER.as_bytes()[beat % BLOBS_SHADER.as_bytes().len()];
-            let frequency_idx = (current_note % notes_length as u8);
-            let frequency = note_frequencies[frequency_idx as usize];
+            let how_far_into_note_s = sample_idx % note_length_in_samples;
+            let lead_note = BLOBS_SHADER.as_bytes()[beat % BLOBS_SHADER.as_bytes().len()] as usize;
 
             let mut sample = 0f32;
-            //sample += play_note(frequency / 2f32, sample_idx) * 0.5;
+
+            let megapluck = get_pluck(how_far_into_note_s, 0.4);
+            let lead_freq = note_frequencies[(lead_note % notes_length) as usize];
+            sample += play_note(lead_freq, sample_idx) * 0.8 * megapluck;
+
+            if beat % 12 >= 9 {
+                let lead2_freq = note_frequencies[((lead_note + 7) % notes_length) as usize];
+                sample += play_note(lead2_freq, sample_idx) * 0.7 * megapluck;
+            }
             //sample += play_note(frequency / 2f32, sample_idx + 1000) * 0.5;
-            // This is the lead synth
-            sample += play_note(frequency, sample_idx, true);
 
-            let delay_in_samples = (sample_rate as f32 * 0.2) as usize;
-            sample += play_note(
-                frequency,
-                if sample_idx < delay_in_samples {
-                    sample_idx
-                } else {
-                    sample_idx - delay_in_samples
-                },
-                true,
-            );
+            // let delay_in_samples = note_length_in_samples * 2; // one_ms_in_samples *  (sample_rate as f32 * 0.2) as usize;
+            // let delayed_sample_idx = if sample_idx < delay_in_samples {
+            // sample_idx
+            // } else {
+            // sample_idx - delay_in_samples
+            // };
+            // sample += play_note(lead_freq, delayed_sample_idx) * megapluck;
+            // sample += play_note(lead_freq / 2f32, sample_idx) * 0.5 * megapluck;
 
-            let note_idx = sample_idx / (note_length_in_samples * 8);
-            let frequency = note_frequencies[(note_idx % notes_length) as usize];
-            //sample += play_note(frequency / 3f32, sample_idx, false);
+            let bass_note = sample_idx / (note_length_in_samples * 8);
+            let bass_freq = note_frequencies[(bass_note % notes_length) as usize];
+            let lilpluck = 1.0; //get_pluck(how_far_into_note_s, 0.9);
+            sample += play_note(bass_freq / 3f32, sample_idx) * 0.5;
 
             sample /= 4f32;
 
+            // Output section
             let rendered_sample = (sample * (u16::MAX - 1) as f32 - (u16::MAX / 2) as f32) as i16;
             *buffer.offset(sample_idx as isize) = rendered_sample;
-
-            //let upper = BLOBS_SHADER.as_bytes()[beat % BLOBS_SHADER.as_bytes().len()];
-            //let lower = BLOBS_SHADER.as_bytes()[(beat + 1) % BLOBS_SHADER.as_bytes().len()];
-            //*buffer.offset(sample_idx as isize) = upper as i16 + ((lower as i16) << 8);
         }
 
         const FRAMES_PER_SECOND: usize = 60;

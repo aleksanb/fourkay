@@ -23,6 +23,7 @@ struct Lib {
 }
 
 fn main() {
+    println!("cargo:rerun-if-changed=build.rs");
     let libraries = [
         Lib {
             link_name: "X11".to_string(),
