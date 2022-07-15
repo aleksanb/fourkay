@@ -1,8 +1,5 @@
 uniform float f;
 
-#define MAXITR 200
-#define EPS .01
-
 float opSU(float d1, float d2, float k) {
     float h = clamp(0.5 + 0.5 * (d2 - d1) / k, 0.0, 1.0);
     return mix(d2, d1, h) - k * h * (1.0 - h);
@@ -36,10 +33,7 @@ float sdf(in vec2 p) {
 
 float dist_func(vec3 p)
 {
-  float music = 2.;
-  
-  float ball = length(p - vec3(0., .5 + music - 1., 0.)) - (.5 + music);
-  
+  float ball = length(p) - 2.;
   float ground = p.y + 1.;
   
   return min(ball, ground);
@@ -49,11 +43,11 @@ float marcher(vec3 startpos, vec3 raydir)
 {
   float raylength = 0.;
   
-  for (int i = 0; i < MAXITR; i++)
+  for (int i = 0; i < 200.; i++) // Set max itr here
   {
     vec3 pos = raydir * raylength + startpos;
     float dist = dist_func(pos);
-    if (dist < EPS)
+    if (dist < 0.01)
     {
       break;
     }
@@ -75,14 +69,14 @@ vec3 findnormal(vec3 p)
 
 float light (vec3 pos)
 {
-  vec3 light_position = vec3(0., 5., 2.);
+  vec3 light_position = vec3(0., 10., -10.);
   vec3 light_normal = normalize(vec3( light_position - pos));
   
   vec3 surface_normal = findnormal(pos);
   
   float light = clamp(dot(light_normal, surface_normal), 0., 1.);
   
-  float d = marcher(pos + surface_normal * EPS, light_normal);
+  float d = marcher(pos + surface_normal * 0.01, light_normal);
   if (d < 100.) return light * 0.1;
   return light;
 }
@@ -271,6 +265,7 @@ void main() {
         
         vec3 pos = camera_position + camera_angle * depth;
         color = vec3(light(pos));
+        //color = normalvec;
     }
 
     gl_FragColor = vec4(color, 1.0);
