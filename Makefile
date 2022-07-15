@@ -48,5 +48,5 @@ run: pack
 
 .PHONY: drun
 drun:
-	cargo run
+	cargo run  --features println
 	

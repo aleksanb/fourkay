@@ -332,16 +332,9 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
         const A4: f32 = 440.00;
         const As4: f32 = 466.16;
         const B4: f32 = 493.88;
-
-        //let mut notes = [0; 40];
-        //for i in 0..28 {
-        //let pow = (20f32 - i as f32) / 12;
-        //notes[i] = math::pow(440f32, pow);
-        ////notes[0] = math:: 440f32 *
-        //}
-
         let sample_rate = 44_100;
-        let one_ms_in_samples = sample_rate / 60; // 735, 16ms;
+
+        let one_ms_in_samples = sample_rate / 1000; // 735, 16ms;
         const BPM: usize = 170 * 1;
         let note_length_in_samples = sample_rate * 60 / BPM; // Around 15k, 300ms
 
@@ -360,7 +353,7 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
             how_far_into_note
         };
 
-        let pluck_length_s = one_ms_in_samples as f32 * 8f32;
+        let pluck_length_s = one_ms_in_samples as f32 * 130f32;
         let get_pluck = |how_far_into_note_s: f32, to: f32| {
             let from = 1.0;
             if how_far_into_note_s < pluck_length_s {
@@ -372,10 +365,16 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
 
         const DEMO_LENGTH_S: usize = 2 * 60;
         let samples_to_prerender = DEMO_LENGTH_S * sample_rate;
-        let bytes_per_sample = mem::size_of::<i16>() * 1; // Because 16bit audio
-        let buffer_size = bytes_per_sample * samples_to_prerender;
-        let mut buffer = libc::malloc(buffer_size as libc::size_t) as *mut i16;
-        println!("Allocating buffer with : %d\n\0", buffer_size);
+
+        let instrument_bytes_per_sample = mem::size_of::<f32>() * 1;
+        let instrument_buffer_size = instrument_bytes_per_sample * samples_to_prerender;
+        let mut lead_buffer = libc::malloc(instrument_buffer_size as libc::size_t) as *mut f32;
+        // let mut bass_buffer = libc::malloc(instrument_buffer_size as libc::size_t) as *mut f32;
+
+        let mut bytes_per_sample = mem::size_of::<i16>() * 1; // Because 16bit audio
+        let mut final_buffer_size = bytes_per_sample * samples_to_prerender;
+        let mut buffer = libc::malloc(final_buffer_size as libc::size_t) as *mut i16;
+        println!("Allocating buffer with : %d\n\0", final_buffer_size);
 
         println!("bloblen %d\n\0", BLOBS_SHADER.len());
         println!("bloblen %d\n\0", BLOBS_SHADER.as_bytes().len());
@@ -383,41 +382,49 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
         // Additionally, rotate the note library at certan points in the demo.
 
         for sample_idx in 0..samples_to_prerender {
-            let beat = sample_idx / note_length_in_samples;
-            let how_far_into_note_s = (sample_idx % note_length_in_samples) as f32;
+            let current_note_length_in_samples;
+            if sample_idx < note_length_in_samples * 10 {
+                current_note_length_in_samples = note_length_in_samples;
+            } else if sample_idx < note_length_in_samples * 20 {
+                current_note_length_in_samples = note_length_in_samples * 2;
+            } else {
+                current_note_length_in_samples = note_length_in_samples;
+            }
+
+            let beat = sample_idx / current_note_length_in_samples;
+            let how_far_into_note_s = (sample_idx % current_note_length_in_samples) as f32;
             let lead_note = BLOBS_SHADER.as_bytes()[beat % BLOBS_SHADER.as_bytes().len()] as usize;
 
-            let mut sample = 0f32;
-
+            let mut lead_sample = 0f32;
             let megapluck = get_pluck(how_far_into_note_s, 0.4);
             let lead_freq = note_frequencies[(lead_note % notes_length) as usize];
-            sample += play_note(lead_freq, sample_idx) * 0.8 * megapluck;
+            lead_sample += play_note(lead_freq, sample_idx) * 0.5 * megapluck;
 
             if beat % 12 >= 9 {
                 let lead2_freq = note_frequencies[((lead_note + 7) % notes_length) as usize];
-                sample += play_note(lead2_freq, sample_idx) * 0.7 * megapluck;
+                lead_sample += play_note(lead2_freq, sample_idx) * 0.4 * megapluck;
             }
-            //sample += play_note(frequency / 2f32, sample_idx + 1000) * 0.5;
 
-            // let delay_in_samples = note_length_in_samples * 2; // one_ms_in_samples *  (sample_rate as f32 * 0.2) as usize;
-            // let delayed_sample_idx = if sample_idx < delay_in_samples {
-            // sample_idx
-            // } else {
-            // sample_idx - delay_in_samples
-            // };
-            // sample += play_note(lead_freq, delayed_sample_idx) * megapluck;
-            // sample += play_note(lead_freq / 2f32, sample_idx) * 0.5 * megapluck;
+            let delay_in_samples =
+                current_note_length_in_samples + current_note_length_in_samples / 2;
+            if sample_idx >= delay_in_samples {
+                lead_sample += *lead_buffer.add(sample_idx).sub(delay_in_samples) * 0.5;
+            }
+
+            *lead_buffer.add(sample_idx) = lead_sample;
 
             let bass_note = sample_idx / (note_length_in_samples * 8);
             let bass_freq = note_frequencies[(bass_note % notes_length) as usize];
-            let lilpluck = 1.0; //get_pluck(how_far_into_note_s, 0.9);
-            sample += play_note(bass_freq / 3f32, sample_idx) * 0.5;
-
-            sample /= 4f32;
+            let bass_sample = play_note(bass_freq / 3f32, sample_idx) * 0.5;
+            //*bass_buffer.add(sample_idx) = bass_sample;
 
             // Output section
-            let rendered_sample = (sample * (u16::MAX - 1) as f32 - (u16::MAX / 2) as f32) as i16;
-            *buffer.offset(sample_idx as isize) = rendered_sample;
+            let all_samples = (*lead_buffer.offset(sample_idx as isize)
+                + bass_sample) //*bass_buffer.offset(sample_idx as isize))
+                / 4f32;
+            let rendered_sample =
+                (all_samples * (u16::MAX - 1) as f32 - (u16::MAX / 2) as f32) as i16;
+            *buffer.add(sample_idx) = rendered_sample;
         }
 
         const FRAMES_PER_SECOND: usize = 60;
@@ -493,12 +500,12 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
             solid_shader.render((current_frame / FRAMES_PER_SECOND as f32) + 0.0);
 
             unsafe { glx::glXSwapBuffers(display as *mut bindings::glx::_XDisplay, window) }
-            if current_frame > 600f32 {
-                return 1;
-            }
-            //if should_exit_after_processing_pending_events(display, window) {
+            //if current_frame > 300f32 {
             //return 1;
             //}
+            if should_exit_after_processing_pending_events(display, window) {
+                return 1;
+            }
         }
 
         #[cfg(feature = "error-handling")]
@@ -537,18 +544,18 @@ fn should_exit_after_processing_pending_events(
 
         println!("event.type = %d\n\0", event.type_.as_ref());
         match unsafe { event.type_.as_ref() } {
-            &Xlib_constants::Expose => {
-                println!("Window attributes!\n\0");
-                unsafe {
-                    let window_attributes = {
-                        let mut window_attributes: mem::MaybeUninit<Xlib::XWindowAttributes> =
-                            mem::MaybeUninit::uninit();
-                        Xlib::XGetWindowAttributes(display, window, window_attributes.as_mut_ptr());
-                        window_attributes.assume_init()
-                    };
-                    gl::glViewport(0, 0, window_attributes.width, window_attributes.height)
-                };
-            }
+            //&Xlib_constants::Expose => {
+            //println!("Window attributes!\n\0");
+            //unsafe {
+            //let window_attributes = {
+            //let mut window_attributes: mem::MaybeUninit<Xlib::XWindowAttributes> =
+            //mem::MaybeUninit::uninit();
+            //Xlib::XGetWindowAttributes(display, window, window_attributes.as_mut_ptr());
+            //window_attributes.assume_init()
+            //};
+            //gl::glViewport(0, 0, window_attributes.width, window_attributes.height)
+            //};
+            //}
             &Xlib_constants::KeyPress => {
                 println!("Keyboard was pressed %d\n\0", event.xkey.as_ref().keycode);
                 // 9 is esc
