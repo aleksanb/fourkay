@@ -111,11 +111,11 @@ void main() {
         uv *= min(abs(sin((f) / 5.)) * 3., 3.);
         
         float I_angle = f/2.;
-        if(f>15.) {
+        if(f>15.3) {
             uv = vec2(uv.x * sin(I_angle) - uv.y * cos(I_angle), uv.x * cos(I_angle) + uv.y * sin(I_angle));
         } 
         if(f>23.) {
-            f += thump;
+            f += thump * 2.;
         }
         
         float c = sin((9.25 * uv.y) + (8.0 * f)) * cos((9.25 * uv.x));
