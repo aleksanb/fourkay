@@ -500,12 +500,13 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
             solid_shader.render((current_frame / FRAMES_PER_SECOND as f32) + 0.0);
 
             unsafe { glx::glXSwapBuffers(display as *mut bindings::glx::_XDisplay, window) }
-            //if current_frame > 300f32 {
-            //return 1;
-            //}
-            if should_exit_after_processing_pending_events(display, window) {
+            if current_frame > 60f32 * 72f32 {
+                // We terminate after 72 seconds.
                 return 1;
             }
+            // if should_exit_after_processing_pending_events(display, window) {
+            // return 1;
+            // }
         }
 
         #[cfg(feature = "error-handling")]
@@ -544,18 +545,18 @@ fn should_exit_after_processing_pending_events(
 
         println!("event.type = %d\n\0", event.type_.as_ref());
         match unsafe { event.type_.as_ref() } {
-            //&Xlib_constants::Expose => {
-            //println!("Window attributes!\n\0");
-            //unsafe {
-            //let window_attributes = {
-            //let mut window_attributes: mem::MaybeUninit<Xlib::XWindowAttributes> =
-            //mem::MaybeUninit::uninit();
-            //Xlib::XGetWindowAttributes(display, window, window_attributes.as_mut_ptr());
-            //window_attributes.assume_init()
-            //};
-            //gl::glViewport(0, 0, window_attributes.width, window_attributes.height)
-            //};
-            //}
+            &Xlib_constants::Expose => {
+                println!("Window attributes!\n\0");
+                unsafe {
+                    let window_attributes = {
+                        let mut window_attributes: mem::MaybeUninit<Xlib::XWindowAttributes> =
+                            mem::MaybeUninit::uninit();
+                        Xlib::XGetWindowAttributes(display, window, window_attributes.as_mut_ptr());
+                        window_attributes.assume_init()
+                    };
+                    gl::glViewport(0, 0, window_attributes.width, window_attributes.height)
+                };
+            }
             &Xlib_constants::KeyPress => {
                 println!("Keyboard was pressed %d\n\0", event.xkey.as_ref().keycode);
                 // 9 is esc
