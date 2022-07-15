@@ -50,3 +50,7 @@ run: pack
 drun:
 	cargo run  --features println
 	
+
+.PHONY: deploy
+deploy:
+	scp build/fourkay burkow.no:/var/www/burkow.no/cv/uploads/fourkay
