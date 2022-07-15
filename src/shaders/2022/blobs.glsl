@@ -42,17 +42,32 @@ void main() {
     uv -= vec2(.5, 9./16./2.);
     uv *= 10;
 
-    float angle = f;
-    uv = vec2(uv.x * sin(f) - uv.y * cos(f), uv.x * cos(f) + uv.y * sin(f));
+    float I_angle = f/2.;
+    vec2 uvt = vec2(uv.x * sin(I_angle) - uv.y * cos(I_angle), uv.x * cos(I_angle) + uv.y * sin(I_angle));
+    float thump = max(0., sin(2.2253 * f)); // 3.1415 * f * 170. / 60. / 4. = 2.2253 * f
+    if (f>35. && f < 58.)
+    {
+        uvt.x += uv.y * thump;
+    }
 
     vec3 color = vec3(1., 1., .7);
-    float m = mod(floor((uv.x + uv.y) / 2. * 3. + f), 3.);
-    float l = mod(floor(uv.x * 10. - f), 3.);
+    float m = mod(floor((uvt.x + uvt.y) / 2. * 3. + f), 3.);
+    float l = mod(floor(uvt.x * 10. - f), 3.);
 
+    // Pastel pulse
     if(f < 31.) {
         uv.y -= 0.5;
         uv /= 5.;
         uv *= min(abs(sin((f) / 5.)) * 3., 3.);
+        
+        float I_angle = f/2.;
+        if(f>15.) {
+            uv = vec2(uv.x * sin(I_angle) - uv.y * cos(I_angle), uv.x * cos(I_angle) + uv.y * sin(I_angle));
+        } 
+        if(f>23.) {
+            f += thump;
+        }
+        
         float c = sin((9.25 * uv.y) + (8.0 * f)) * cos((9.25 * uv.x));
         float shape = smoothstep(1.9 - clamp(distance(c + uv.y, 0.5) * 0.9, 0.0, 1.0), 1.0, 0.9);
 
@@ -64,6 +79,7 @@ void main() {
         }
     }
 
+    // Bars
     if(f >= 32. && f < 44.) {
         float t = mod(floor(f - 32.), 12.);
         if(m == 0.) {
@@ -122,17 +138,24 @@ void main() {
         }
     }
 
-    if(f >= 35. && f < 56.) {
+    if(f >= 36. && f < 56.) {
         float t = sdf(uv);
-        if(t <= 0.) {
+        if(t <= -2.) { // Set size of overlaid ball here
             color = vec3(1., 1., .7);
         }
     }
 
+    // Metaballs
     if(f >= 56.) {
-        float angle = -f * 2.;
-        vec2 uvr = vec2(uv.x * sin(angle) - uv.y * cos(angle), uv.x * cos(angle) + uv.y * sin(angle));
-        float t = sdf(uvr);
+        float angle = -f;
+
+        if(f >= 63.2) {
+            angle *= 2.;
+            angle += thump;
+            uv.x += sin(uv.y * thump * 4.); // Wobble the SDF
+        }
+        uv = vec2(uv.x * sin(angle) - uv.y * cos(angle), uv.x * cos(angle) + uv.y * sin(angle)); // rotate
+        float t = sdf(uv);
         if(t <= 0.) {
             color = vec3(1., 1., .7);
             float t = mod(floor(f - 56.), 12.);
