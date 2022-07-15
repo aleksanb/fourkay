@@ -1,5 +1,8 @@
 uniform float f;
 
+#define MAXITR 200
+#define EPS .01
+
 float opSU(float d1, float d2, float k) {
     float h = clamp(0.5 + 0.5 * (d2 - d1) / k, 0.0, 1.0);
     return mix(d2, d1, h) - k * h * (1.0 - h);
@@ -29,6 +32,59 @@ float sdf(in vec2 p) {
     r = opSU(r, s8, 2.);
 
     return r;
+}
+
+float dist_func(vec3 p)
+{
+  float music = 2.;
+  
+  float ball = length(p - vec3(0., .5 + music - 1., 0.)) - (.5 + music);
+  
+  float ground = p.y + 1.;
+  
+  return min(ball, ground);
+}
+
+float marcher(vec3 startpos, vec3 raydir)
+{
+  float raylength = 0.;
+  
+  for (int i = 0; i < MAXITR; i++)
+  {
+    vec3 pos = raydir * raylength + startpos;
+    float dist = dist_func(pos);
+    if (dist < EPS)
+    {
+      break;
+    }
+    pos += raydir * dist;
+    raylength += dist;
+  }
+  return raylength;
+}
+
+vec3 findnormal(vec3 p)
+{
+  vec2 e = vec2(.01, 0.00);
+  float d = dist_func(p);
+  
+  vec3 n = d - vec3(dist_func(p - e.xyy), dist_func(p - e.yxy), dist_func(p - e.yyx));
+  
+  return normalize(n);
+}
+
+float light (vec3 pos)
+{
+  vec3 light_position = vec3(0., 5., 2.);
+  vec3 light_normal = normalize(vec3( light_position - pos));
+  
+  vec3 surface_normal = findnormal(pos);
+  
+  float light = clamp(dot(light_normal, surface_normal), 0., 1.);
+  
+  float d = marcher(pos + surface_normal * EPS, light_normal);
+  if (d < 100.) return light * 0.1;
+  return light;
 }
 
 void main() {
@@ -146,7 +202,7 @@ void main() {
     }
 
     // Metaballs
-    if(f >= 56.) {
+    if(f >= 56. && f < 68.) {
         float angle = -f;
 
         if(f >= 63.2) {
@@ -203,6 +259,18 @@ void main() {
 
             }
         }
+    }
+    if(f>68.)
+    {
+        vec3 camera_position = vec3(0., 0., -3.);
+        vec3 camera_angle = normalize(vec3(uv.x, uv.y, 1.));
+        
+        float depth = marcher(camera_position, camera_angle);
+        
+        vec3 normalvec = findnormal(camera_position + camera_angle * depth);
+        
+        vec3 pos = camera_position + camera_angle * depth;
+        color = vec3(light(pos));
     }
 
     gl_FragColor = vec4(color, 1.0);
