@@ -59,7 +59,6 @@ macro_rules! intern_atom {
 
 static VERTEX_SHADER: &str = concat!(include_str!("shaders/quad-vertex.glsl"), "\0");
 // static BALLS_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/balls.glsl.out"), "\0");
-// static SOLID_FRAGMENT_SHADER: &str = "void main(){gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);}\0";
 // static FLOWERS_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/flower.glsl"), "\0");
 // static BLOBBY_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/blobby.glsl.out"), "\0");
 // static SNAKE_FRAGMENT_SHADER: &str = concat!(include_str!("shaders/snake.glsl.out"), "\0");
@@ -69,6 +68,8 @@ static VERTEX_SHADER: &str = concat!(include_str!("shaders/quad-vertex.glsl"), "
 // blobs
 // static VORONOI_SHADER: &str = concat!(include_str!("shaders/2022/voronoi.glsl"), "\0");
 // static DISCOLINES_SHADER: &str = concat!(include_str!("shaders/2022/discolines.glsl"), "\0");
+
+// static BLOBS_SHADER: &str = "void main(){gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);}\0";
 static BLOBS_SHADER: &str = concat!(include_str!("shaders/2022/blobs.glsl.out"), "\0");
 
 #[no_mangle]
@@ -353,8 +354,7 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
             how_far_into_note
         };
 
-        let pluck_length_s = one_ms_in_samples as f32 * 130f32;
-        let get_pluck = |how_far_into_note_s: f32, to: f32| {
+        let get_pluck = |pluck_length_s: f32, how_far_into_note_s: f32, to: f32| {
             let from = 1.0;
             if how_far_into_note_s < pluck_length_s {
                 from - (from - to) * (how_far_into_note_s / pluck_length_s)
@@ -383,17 +383,27 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
 
         for sample_idx in 0..samples_to_prerender {
             // First slow section
-            let current_note_length_in_samples = if sample_idx < sample_rate * 15 {
-                note_length_in_samples * 2
+            let mut modulation: f32;
+            let current_note_length_in_samples;
+            if sample_idx < sample_rate * 15 {
+                current_note_length_in_samples = note_length_in_samples * 2;
+                modulation = 1.0;
             // First fast section, after first zoom in
             } else if sample_idx < sample_rate * 31 {
-                note_length_in_samples
+                current_note_length_in_samples = note_length_in_samples;
+                modulation = 1.0;
             // Second slow section, after second zoom in
-            } else if sample_idx < sample_rate * 53 {
-                note_length_in_samples * 2
+            } else if sample_idx < sample_rate * 42 {
+                modulation = 1.0594630943592953;
+                current_note_length_in_samples = note_length_in_samples * 2;
+            // Warpy boi time, metaballs etc
+            } else if sample_idx < sample_rate * 54 {
+                modulation = 1.0594630943592953;
+                current_note_length_in_samples = note_length_in_samples;
             // Warpy boi time, metaballs etc
             } else {
-                note_length_in_samples
+                modulation = 1.122462048309373;
+                current_note_length_in_samples = note_length_in_samples
             };
 
             let beat = sample_idx / current_note_length_in_samples;
@@ -401,36 +411,47 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
             let lead_note = BLOBS_SHADER.as_bytes()[beat % BLOBS_SHADER.as_bytes().len()] as usize;
 
             let mut lead_sample = 0f32;
-            let megapluck = get_pluck(how_far_into_note_s, 0.4);
-            let lead_freq = note_frequencies[(lead_note % notes_length) as usize];
+
+            let megapluck = get_pluck(one_ms_in_samples as f32 * 130f32, how_far_into_note_s, 0.3);
+            let lead_freq = note_frequencies[(lead_note % notes_length) as usize] * modulation;
+
             lead_sample += play_note(lead_freq, sample_idx) * 0.5 * megapluck;
 
             if beat % 12 >= 9 {
-                let lead2_freq = note_frequencies[((lead_note + 7) % notes_length) as usize];
-                lead_sample += play_note(lead2_freq, sample_idx) * 0.4 * megapluck;
+                let lead2_freq =
+                    note_frequencies[((lead_note + 7) % notes_length) as usize] * modulation;
+                lead_sample += play_note(lead2_freq, sample_idx) * 0.5 * megapluck;
             }
 
             let delay_in_samples =
                 current_note_length_in_samples + current_note_length_in_samples / 2;
             if sample_idx >= delay_in_samples {
-                lead_sample += *lead_buffer.add(sample_idx).sub(delay_in_samples) * 0.5;
+                lead_sample += *lead_buffer.add(sample_idx).sub(delay_in_samples) * 0.6;
             }
 
             *lead_buffer.add(sample_idx) = lead_sample;
 
             let bass_note = sample_idx / (note_length_in_samples * 8);
-            let bass_freq = note_frequencies[(bass_note % notes_length) as usize];
-            let bass_sample = if sample_idx < sample_rate * 8 {
-                play_note(bass_freq / 3f32, sample_idx) * 0.5
-            } else {
-                play_note(bass_freq / 3f32, sample_idx) * 0.5
-            };
+            let how_far_into_bass_note_s = (sample_idx % (note_length_in_samples * 8)) as f32;
+            let bass_freq = note_frequencies[(bass_note % notes_length) as usize] * modulation;
+            let bass_pluck = get_pluck(
+                note_length_in_samples as f32 * 1.5,
+                how_far_into_bass_note_s,
+                0.5,
+            );
+            //let bass_sample = if sample_idx < sample_rate * 8 {
+            let bass_sample = play_note(bass_freq / 3f32, sample_idx) * bass_pluck * 0.5;
+            // } else {
+            // play_note(bass_freq / 3f32, sample_idx) * 0.5
+            // };
             //*bass_buffer.add(sample_idx) = bass_sample;
 
             // Output section
-            let all_samples = (*lead_buffer.offset(sample_idx as isize)
+            let mut all_samples = bass_sample;
+            let mut all_samples = (*lead_buffer.offset(sample_idx as isize)
                 + bass_sample) //*bass_buffer.offset(sample_idx as isize))
                 / 4f32;
+
             let rendered_sample =
                 (all_samples * (u16::MAX - 1) as f32 - (u16::MAX / 2) as f32) as i16;
             *buffer.add(sample_idx) = rendered_sample;
