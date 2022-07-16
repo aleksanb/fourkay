@@ -54,6 +54,11 @@ void main() {
     float m = mod(floor((uvt.x + uvt.y) / 2. * 3. + f), 3.);
     float l = mod(floor(uvt.x * 10. - f), 3.);
 
+    if (f > 72.5)
+    {
+        f = 72.5;
+    }
+
     // Pastel pulse
     if(f < 31.) {
         uv.y -= 0.5;

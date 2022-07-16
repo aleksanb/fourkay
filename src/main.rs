@@ -530,8 +530,8 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
             solid_shader.render((current_frame / FRAMES_PER_SECOND as f32) + 0.0);
 
             unsafe { glx::glXSwapBuffers(display as *mut bindings::glx::_XDisplay, window) }
-            if current_frame > 60f32 * 72f32 + 30f32 {
-                // We terminate after 72 seconds.
+            if current_frame > 60f32 * 73f32 + 30f32 {
+                // We terminate after 73.5 seconds.
                 return 1;
             }
             // if should_exit_after_processing_pending_events(display, window) {
