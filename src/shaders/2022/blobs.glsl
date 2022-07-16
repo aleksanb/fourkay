@@ -107,7 +107,7 @@ void main() {
 
     if(f >= 36. && f < 56.) {
         float t = sdf(uv);
-        if(t <= -2.) { // Set size of overlaid ball here
+        if(t <= -0.) { // Set size of overlaid ball here
             color = vec3(1., 1., .7);
         }
     }
