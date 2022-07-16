@@ -31,56 +31,6 @@ float sdf(in vec2 p) {
     return r;
 }
 
-float dist_func(vec3 p)
-{
-  float ball = length(p) - 2.;
-  float ground = p.y + 1.;
-  
-  return min(ball, ground);
-}
-
-float marcher(vec3 startpos, vec3 raydir)
-{
-  float raylength = 0.;
-  
-  for (int i = 0; i < 200.; i++) // Set max itr here
-  {
-    vec3 pos = raydir * raylength + startpos;
-    float dist = dist_func(pos);
-    if (dist < 0.01)
-    {
-      break;
-    }
-    pos += raydir * dist;
-    raylength += dist;
-  }
-  return raylength;
-}
-
-vec3 findnormal(vec3 p)
-{
-  vec2 e = vec2(.01, 0.00);
-  float d = dist_func(p);
-  
-  vec3 n = d - vec3(dist_func(p - e.xyy), dist_func(p - e.yxy), dist_func(p - e.yyx));
-  
-  return normalize(n);
-}
-
-float light (vec3 pos)
-{
-  vec3 light_position = vec3(0., 10., -10.);
-  vec3 light_normal = normalize(vec3( light_position - pos));
-  
-  vec3 surface_normal = findnormal(pos);
-  
-  float light = clamp(dot(light_normal, surface_normal), 0., 1.);
-  
-  float d = marcher(pos + surface_normal * 0.01, light_normal);
-  if (d < 100.) return light * 0.1;
-  return light;
-}
-
 void main() {
     // 1) We get [0, 1) coordinates for x,y by dividing by r.xy.
     // 2) Then we scale the y-coordinate so that 1 unit in x direction equals
@@ -157,8 +107,15 @@ void main() {
         }
     }
 
+    if (f > 72.)
+    {
+        float ending_progression = max(0., 1. - (f - 72.) * 6.);
+        uv = (uv - 0.5) * ending_progression + 0.5;
+        uv.y -= 1.0 * (1. - ending_progression);
+    }
+
     // Metaballs
-    if(f >= 56. && f < 68.) {
+    if(f >= 56.) {
         float angle = -f;
 
         if(f >= 63.2) {
@@ -175,19 +132,6 @@ void main() {
                     0.8 + 0.2 * cos(m + t + f / 4.),
                     0.8 + 0.2 * sin(m + t + f / 9.));
         }
-    }
-    if(f>68.)
-    {
-        vec3 camera_position = vec3(0., 0., -3.);
-        vec3 camera_angle = normalize(vec3(uv.x, uv.y, 1.));
-        
-        float depth = marcher(camera_position, camera_angle);
-        
-        vec3 normalvec = findnormal(camera_position + camera_angle * depth);
-        
-        vec3 pos = camera_position + camera_angle * depth;
-        color = vec3(light(pos));
-        //color = normalvec;
     }
 
     gl_FragColor = vec4(color, 1.0);
