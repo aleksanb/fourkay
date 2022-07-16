@@ -431,7 +431,8 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
 
             *lead_buffer.add(sample_idx) = lead_sample;
 
-            let bass_note = sample_idx / (note_length_in_samples * 8);
+            let bass_note_length_in_samples = (note_length_in_samples * 8) as usize;
+            let bass_note = sample_idx / bass_note_length_in_samples;
             let how_far_into_bass_note_s = (sample_idx % (note_length_in_samples * 8)) as f32;
             let bass_freq = note_frequencies[(bass_note % notes_length) as usize] * modulation;
             let bass_pluck = get_pluck(
@@ -439,18 +440,14 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
                 how_far_into_bass_note_s,
                 0.5,
             );
-            //let bass_sample = if sample_idx < sample_rate * 8 {
             let bass_sample = play_note(bass_freq / 3f32, sample_idx) * bass_pluck * 0.5;
-            // } else {
-            // play_note(bass_freq / 3f32, sample_idx) * 0.5
-            // };
-            //*bass_buffer.add(sample_idx) = bass_sample;
 
             // Output section
-            let mut all_samples = bass_sample;
-            let mut all_samples = (*lead_buffer.offset(sample_idx as isize)
-                + bass_sample) //*bass_buffer.offset(sample_idx as isize))
-                / 4f32;
+            let mut all_samples = (*lead_buffer.add(sample_idx) + bass_sample) / 4f32;
+            if sample_idx >= sample_rate * 72 {
+                all_samples *= 1f32
+                    - (sample_idx - sample_rate * 72) as f32 / bass_note_length_in_samples as f32;
+            }
 
             let rendered_sample =
                 (all_samples * (u16::MAX - 1) as f32 - (u16::MAX / 2) as f32) as i16;
@@ -531,7 +528,6 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
 
             unsafe { glx::glXSwapBuffers(display as *mut bindings::glx::_XDisplay, window) }
             if current_frame > 60f32 * 76f32 + 40f32 {
-                // We terminate after 73.5 seconds.
                 return 1;
             }
             // if should_exit_after_processing_pending_events(display, window) {
