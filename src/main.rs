@@ -444,9 +444,10 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
 
             // Output section
             let mut all_samples = (*lead_buffer.add(sample_idx) + bass_sample) / 4f32;
-            if sample_idx >= sample_rate * 72 {
+            if sample_idx >= sample_rate * 70 {
                 all_samples *= 1f32
-                    - (sample_idx - sample_rate * 72) as f32 / bass_note_length_in_samples as f32;
+                    - (sample_idx - sample_rate * 72) as f32
+                        / (bass_note_length_in_samples * 2) as f32;
             }
 
             let rendered_sample =
