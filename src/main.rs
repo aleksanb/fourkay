@@ -382,14 +382,19 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
         // Additionally, rotate the note library at certan points in the demo.
 
         for sample_idx in 0..samples_to_prerender {
-            let current_note_length_in_samples;
-            if sample_idx < note_length_in_samples * 10 {
-                current_note_length_in_samples = note_length_in_samples;
-            } else if sample_idx < note_length_in_samples * 20 {
-                current_note_length_in_samples = note_length_in_samples * 2;
+            // First slow section
+            let current_note_length_in_samples = if sample_idx < sample_rate * 15 {
+                note_length_in_samples * 2
+            // First fast section, after first zoom in
+            } else if sample_idx < sample_rate * 31 {
+                note_length_in_samples
+            // Second slow section, after second zoom in
+            } else if sample_idx < sample_rate * 53 {
+                note_length_in_samples * 2
+            // Warpy boi time, metaballs etc
             } else {
-                current_note_length_in_samples = note_length_in_samples;
-            }
+                note_length_in_samples
+            };
 
             let beat = sample_idx / current_note_length_in_samples;
             let how_far_into_note_s = (sample_idx % current_note_length_in_samples) as f32;
@@ -415,7 +420,11 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
 
             let bass_note = sample_idx / (note_length_in_samples * 8);
             let bass_freq = note_frequencies[(bass_note % notes_length) as usize];
-            let bass_sample = play_note(bass_freq / 3f32, sample_idx) * 0.5;
+            let bass_sample = if sample_idx < sample_rate * 8 {
+                play_note(bass_freq / 3f32, sample_idx) * 0.5
+            } else {
+                play_note(bass_freq / 3f32, sample_idx) * 0.5
+            };
             //*bass_buffer.add(sample_idx) = bass_sample;
 
             // Output section
@@ -431,7 +440,6 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
         const FRAME_LENGTH_MILLISECONDS: usize = 1_000 / FRAMES_PER_SECOND;
         const FRAME_LENGTH_DURATION: core::time::Duration =
             core::time::Duration::from_millis(FRAME_LENGTH_MILLISECONDS as _);
-        let mut current_frame = 0f32;
         let mut current_time = shitty::time::now();
         let mut previous_time = shitty::time::now();
         let mut delta_time = core::time::Duration::new(0, 0);
@@ -443,7 +451,8 @@ pub extern "C" fn main(_argc: isize, _argv: *const *const u8) -> isize {
 
         // let mut timestamp: alsa::snd_timestamp_t = MaybeUninit::uninit().assume_init();
         // let mut status: alsa::snd_pcm_status_t = MaybeUninit::uninit().assume_init();
-        let mut current_sample_idx: isize = 0;
+        let mut current_frame = 0f32;
+        let mut current_sample_idx: isize = 0; // (24 * sample_rate) as isize;
         loop {
             shitty::time::update(&mut current_time);
             let delta_since_last_wake = shitty::time::subtract(&current_time, &previous_time);
