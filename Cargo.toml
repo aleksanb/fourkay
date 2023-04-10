@@ -18,11 +18,13 @@ bindgen = "0.59.2"
 pkg-config = "0.3"
 
 [profile.dev]
+split-debuginfo = "packed"
 panic = "abort"
 
 [profile.release]
 strip = true
 panic = "abort"
-opt-level = 2  # Currently gives the best size  https://rust-embedded.github.io/book/unsorted/speed-vs-size.html
+opt-level = "z"
 lto = true
 codegen-units = 1
+# https://rust-embedded.github.io/book/unsorted/speed-vs-size.html
